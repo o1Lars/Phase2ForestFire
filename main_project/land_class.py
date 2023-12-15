@@ -29,12 +29,14 @@ class Landpatch():
         ----------
         # TODO
         """
+
     # Class methods
-    
+
     def mutate_landpatch(self):
         """Allows for swapping the subtype of the landpatch without loosing connection to neighbors and associations with firefighters, 
         eg. if initial instance is classified as a Rockpatch, swapped instance is then Treepatch
         """
+
         # TODO
         print("The landpatch has been swapped")
 
