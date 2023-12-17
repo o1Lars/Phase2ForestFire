@@ -12,7 +12,9 @@ Module is created as part of the group project for the final exam of DS830 Intro
 """
 
 # Import dependencies
-import visualiser_rndgraph as vrg
+import landpatch_creator as lc
+import visualiser_random_forest_graph as vis_rfg
+import graph_helper
 import matplotlib.pyplot as plt
 from typing import List, Optional, Dict
 import random as random
@@ -21,13 +23,12 @@ from time import sleep
 
 
 class Graph():
-    """Each instance of this class creates a Graph with edges, vertices and a coloring pattern. """
+    """Each instance of this class creates a Graph with edges and vertices populated with landpatches (either rock or tree) and a coloring pattern. """
 
     def __init__(
         self,
         edges: list,
         color_pattern: int) -> None:
-
         """
         Parameters
         ----------
@@ -43,30 +44,35 @@ class Graph():
             Is true if all graph vertices has at least one neighbour
         """
 
-        self.edges = edges
-        self.color_pattern = color_pattern
-        self.vertices_list = self.create_vertices_list()
-        self.val_map = self.create_val_map()
-        self.vertices_neighbours = self.create_neighbour_dict()
-        self.vertices_frustration = {}
-        self.total_frustration = []
-        self.is_connected = False
-        self.vis_graph = vrg.Visualiser(self.edges, val_map=self.val_map, vis_labels=True, node_size=200)
+        self._edges = edges
+        self._color_pattern = color_pattern
+        self._vertices_list = self.create_vertices_list()
+        self._val_map = self.create_val_map()
+        self._vertices_neighbours = self.create_neighbour_dict()
+        self._patches_map = self.populate_patches() 
+        self._is_connected = False
+        self._vis_graph = vis_rfg.Visualiser(self._edges, val_map=self.val_map, vis_labels=True, node_size=200)
 
         # add delay to show initial graph
         sleep(0.6)
 
-        # calculate initial vertex frustration / local metric
-        self.update_vertex_frustration()
-        # calculate initial total frustration at instance construction
-        self.total_frustration.append(self.global_metric())
+
 
     # class methods
+    
+    def populate_patches(self):
+        """Populates the vertices of a graph with either Rockpatches or Treepatches"""
+        
+        vertices = self._vertices_list
+
+        #TODO
+
+        print("Populating vertices with patches...")
 
     def create_vertices_list(self) -> list:
         """Return a list of vertices from tuple of edges"""
 
-        edges = self.edges
+        edges = self._edges
 
         # Create vertices list
         graph_vertices = []
@@ -87,15 +93,15 @@ class Graph():
 
         color_pattern = 0
         # set color pattern
-        if self.color_pattern == 'All 0':
+        if self._color_pattern == 'All 0':
             color_pattern = 0
-        elif self.color_pattern == 'All 1':
+        elif self._color_pattern == 'All 1':
             color_pattern = 1
         else:
             color_pattern = 2
         
         color_dict = {}
-        vertices_list = self.vertices_list
+        vertices_list = self._vertices_list
 
         # Add color pattern to vertex
         for vertex in vertices_list:
@@ -111,8 +117,8 @@ class Graph():
     def create_neighbour_dict(self):
         """Return dictionary of vertices as key and neighbours (if any) as value"""
 
-        vertices_list = self.vertices_list
-        edges = self.edges
+        vertices_list = self._vertices_list
+        edges = self._edges
         vertices_neighbours = {}
 
         # add neighbours to dictionary
@@ -136,54 +142,12 @@ class Graph():
 
         return vertices_neighbours
 
-    def local_metric(self, c_i: int, n_j: int) -> float:
-        """Return  the frustration of a site"""
-
-        # Store local metric total
-        total_frustration = 0.0
-
-        for c_j in n_j:
-            total_frustration += (1 - 2 * c_i) * (1 - 2 * c_j)
-        return total_frustration
-
-    def global_metric(self) -> float:
-        """Return the sum of the local_metric over every single vertex of the graph.
-        The global metric is the measure of the frustration of the graph simulated by the program.
-        """
-        vertices_frustration = self.vertices_frustration
-
-        # Store total frustration
-        total_frustration = 0.0
-
-        # iterate over dictionary of vertices
-        for vertex in vertices_frustration:
-            # add all vertex frustrations to total
-            total_frustration += vertices_frustration[vertex]
-
-        # Multiply total_frustration by 1/2 as per the provided formula.
-        total_frustration *= 0.5
-
-        return total_frustration
-
-    def update_vertex_frustration(self):
-        """Updates frustration for each vertex"""
-
-        vertices_list = self.vertices_list
-        vertices_neighbours = self.vertices_neighbours
-        vertices_color = self.val_map
-
-        for vertex in vertices_list:
-            c_i = vertices_color[vertex]
-            n_J = [vertices_color[neighbour] for neighbour in vertices_neighbours[vertex]]
-            frustration = self.local_metric(c_i, n_J)
-            self.vertices_frustration[vertex] = frustration
-
     def update_graph_connection(self):
         # Return True if graph is connected, otherwise return False
         visited = set()
-        self.is_connected = False
+        self._is_connected = False
 
-        for start_vertex in self.vertices_list:
+        for start_vertex in self._vertices_list:
             if start_vertex not in visited:
                 stack = [start_vertex]
 
@@ -192,123 +156,20 @@ class Graph():
                     if vertex not in visited:
                         visited.add(vertex)
                         stack.extend(
-                            neighbour for neighbour in self.vertices_neighbours[vertex] if neighbour not in visited)
+                            neighbour for neighbour in self._vertices_neighbours[vertex] if neighbour not in visited)
 
                 # If all vertices are visited, the graph is connected
-                self.is_connected = (len(visited) == len(self.vertices_list))
-                if self.is_connected:
+                self._is_connected = (len(visited) == len(self._vertices_list))
+                if self._is_connected:
                     return True
                 else:
                     return False
                     break # Finish the loop if an unconnected section has been found
-    def update_ordered(self) -> None:
-        """Visit each site of the graph and change (swap) the colour if the local action of the site is positive"""
-        vertices_list = self.vertices_list
-        vertices_frustration = self.vertices_frustration
-        val_map = self.val_map
-
-        # iterate over vertices in vertices_dictionary
-        for vertex in vertices_list:
-            # set local action for each vertex
-            local_action = vertices_frustration[vertex]
-            if local_action > 0:
-                current_color = val_map[vertex]                     # set current color
-                new_color = 1.0 if current_color != 1.0 else 0.0    # swap current color
-                val_map[vertex] = new_color
-                self.update_vertex_frustration()                    # update vertices frustration
-
-    def update_max_violation(self) -> None:
-        """Identify the site with the largest value of local action and swap its colour."""
-
-        vertices_list = self.vertices_list
-        vertices_frustration = self.vertices_frustration
-        val_map = self.val_map
-
-        # store vertix with largest local action
-        largest_action = None
-        largest_vertex = None
-
-        # iterate over dictionary
-        for vertex in vertices_list:
-            # set current local action
-            current_action = vertices_frustration[vertex]
-
-            # check if local action of current vertex > largest
-            if largest_action is None or current_action > largest_action:
-                largest_action = current_action                             # set new largest action value
-                largest_vertex = vertex                                     # track vertex with largest action value
-
-        # swap the color of vertex with largest local action
-        if val_map[largest_vertex] == 1.0:
-            val_map[largest_vertex] = 0.0
-        else:
-            val_map[largest_vertex] = 1.0
-
-        # calculate new frustration for each vertex
-        self.update_vertex_frustration()
-
-    def update_monte_carlo(self) -> None:
-        """Visit each site of the graph and swap colour if the exponential of the local action > a random float between 0,1."""
-
-        vertices_list = self.vertices_list
-        vertices_frustration = self.vertices_frustration
-        val_map = self.val_map
-
-        # iterate over vertices in vertices_dictionary
-        for vertex in vertices_list:
-            # set local action for each vertex
-            local_action = vertices_frustration[vertex]
-            if local_action > 0:
-                current_color = val_map[vertex]  # set current color
-                random_number = random.uniform(0, 1)  # generate random float between 0 and 1
-                exp_local_action = math.exp(local_action)
-
-                if exp_local_action > random_number: #compare exponent to random number
-                    new_color = 1.0 if current_color != 1.0 else 0.0 # swap current colour
-                    val_map[vertex] = new_color
-                    self.update_vertex_frustration()  # update vertices frustration
-
-    def run_simulation(self, update_procedure, iterations):
-        """Simulate update of graph accourding to update_procedure for number of iterations"""
-
-        for iteration in range(iterations):
-            # small delay 
-            sleep(0.6)
-            if update_procedure.lower() == "ordered":
-                self.update_ordered()
-            elif update_procedure.lower() == "maxviolation":
-                self.update_max_violation()
-            else:
-                self.update_monte_carlo()
-            # update coloring in visual representation of the graph instance
-            self.vis_graph.update(val_map=self.val_map)
-
-            # compute new global metric and add to total_frustration
-            self.total_frustration.append(self.global_metric())
-
-    def report_frustration_history(self, steps: int) -> None:
-        """ Display plot of the evolution of total frustration over a specified number of steps"""
-
-        step_list = list(range(0, steps + 1))
-        frustration = self.total_frustration
-
-        fig, ax = plt.subplots()  # Create a figure containing a single axes.
-        ax.plot(step_list, frustration)  # Plot some data on the axes
-
-        # Set labels
-        ax.set_ylabel("Frustration of the graph")
-        ax.set_xlabel("Number of update steps")
-
-        # Set the title directly on the axes
-        ax.set_title("Evolution of Total Frustration")
-
-        # Display
-        plt.show()
         
     def __eq__(self, other):
         """Return true if edges of this instance is equal to edges of other instance of same class"""
  
-        if (self.edges == other.edges):
+        if (self._edges == other.edges):
             return True
         else:
             return False
@@ -317,12 +178,12 @@ class Graph():
     def __str__(self):
         """Return a textual representation of the attributes of the graph"""
 
-        return f"vertices: {self.vertices_list}. Vertex colors: {self.val_map}. Vertex neighbours: {self.vertices_neighbours}.\
+        return f"vertices: {self._vertices_list}. Vertex colors: {self.val_map}. Vertex neighbours: {self._vertices_neighbours}.\
             vertex frustration: {self.vertices_frustration}. Total graph frustration: {self.total_frustration}"
     
     def __repr__(self):
         """Return a Python-like representation of this this instance"""
-        return f"GraphCreater({self.edges}, {self.color_pattern})"
+        return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 # function for generating af g
 def generate_random_graph(n, p=0.6):
@@ -400,11 +261,6 @@ def create_graph_from_file(file_path: str) -> list[tuple]:
         return []
 
     return graph_edges
-
-""" graph_color_test1 = GraphCreater([(1,2), (1, 3), (2, 3)], 0)
-graph_color_test2 = GraphCreater([(1,2), (1, 3), (2, 3)], 0)
-print(graph_color_test1.val_map)
-print(graph_color_test2.val_map) """
 
 # Import doctest module
 if __name__ == "__main__":

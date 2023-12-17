@@ -86,10 +86,12 @@ elif graph_type == 2:
     if n_random_graph > 500:
         print("Your desired number of vertices exceeds the limit.")
     else:
-        graph_edges = generate_random_graph(n_random_graph, 0.6)
+        graph_edges = generate_random_graph(n_random_graph, 0.6) ### IMP: Here we should use the random planar graph from provided module graph_helper.py to ensure random graph is planar
 else:
     print("Invalid choice. Please enter '1' or '2'.")
 
+## Here we need to verify the provided graph is planar, there is a function in module graph_helper.py
+    
 # print(graph_edges)
 
 # Terrain configuration
