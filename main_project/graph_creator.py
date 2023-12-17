@@ -190,16 +190,6 @@ class Graph():
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 
-
-
-
-
-
-
-
-
-
-
 @dataclass
 class Graphdata:
     """Each instance of this class creates a dataclass that stores various information related to simulating the evolution of patches of land
