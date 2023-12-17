@@ -1,5 +1,7 @@
 """
-This module provides Graph, a class for creating a graph of edges and sites forming a graph
+This module provides:
+ - Graph: a class for creating a graph of edges and sites forming a graph
+ - Graphdata: a special python dataclass for storing data associated with the graph, eg. evolution of landpatches
 
 Requirements
 ------------
@@ -12,6 +14,7 @@ Module is created as part of the group project for the final exam of DS830 Intro
 """
 
 # Import dependencies
+from dataclasses import dataclass
 import landpatch_creator as lc
 import visualiser_random_forest_graph as vis_rfg
 import graph_helper
@@ -185,27 +188,92 @@ class Graph():
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
-# function for generating af g
-def generate_random_graph(n, p=0.6):
-    """Return a list of edges in tuples by generating a random graph from n vertices with p 0.6"""
+@dataclass
+class Graphdata:
+    """Each instance of this class creates a dataclass that stores various information related to simulating the evolution of patches of land
 
-    # Randomly assign connection between vertices
-    graph = [[0 for _ in range(n)] for _ in range(n)]
+    Parameters
+    ----------
+    _land_patches: int, default = 0
+        Stores total number of landpatches on the graph (coresponds to total number of vertices)
+    _tree_patches: List[int], default = []
+        Stores current number of tree patches on the graph
+    _rock_patches: List[int], default = []
+        Stores current number of rock patches on the graph
+    _ignited_tree_patches: List[int], default = []
+        Stores current number of ignited tree patches
+    _consumed_tree_patches: int, default = 0
+        Stores total number of tree patches consumed by fire
+    _rock_to_tree_counter: int, default = 0
+        Stores number of rock patches that, during the course of simulation, have turned into tree patches
+    _firefighters: List[int] = []
+        Stores current number of firefighters
+    _dead_firefighters: int = 0
+        Stores number of firefighters, who have perished
+    """
+    _land_patches: int = 0
+    _tree_patches: List[int] = []
+    _rock_patches: List[int] = []
+    _ignited_tree_patches: List[int] = []
+    _consumed_tree_patches: int = 0
+    _rock_to_tree_counter: int = 0
+    _firefighters: List[int] = []
+    _dead_firefighters_counter: int = 0
 
-    for i in range(n):
-        for j in range(i + 1, n):
-            if random.random() < p:
-                graph[i][j] = graph[j][i] = 1
+    def update_patches(self, patches_map: Dict[str]) -> None:
+        """Updates number of tree patches, rock patches and forest fires"""
 
-    # Create list of edges
-    edges = []
+        # Store variables for updating patches of instance
+        treepatches = self._tree_patches
+        rockpatches = self._rock_patches
+        forest_fires = self._ignited_tree_patches
 
-    for i in range(len(graph)):
-        for j in range(i + 1, len(graph[i])):
-            if graph[i][j] == 1:
-                edges.append((i, j))
+        # Initialize counters
+        treepatches_counter = 0
+        rockpatches_counter = 0
+        forest_fires_counter = 0
 
-    return edges
+        # Iterate over patches_map
+        for vertex, patch in patches_map.items():
+            # check if patch mapped to vertex is rock or tree
+            if isinstance(patch, lc.Rockpatch):
+                rockpatches_counter += 1
+            else:
+                treepatches_counter += 1
+                # check if tree patch is ignited
+                if patch.is_ignited:
+                    forest_fires_counter += 1
+        
+        # Append patch count to instance data
+        treepatches.append(treepatches_counter) 
+        rockpatches.append(rockpatches_counter)
+        forest_fires.append(forest_fires_counter) 
+
+    def update_rock_to_tree_counter(self) -> None:
+        """Updates number of rock patches that swapped to a tree patch"""
+        # TODO
+
+        self._rock_to_tree_counter += 1
+    
+    def update_firefighter_list(self) -> None:
+        """Updates the list of current alive fire fighters"""
+
+        # Compute number of currently alive firefighters
+        firefighters = self._firefighters[0] - self._dead_firefighters_counter
+
+        # Append total number of alive firefighters to firefighter list
+        self._firefighters.append(firefighters)
+
+    def update_dead_firefighters_counter(self):
+        """Updates counter of dead fire fighters"""
+        
+        self._dead_firefighters_counter += 1
+
+
+
+
+
+
 
 def add_edges_from_lines(lines: str) -> list[tuple]:
     """Read lines, check if line represent an edge of a graph. Return list of edges"""
