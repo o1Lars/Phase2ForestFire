@@ -17,12 +17,13 @@ Module is created as part of the group project for the final exam of DS830 Intro
 from dataclasses import dataclass
 import landpatch_creator as lc
 import visualiser_random_forest_graph as vis_rfg
-import graph_helper
+import graph_helper as gh
 import matplotlib.pyplot as plt
 from typing import List, Optional, Dict
 import random as random
 import math as math
 from time import sleep
+import os
 
 
 class Graph():
@@ -188,6 +189,17 @@ class Graph():
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
+
+
+
+
+
+
+
+
+
+
+
 @dataclass
 class Graphdata:
     """Each instance of this class creates a dataclass that stores various information related to simulating the evolution of patches of land
@@ -269,11 +281,19 @@ class Graphdata:
         
         self._dead_firefighters_counter += 1
 
+# function for generating af g
+def user_file(fp, fn):
+    """This function opens a file using a given file path (fp) and file name (fn), and reads its contents."""
 
+    try:
+        with open(os.path.join(fp, fn), 'r') as file:
+            file_content = file.read()
+            return file_content
 
-
-
-
+    except FileNotFoundError as e:
+        return e
+    except IOError as e:
+        return e
 
 def add_edges_from_lines(lines: str) -> list[tuple]:
     """Read lines, check if line represent an edge of a graph. Return list of edges"""
@@ -298,28 +318,29 @@ def add_edges_from_lines(lines: str) -> list[tuple]:
         # Check if both values are valid integers
         if len(nodes) == 2 and nodes[0].strip().isdigit() and nodes[1].strip().isdigit():
             # Convert nodes to integers and add the edge to the graph
-            u, v = map(int, nodes)
+            i, j = map(int, nodes)
             # Add the edge as a tuple to the edges_list
-            edges_list.append((u, v))
+            edges_list.append((i, j))
         else:
             print("Invalid input.")
 
     return edges_list
 
-# functions for creating list of edges from a file
-
-def create_graph_from_file(file_path: str) -> list[tuple]:
+def create_graph_from_file(filename: str) -> list[tuple]:
     """Read a file, checks if its valid and return a list of edges for a graph"""
-    # Open the text file in read mode
+
     try:
-        with open(file_path, 'r') as file:
+        with open(filename, 'r') as file:
             # Read lines from the file and remove whitespaces
             lines = [line.strip() for line in file.readlines() if line.strip()]
-    # Handle errors
-    except FileNotFoundError:
-        print("Error: The file could not be found.")
-    except IOError:
-        print("There was an error reading from the file.")
+
+    except FileNotFoundError as e:
+        print("The file could not be found.")
+        return []  # Return an empty list
+
+    except IOError as e:
+        print("There was an error reading from the file:", str(e))
+        return []  # Return an empty list
 
     # add edges from file to edges_list
     try:
@@ -329,6 +350,44 @@ def create_graph_from_file(file_path: str) -> list[tuple]:
         return []
 
     return graph_edges
+
+# Load the functions
+graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
+
+if graph_type == 1:
+    file_path = input("Enter the file path: ")
+    file_name = input("Enter the file name: ") + ".dat"
+
+    # Compile file information
+    user_file_path = os.path.join(file_path, file_name)
+
+    user_graph = user_file(file_path, file_name)
+    graph_edges = create_graph_from_file(user_file_path)
+
+    # Verify that the graph is a planar graph
+    if gh.edges_planar(graph_edges):
+        print("Your graph is a planar graph. Yahoo!")
+    else:
+        print("Your graph is not a planar graph.")
+
+elif graph_type == 2:
+    n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
+    if n_random_graph > 500:
+        print("Your desired number of vertices exceeds the limit.")
+    else:
+        # Generate a random graph
+        graph_edges = gh.voronoi_to_edges(n_random_graph)
+
+        # Verify that the graph is a planar graph
+        if gh.edges_planar(graph_edges[0]):
+            print("Your graph is a planar graph. Yahoo!")
+        else:
+            print("Your graph is not a planar graph.")
+else:
+    print("Invalid choice. Please enter '1' or '2'.")
+
+print(graph_edges)
+
 
 # Import doctest module
 if __name__ == "__main__":
