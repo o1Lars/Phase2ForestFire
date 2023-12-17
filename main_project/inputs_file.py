@@ -47,7 +47,7 @@ def add_edges_from_lines(lines: str) -> list[tuple]:
     return edges_list
 
 def create_graph_from_file(filename: str) -> list[tuple]:
-    """Read a file, checks if its valid and return a list of edges for a graph"""
+    """Reads a file, checks if it's valid, and returns a list of edges for a graph"""
 
     try:
         with open(filename, 'r') as file:
