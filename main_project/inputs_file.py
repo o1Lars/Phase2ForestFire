@@ -1,4 +1,19 @@
+import graph_helper as gh
+import os
 import random
+
+def user_file(fp, fn):
+    """This function opens a file using a given file path (fp) and file name (fn), and reads its contents."""
+
+    try:
+        with open(os.path.join(fp, fn), 'r') as file:
+            file_content = file.read()
+            return file_content
+
+    except FileNotFoundError as e:
+        return e
+    except IOError as e:
+        return e
 
 def add_edges_from_lines(lines: str) -> list[tuple]:
     """Read lines, check if line represent an edge of a graph. Return list of edges"""
@@ -34,16 +49,18 @@ def add_edges_from_lines(lines: str) -> list[tuple]:
 def create_graph_from_file(filename: str) -> list[tuple]:
     """Read a file, checks if its valid and return a list of edges for a graph"""
 
-    # Open the text file in read mode
     try:
         with open(filename, 'r') as file:
             # Read lines from the file and remove whitespaces
             lines = [line.strip() for line in file.readlines() if line.strip()]
-    # Handle errors
-    except FileNotFoundError:
-        print("Error: The file could not be found.")
-    except IOError:
-        print("There was an error reading from the file.")
+
+    except FileNotFoundError as e:
+        print("The file could not be found.")
+        return []  # Return an empty list
+
+    except IOError as e:
+        print("There was an error reading from the file:", str(e))
+        return []  # Return an empty list
 
     # add edges from file to edges_list
     try:
@@ -54,45 +71,41 @@ def create_graph_from_file(filename: str) -> list[tuple]:
 
     return graph_edges
 
-def generate_random_graph(n, p=0.6):
-    """Return a list of edges in tuples by generating a random graph from n vertices with p 0.6"""
-
-    # Randomly assign connection between vertices
-    graph = [[0 for _ in range(n)] for _ in range(n)]
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            if random.random() < p:
-                graph[i][j] = graph[j][i] = 1
-
-    # Create list of edges
-    edges = []
-
-    for i in range(len(graph)):
-        for j in range(i + 1, len(graph[i])):
-            if graph[i][j] == 1:
-                edges.append((i, j))
-
-    return edges
-
 # Load the functions
 graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
 
 if graph_type == 1:
-    file_graph = input("Enter the name of your file (e.g.: graph.dat): ")
-    graph_edges = create_graph_from_file(file_graph)
+    file_path = input("Enter the file path: ")
+    file_name = input("Enter the file name: ") + ".dat"
+
+    # Compile file information
+    user_file_path = os.path.join(file_path, file_name)
+
+    user_graph = user_file(file_path, file_name)
+    graph_edges = create_graph_from_file(user_file_path)
+
+    # Verify that the graph is a planar graph
+    if gh.edges_planar(graph_edges):
+        print("Your graph is a planar graph. Yahoo!")
+    else:
+        print("Your graph is not a planar graph.")
+
 elif graph_type == 2:
     n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
     if n_random_graph > 500:
         print("Your desired number of vertices exceeds the limit.")
     else:
-        graph_edges = generate_random_graph(n_random_graph, 0.6) ### IMP: Here we should use the random planar graph from provided module graph_helper.py to ensure random graph is planar
+        graph_edges = gh.voronoi_to_edges(n_random_graph)
+
+        # Verify that the graph is a planar graph
+        if gh.edges_planar(graph_edges[0]):
+            print("Your graph is a planar graph. Yahoo!")
+        else:
+            print("Your graph is not a planar graph.")
 else:
     print("Invalid choice. Please enter '1' or '2'.")
 
-## Here we need to verify the provided graph is planar, there is a function in module graph_helper.py
-    
-# print(graph_edges)
+print(graph_edges)
 
 # Terrain configuration
 def get_valid_input(prompt):
@@ -158,7 +171,6 @@ if assign_sim_time_limit == 1:
     user_sim_time_limit = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
 else:
     random_sim_time_limit = round(random.randint(2, 50))
-
 
 # Printing Terrain configuration
 print(f"The ratio of trees to rocks is {random_tree_percent} : {random_rock_percent}.")
