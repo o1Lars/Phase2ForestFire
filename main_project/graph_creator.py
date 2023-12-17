@@ -61,7 +61,7 @@ class Graph():
     # class methods
     
     def populate_patches(self):
-        """Populates the vertices of a graph with either Rockpatches or Treepatches"""
+        """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
         vertices = self._vertices_list
 
