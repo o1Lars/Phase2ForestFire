@@ -60,7 +60,7 @@ class Graph():
         self._vertices_neighbours = self.create_neighbour_dict()
         self._patches_map = self._populate_patches() 
         self._is_connected = False
-        self._vis_graph = vis_rfg.Visualiser(self._edges, Colour_map=self._color_map, vis_labels=True, node_size=200)
+        self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
 
         # add delay to show initial graph
         sleep(0.6)
@@ -114,28 +114,30 @@ class Graph():
     def create_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
 
-        color_pattern = 0
-        # set color pattern
-        if self._color_pattern == 'All 0':
-            color_pattern = 0
-        elif self._color_pattern == 'All 1':
-            color_pattern = 1
-        else:
-            color_pattern = 2
+        patches = self._patches_map
+
+        color_map = {}
+
+        # Iterate over patches dictionary
+        for vertex, patch_type in patches.items():
+            color_code = 0
+
+            # Identify if patch is tree or rock
+            if isinstance(patch_type, lc.Treepatch):
+                # Check if tree patch is ignited
+                if patch_type._ignited:
+                    color_code = patch_type._tree_health - 256
+                else:
+                    color_code = patch_type._tree_health
+            
+            color_map[vertex] = color_code
         
-        color_dict = {}
-        vertices_list = self._vertices_list
+        return color_map
 
-        # Add color pattern to vertex
-        for vertex in vertices_list:
-            # add color pattern to vertex
-            if color_pattern == 0 or color_pattern == 1:
-                color_dict[vertex] = color_pattern
-            else:  # if color pattern not 0 or 1, randomly assign color value
-                color = random.randint(0, 1)
-                color_dict[vertex] = color
 
-        return color_dict
+
+
+
 
     def create_neighbour_dict(self):
         """Return dictionary of vertices as key and neighbours (if any) as value"""
