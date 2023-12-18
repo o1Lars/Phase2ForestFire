@@ -14,16 +14,17 @@ Module is created as part of the group project for the final exam of DS830 Intro
 """
 
 # Import dependencies
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import landpatch_creator as lc
-import visualiser_random_forest_graph as vis_rfg
+#import visualiser_random_forest_graph as vis_rfg
 import graph_helper as gh
 import matplotlib.pyplot as plt
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Type
 import random as random
 import math as math
 from time import sleep
 import os
+import sys
 
 
 class Graph():
@@ -32,7 +33,8 @@ class Graph():
     def __init__(
         self,
         edges: list,
-        color_pattern: int) -> None:
+        color_pattern: int,
+        tree_distribution: float) -> None:
         """
         Parameters
         ----------
@@ -40,6 +42,8 @@ class Graph():
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
         color_pattern:
             Color of the vertices
+        tree_distribution: float
+            Percentage distribution of tree to rock patches ratio
         vertices_dict: Optional[dict], default = {}
             dictionary with vertices as key and values for each vertex: color, frustration, neighbours
         total_frustration: Optional[float], default = 0
@@ -51,27 +55,42 @@ class Graph():
         self._edges = edges
         self._color_pattern = color_pattern
         self._vertices_list = self.create_vertices_list()
+        self._tree_distribution = tree_distribution
         self._val_map = self.create_val_map()
         self._vertices_neighbours = self.create_neighbour_dict()
-        self._patches_map = self.populate_patches() 
+        self._patches_map = self._populate_patches() 
         self._is_connected = False
-        self._vis_graph = vis_rfg.Visualiser(self._edges, val_map=self.val_map, vis_labels=True, node_size=200)
+        #self._vis_graph = vis_rfg.Visualiser(self._edges, val_map=self.val_map, vis_labels=True, node_size=200)
 
         # add delay to show initial graph
         sleep(0.6)
 
+        print("attribute: ", self._patches_map)
 
 
     # class methods
     
-    def populate_patches(self):
+    def _populate_patches(self):
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
         vertices = self._vertices_list
+        tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches
 
-        #TODO
+        # Randomly select 'tree_count' vertices to be tree patches
+        tree_vertices = random.sample(vertices, tree_count)
 
-        print("Populating vertices with patches...")
+        # Dictionary mapping vertex to patch class
+        patch_map = {}
+
+        for vertex in vertices:
+            # Check if the current vertex should be a tree or rock patch
+            if vertex in tree_vertices:
+                patch_map[vertex] = lc.Treepatch()
+            else:
+                patch_map[vertex] = lc.Rockpatch()
+        
+        return patch_map
+
 
     def create_vertices_list(self) -> list:
         """Return a list of vertices from tuple of edges"""
@@ -178,17 +197,19 @@ class Graph():
         else:
             return False
 
-
     def __str__(self):
         """Return a textual representation of the attributes of the graph"""
 
-        return f"vertices: {self._vertices_list}. Vertex colors: {self.val_map}. Vertex neighbours: {self._vertices_neighbours}.\
-            vertex frustration: {self.vertices_frustration}. Total graph frustration: {self.total_frustration}"
+        return f"vertices: {self._vertices_list}. Vertex colors: {self._val_map}. Vertex neighbours: {self._vertices_neighbours}."
     
     def __repr__(self):
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
+test_graph = Graph([(1, 2), (1,3), (2,3)], 0, tree_distribution=66)
+print(test_graph._patches_map)
+print("graph: ", test_graph)
+print(test_graph._patches_map[1].test())
 
 @dataclass
 class Graphdata:
@@ -214,15 +235,15 @@ class Graphdata:
         Stores number of firefighters, who have perished
     """
     _land_patches: int = 0
-    _tree_patches: List[int] = []
-    _rock_patches: List[int] = []
-    _ignited_tree_patches: List[int] = []
+    _tree_patches: List[int] = field(default_factory=list)
+    _rock_patches: List[int] = field(default_factory=list)
+    _ignited_tree_patches: List[int] = field(default_factory=list)
     _consumed_tree_patches: int = 0
     _rock_to_tree_counter: int = 0
-    _firefighters: List[int] = []
+    _firefighters: List[int] = field(default_factory=list)
     _dead_firefighters_counter: int = 0
 
-    def update_patches(self, patches_map: Dict[str]) -> None:
+    def update_patches(self, patches_map: Dict[str, Type]) -> None:
         """Updates number of tree patches, rock patches and forest fires"""
 
         # Store variables for updating patches of instance
@@ -270,7 +291,7 @@ class Graphdata:
         """Updates counter of dead fire fighters"""
         
         self._dead_firefighters_counter += 1
-
+sys.exit()
 # function for generating af g
 def user_file(fp, fn):
     """This function opens a file using a given file path (fp) and file name (fn), and reads its contents."""

@@ -46,12 +46,16 @@ class Landpatch():
         """Return the ID of the next neighbors to the present patch"""
         # TODO
         print("This returns the next neighbors to the present patch")
+    
+    def test(self) -> bool:
+        """test if created"""
+        return True
 
 
 class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch"""
 
-    def __init__(self, greening_state: Optional[int]) -> None:
+    def __init__(self, greening_state: Optional[int] = 0) -> None:
         super().__init__()
         # TODO
         """
@@ -83,7 +87,7 @@ class Rockpatch(Landpatch):
 class Treepatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Treepatch"""
 
-    def __init__(self, tree_health: Optional[int]) -> None:
+    def __init__(self, tree_health: Optional[int]= 100) -> None:
         super().__init__()
         # TODO
         """
