@@ -18,12 +18,13 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from typing import List, Optional, Dict
 
+
 class Landpatch():
     """This is the base class for representing a patch of land as a vertex of a graph"""
 
     def __init__(self) -> None:
         pass
-    
+
         """
         Parameters
         ----------
@@ -42,8 +43,9 @@ class Landpatch():
 
     def next_neighbours_ID(self):
         """Return the ID of the next neighbors to the present patch"""
-        #TODO
+        # TODO
         print("This returns the next neighbors to the present patch")
+
 
 class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch"""
@@ -59,8 +61,23 @@ class Rockpatch(Landpatch):
         # TODO
         """
         self._greening_state = greening_state
-        # Methods
-        # TODO   
+
+    def mutate(self):
+        """Allows swapping a Rockpatch with a Treepatch without losing connections to neighbors and associations with firefighters."""
+        ## Each Rockpatch has a possibility of becoming a Treepatch at each step (default 1%).
+        if random.random() < 0.01:
+            self.mutate_landpatch(Treepatch)
+            print("The Rockpatch has mutated into a Treepatch.")
+
+    def update_greens(self):
+        """Updates the greening state of the rockpatch over time."""
+        #huh? does the rockpatch green over time?
+        # TODO: Implement the logic for updating the greening state
+        print("The greening state of the Rockpatch has been updated.")
+
+    def __str__(self):
+        return f"Rockpatch(Greening State: {self._greening_state})"
+
 
 class Treepatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Treepatch"""
@@ -79,27 +96,37 @@ class Treepatch(Landpatch):
         self._tree_health = tree_health
         self._ignited = False
 
-
     # Methods
     # TODO
     def updateland(self):
-        """Updates the value of treestats due to fire or firefighter action for one evolution step"""
-        #TODO
-        # if not ignited, update tree_health + 10
-        # if ignited, update tree_health - 20
-        # if tree_health < 0, mutate to Rockpatch
+        if not self._ignited:
+            self._tree_health += 10
+        else:
+            self._tree_health -= 20
+
+        if self._tree_health < 0:
+            self.mutate_landpatch(Rockpatch)
         print("Treestats has been updated.")
-    
+
     def spread_fire(self):
         """With probability 30%, spread fire to adjacent Treepatch"""
         # Possibly goes on the graph constructor class instance and not here... Not sure yet.
-        # TODO 
-        print("Fire has spread to adjacent Treepatch")
+        if random.random() < 0.3:
+            # Get the neighbors of the current Treepatch
+            neighbors = self.next_neighbours_ID()
+
+            #Ignites adjacents treepatches not already on fire
+            for neighbor in neighbors:
+                if not neighbor._ignited:
+                    neighbor._ignited = True
+
+            print("Fire has spread to adjacent Treepatch")
+
 
 class Firefighter():
     """Each instance of this class creates a firefighter for extingushing fires in a graph of landpatches"""
 
-    def __init__(self, firefighter_skill: Optional[float] = 1, health: Optional[float]=100) -> None:
+    def __init__(self, firefighter_skill: Optional[float] = 1, health: Optional[float] = 100) -> None:
         pass
         # TODO
         """
@@ -119,6 +146,7 @@ class Firefighter():
     def extinguish_fire(self):
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch"""
         # TODO
+
     print("Hastala no burn today")
 
     def move_firefighter(self):
@@ -126,10 +154,10 @@ class Firefighter():
         # Possibly on graph class. Unsure if the logic here can be carried to elsewhere
         # TODO
         print("Firefighter has moves to adjacent patch")
-    
+
     def update_health(self):
         """Updates the current instance of firefighters health."""
         # TODO
         # If current instance of class firefighter is on ignited landpatch, update health by - 10
         # If current instance of class firefighter is NOT on ignited landpatch, update health by + 5
-    
+
