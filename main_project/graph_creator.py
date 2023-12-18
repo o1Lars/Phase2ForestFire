@@ -50,12 +50,14 @@ class Graph():
         """
 
         self._edges = edges
-        self._vertices_list = self.create_vertices_list()
         self._tree_distribution = tree_distribution
+        self._vertices_list = self.create_vertices_list()
         self._vertices_neighbours = self.create_neighbour_dict()
         self._patches_map = self._populate_patches()
         self._color_map = self.create_color_map()
         self._is_connected = False
+
+        # visualize opening instance of graph
         self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
         self._vis_graph.update_node_colours(self._color_map)
 
@@ -182,6 +184,10 @@ class Graph():
                 else:
                     return False
                     break # Finish the loop if an unconnected section has been found
+    
+    def create_firefighters(self) -> dict:
+        """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
+
         
     def __eq__(self, other):
         """Return true if edges of this instance is equal to edges of other instance of same class"""
