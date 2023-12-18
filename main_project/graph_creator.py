@@ -16,7 +16,7 @@ Module is created as part of the group project for the final exam of DS830 Intro
 # Import dependencies
 from dataclasses import dataclass, field
 import landpatch_creator as lc
-#import visualiser_random_forest_graph as vis_rfg
+import visualiser_random_forest_graph as vis_rfg
 import graph_helper as gh
 import matplotlib.pyplot as plt
 from typing import List, Optional, Dict, Type
@@ -60,7 +60,7 @@ class Graph():
         self._vertices_neighbours = self.create_neighbour_dict()
         self._patches_map = self._populate_patches() 
         self._is_connected = False
-        #self._vis_graph = vis_rfg.Visualiser(self._edges, val_map=self.val_map, vis_labels=True, node_size=200)
+        self._vis_graph = vis_rfg.Visualiser(self._edges, Colour_map=self._val_map, vis_labels=True, node_size=200)
 
         # add delay to show initial graph
         sleep(0.6)
