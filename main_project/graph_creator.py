@@ -56,11 +56,11 @@ class Graph():
         self._color_pattern = color_pattern
         self._vertices_list = self.create_vertices_list()
         self._tree_distribution = tree_distribution
-        self._val_map = self.create_val_map()
+        self._color_map = self.create_color_map()
         self._vertices_neighbours = self.create_neighbour_dict()
         self._patches_map = self._populate_patches() 
         self._is_connected = False
-        self._vis_graph = vis_rfg.Visualiser(self._edges, Colour_map=self._val_map, vis_labels=True, node_size=200)
+        self._vis_graph = vis_rfg.Visualiser(self._edges, Colour_map=self._color_map, vis_labels=True, node_size=200)
 
         # add delay to show initial graph
         sleep(0.6)
@@ -111,7 +111,7 @@ class Graph():
 
         return graph_vertices
 
-    def create_val_map(self) -> dict:
+    def create_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
 
         color_pattern = 0
@@ -200,7 +200,7 @@ class Graph():
     def __str__(self):
         """Return a textual representation of the attributes of the graph"""
 
-        return f"vertices: {self._vertices_list}. Vertex colors: {self._val_map}. Vertex neighbours: {self._vertices_neighbours}."
+        return f"vertices: {self._vertices_list}. Vertex colors: {self._color_map}. Vertex neighbours: {self._vertices_neighbours}."
     
     def __repr__(self):
         """Return a Python-like representation of this this instance"""

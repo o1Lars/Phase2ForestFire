@@ -15,7 +15,7 @@ This module provided as material for the phase 2 project for DM857, DS830 (2023)
 """
 
 from __future__ import annotations # to use a class in type hints of its members
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -38,6 +38,8 @@ class Visualiser:
     Colour_map: Dict[int:int]
       Dictionary containing the identity and color of each node
         Colour, expressed as a integer from -256(full-red) to 256(full-green)
+    pos_nodes: Optional[Dict[int:Tuple[float,float]]]={},
+      Dictionary of key:{x,y} positions identifing the location of each node
     node_size: int, default 100
       Control the size of the drawn nodes
     vis_labels: Optional[bool] = False,
@@ -123,4 +125,5 @@ class Visualiser:
     plt.savefig('generic_graph_1.pdf')  
     plt.pause(0.2)
 
-  
+test_vis = Visualiser(edges=[(1, 2), (1, 3), (2, 3)], Colour_map={1: 1, 2: 2, 3: 1}, node_size=100)
+test_vis._replot()
