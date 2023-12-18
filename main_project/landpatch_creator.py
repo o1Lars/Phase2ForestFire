@@ -35,7 +35,7 @@ class Landpatch():
     # Class methods
 
     def mutate_landpatch(self):
-        """Allows for swapping the subtype of the landpatch without loosing connection to neighbors and associations with firefighters, 
+        """Allows for swapping the subtype of the landpatch without loosing connection to neighbors and associations with firefighters,
         eg. if initial instance is classified as a Rockpatch, swapped instance is then Treepatch
         """
 
@@ -46,7 +46,7 @@ class Landpatch():
         """Return the ID of the next neighbors to the present patch"""
         # TODO
         print("This returns the next neighbors to the present patch")
-    
+
     def test(self) -> bool:
         """test if created"""
         return True
@@ -146,23 +146,44 @@ class Firefighter():
 
         self._firefighter_skill = firefighter_skill
         self._health = health
+        self._current_patch = None
 
     # methods
-    def extinguish_fire(self):
+    def extinguish_fire(self, treepatch):
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch"""
-        # TODO
-
-        print("Hastala no burn today")
+        if treepatch._ignited:
+            extinguish_probability = self._firefighter_skill
+            if random.random() < extinguish_probability:
+                treepatch._ignited = False
+                print("Fire extinguished by firefighter.")
+            else:
+                print("Firefighter failed to extinguish fire.")
 
     def move_firefighter(self):
-        """Firefighter moves to adjacent patch. Will prioritize adjacent Treepatch is ignited, else at random"""
-        # Possibly on graph class. Unsure if the logic here can be carried to elsewhere
-        # TODO
-        print("Firefighter has moved to adjacent patch")
+        if self._current_patch is not None:
+            neighbors = self._current_patch.next_neighbours_ID()
+            #TODO add logic for staying at patch until fire is gone
 
-    def update_health(self):
-        """Updates the current instance of firefighters health."""
-        # TODO
-        # If current instance of class firefighter is on ignited landpatch, update health by - 10
-        # If current instance of class firefighter is NOT on ignited landpatch, update health by + 5
+            # Check if there are adjacent Treepatches on fire
+            adjacent_fire_patches = [neighbor for neighbor in neighbors if
+                                     isinstance(neighbor, Treepatch) and neighbor._ignited]
 
+            if adjacent_fire_patches:
+                # Move to a random adjacent Treepatch on fire
+                new_location = random.choice(adjacent_fire_patches)
+            else:
+                # Move to a random adjacent patch
+                new_location = random.choice(neighbors)
+
+            print(f"Firefighter moved from {self._current_patch} to {new_location}.")
+            self._current_patch = new_location
+        else:
+            print("Firefighter has no current location.")
+
+    def update_health(self, current_patch):
+        """Updates the current instance of firefighter's health."""
+        if current_patch._ignited:
+            self._health -= 10
+        else:
+            self._health += 5
+        print(f"Firefighter health updated to {self._health}.")
