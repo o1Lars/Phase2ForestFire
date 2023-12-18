@@ -17,6 +17,7 @@ Notes
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 from typing import List, Optional, Dict
+import random
 
 
 class Landpatch():
@@ -147,13 +148,13 @@ class Firefighter():
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch"""
         # TODO
 
-    print("Hastala no burn today")
+        print("Hastala no burn today")
 
     def move_firefighter(self):
         """Firefighter moves to adjacent patch. Will prioritize adjacent Treepatch is ignited, else at random"""
         # Possibly on graph class. Unsure if the logic here can be carried to elsewhere
         # TODO
-        print("Firefighter has moves to adjacent patch")
+        print("Firefighter has moved to adjacent patch")
 
     def update_health(self):
         """Updates the current instance of firefighters health."""
