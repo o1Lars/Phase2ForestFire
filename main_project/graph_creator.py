@@ -52,11 +52,12 @@ class Graph():
         self._edges = edges
         self._vertices_list = self.create_vertices_list()
         self._tree_distribution = tree_distribution
-        self._color_map = self.create_color_map()
         self._vertices_neighbours = self.create_neighbour_dict()
-        self._patches_map = self._populate_patches() 
+        self._patches_map = self._populate_patches()
+        self._color_map = self.create_color_map()
         self._is_connected = False
         self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
+        self._vis_graph.update_node_colours(self._color_map)
 
         # add delay to show initial graph
         sleep(0.6)
