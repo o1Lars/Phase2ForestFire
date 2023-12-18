@@ -33,15 +33,12 @@ class Graph():
     def __init__(
         self,
         edges: list,
-        color_pattern: int,
         tree_distribution: float) -> None:
         """
         Parameters
         ----------
         edges: List[(int,int)]
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
-        color_pattern:
-            Color of the vertices
         tree_distribution: float
             Percentage distribution of tree to rock patches ratio
         vertices_dict: Optional[dict], default = {}
@@ -53,7 +50,6 @@ class Graph():
         """
 
         self._edges = edges
-        self._color_pattern = color_pattern
         self._vertices_list = self.create_vertices_list()
         self._tree_distribution = tree_distribution
         self._color_map = self.create_color_map()
@@ -134,11 +130,6 @@ class Graph():
         
         return color_map
 
-
-
-
-
-
     def create_neighbour_dict(self):
         """Return dictionary of vertices as key and neighbours (if any) as value"""
 
@@ -208,7 +199,7 @@ class Graph():
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
-test_graph = Graph([(1, 2), (1,3), (2,3)], 0, tree_distribution=66)
+test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66)
 print(test_graph._patches_map)
 print("graph: ", test_graph)
 print(test_graph._patches_map[1].test())
