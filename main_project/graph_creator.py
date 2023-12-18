@@ -51,21 +51,17 @@ class Graph():
 
         self._edges = edges
         self._tree_distribution = tree_distribution
-        self._vertices_list = self.create_vertices_list()
-        self._vertices_neighbours = self.create_neighbour_dict()
-        self._patches_map = self._populate_patches()
-        self._color_map = self.create_color_map()
+        self._vertices_list = self._create_vertices_list()
+        self._vertices_neighbours = self._create_neighbour_dict()
+        self._patches_map = self._populate_patches()                # Map patch type to vertex
+        self._color_map = self._create_color_map()                  # Map color to vertex
+        self._firefighters_map = self._deploy_firefighters()        # Map firefighters to vertex
         self._is_connected = False
 
         # visualize opening instance of graph
         self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
         self._vis_graph.update_node_colours(self._color_map)
-
-        # add delay to show initial graph
-        sleep(0.6)
-
-        print("attribute: ", self._patches_map)
-
+        sleep(0.6) # add delay to show initial graph
 
     # class methods
     
@@ -91,7 +87,7 @@ class Graph():
         return patch_map
 
 
-    def create_vertices_list(self) -> list:
+    def _create_vertices_list(self) -> list:
         """Return a list of vertices from tuple of edges"""
 
         edges = self._edges
@@ -110,7 +106,7 @@ class Graph():
 
         return graph_vertices
 
-    def create_color_map(self) -> dict:
+    def _create_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
 
         patches = self._patches_map
@@ -133,7 +129,7 @@ class Graph():
         
         return color_map
 
-    def create_neighbour_dict(self):
+    def _create_neighbour_dict(self):
         """Return dictionary of vertices as key and neighbours (if any) as value"""
 
         vertices_list = self._vertices_list
@@ -185,9 +181,23 @@ class Graph():
                     return False
                     break # Finish the loop if an unconnected section has been found
     
-    def create_firefighters(self) -> dict:
+    def _deploy_firefighters(self, firefighters) -> dict:
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
 
+        vertices = self._vertices_list
+
+        # Randomly select vertices for firefighters to be deployed
+        tree_vertices = random.sample(vertices, firefighters)
+
+        # Dictionary for mapping fire fighters to vertex
+        firefighter_map = {}
+
+        for vertex in vertices:
+            # Check if the current vertex should be a tree or rock patch
+            if vertex in tree_vertices:
+                firefighter_map[vertex] = lc.Firefighter()
+        
+        return firefighter_map
         
     def __eq__(self, other):
         """Return true if edges of this instance is equal to edges of other instance of same class"""
