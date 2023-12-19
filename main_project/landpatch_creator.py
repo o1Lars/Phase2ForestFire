@@ -55,17 +55,16 @@ class Landpatch():
 class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch"""
 
-    def __init__(self, greening_state: Optional[int] = 0) -> None:
+    def __init__(self) -> None:
         super().__init__()
         # TODO
         """
         Parameters
-        greening_state: Optional[int]
-            Attribute that represents the rockpatches current level of greening. Used to increase probability of becoming a Treepatch
+        
+            
         ----------
         # TODO
         """
-        self._greening_state = greening_state
 
     def mutate(self):
         """Allows swapping a Rockpatch with a Treepatch without losing connections to neighbors and associations with firefighters."""
@@ -74,36 +73,22 @@ class Rockpatch(Landpatch):
             self.mutate_landpatch(Treepatch)
             print("The Rockpatch has mutated into a Treepatch.")
 
-    def update_greens(self):
-        """Updates the greening state of the rockpatch over time."""
-        #huh? does the rockpatch green over time?
-        # TODO: Implement the logic for updating the greening state
-        print("The greening state of the Rockpatch has been updated.")
-
-    def __str__(self):
-        return f"Rockpatch(Greening State: {self._greening_state})"
-
-
 class Treepatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Treepatch"""
 
-    def __init__(self, tree_health: Optional[int]= 100) -> None:
+    def __init__(self, tree_health: Optional[int] = 100) -> None:
         super().__init__()
-        # TODO
         """
         Parameters
         ----------
         tree_health: Optional[int]
-            Attribute identifies the current health of the treepatch [0-256]
-        # TODO
+            Attribute identifies the current health of the treepatch [0-256].
         """
-
         self._tree_health = tree_health
         self._ignited = False
 
-    # Methods
-    # TODO
-    def updateland(self):
+    def update_treestats(self) -> None:
+        """Update treestats based on the specified conditions."""
         if not self._ignited:
             self._tree_health += 10
         else:
@@ -113,44 +98,45 @@ class Treepatch(Landpatch):
             self.mutate_landpatch(Rockpatch)
         print("Treestats has been updated.")
 
-    def spread_fire(self):
-        """With probability 30%, spread fire to adjacent Treepatch"""
-        # Possibly goes on the graph constructor class instance and not here... Not sure yet.
+    def spread_fire(self) -> None:
+        """With probability 30%, spread fire to adjacent Treepatch."""
         if random.random() < 0.3:
             # Get the neighbors of the current Treepatch
             neighbors = self.next_neighbours_ID()
 
-            #Ignites adjacents treepatches not already on fire
+            # Ignites adjacents treepatches not already on fire
             for neighbor in neighbors:
                 if not neighbor._ignited:
                     neighbor._ignited = True
 
             print("Fire has spread to adjacent Treepatch")
 
+    def evolve(self) -> None:
+        """Perform one evolution step for the Treepatch."""
+        self.update_treestats()
+        self.spread_fire()
+        # Additional logic for the Treepatch's evolution? maybe later not sure
 
-class Firefighter():
-    """Each instance of this class creates a firefighter for extingushing fires in a graph of landpatches"""
+class Firefighter:
+    """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
 
     def __init__(self, firefighter_skill: Optional[float] = 1, health: Optional[float] = 100) -> None:
-        pass
-        # TODO
         """
+        Initialize a Firefighter.
+
         Parameters
         ----------
-        # TODO
         firefighter_skill: Optional[float]
-            represents the instance of firefighters' ability to extinguish fires on a Treepatch
-        health: Optional[float], default = 100
-            represents the instance of firefighters' current health
+            Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
+        health: Optional[float], default=100
+            Represents the instance of a firefighter's current health.
         """
-
         self._firefighter_skill = firefighter_skill
         self._health = health
         self._current_patch = None
 
-    # methods
-    def extinguish_fire(self, treepatch):
-        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch"""
+    def extinguish_fire(self, treepatch) -> None:
+        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch."""
         if treepatch._ignited:
             extinguish_probability = self._firefighter_skill
             if random.random() < extinguish_probability:
@@ -159,10 +145,10 @@ class Firefighter():
             else:
                 print("Firefighter failed to extinguish fire.")
 
-    def move_firefighter(self):
+    def move_firefighter(self) -> None:
+        """Move firefighter randomly to a neighboring patch based on the specified conditions."""
         if self._current_patch is not None:
             neighbors = self._current_patch.next_neighbours_ID()
-            #TODO add logic for staying at patch until fire is gone
 
             # Check if there are adjacent Treepatches on fire
             adjacent_fire_patches = [neighbor for neighbor in neighbors if
@@ -180,10 +166,15 @@ class Firefighter():
         else:
             print("Firefighter has no current location.")
 
-    def update_health(self, current_patch):
-        """Updates the current instance of firefighter's health."""
-        if current_patch._ignited:
+    def update_health(self) -> None:
+        """Updates the current instance of a firefighter's health."""
+        if self._current_patch and self._current_patch._ignited:
             self._health -= 10
         else:
             self._health += 5
         print(f"Firefighter health updated to {self._health}.")
+
+    def evolve(self) -> None:
+        """Perform one evolution step for the firefighter."""
+        self.move_firefighter()
+        # Additional logic for the firefighter's evolution, if needed.
