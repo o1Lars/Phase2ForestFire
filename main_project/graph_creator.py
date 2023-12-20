@@ -89,7 +89,6 @@ class Graphdata:
 
     def update_rock_to_tree_counter(self) -> None:
         """Updates number of rock patches that swapped to a tree patch"""
-        # TODO
 
         self._rock_to_tree_counter += 1
     
@@ -102,7 +101,7 @@ class Graphdata:
         # Append total number of alive firefighters to firefighter list
         self._firefighters.append(firefighters)
 
-    def update_dead_firefighters_counter(self):
+    def update_dead_firefighters_counter(self) -> None:
         """Updates counter of dead fire fighters"""
         
         self._dead_firefighters_counter += 1
@@ -269,20 +268,37 @@ class Graph():
                     return False
                     break # Finish the loop if an unconnected section has been found
     
+    def swap_patch(self, vertex_id: int) -> None:
+        """Swaps the land patch instance associated with vertex. 
+        If vertex was populated by rock, becomes populated by tree and vice versa"""
+
+        patches_map = self._patches_map
+
+        # Check if the vertex exists in the patches_map
+        if vertex_id in patches_map:
+            if isinstance(patches_map[vertex_id], lc.Treepatch):
+                patches_map[vertex_id] = lc.Rockpatch()
+            elif isinstance(patches_map[vertex_id], lc.Rockpatch):
+                patches_map[vertex_id] = lc.Treepatch()
+            else:
+                print("Invalid patch type.")
+        else:
+            print("Vertex not found in the graph.")
+    
     def _deploy_firefighters(self, firefighters) -> dict:
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
 
         vertices = self._vertices_list
 
         # Randomly select vertices for firefighters to be deployed
-        tree_vertices = random.sample(vertices, firefighters)
+        firefighters_vertices = random.sample(vertices, firefighters)
 
         # Dictionary for mapping fire fighters to vertex
         firefighter_map = {}
 
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
-            if vertex in tree_vertices:
+            if vertex in firefighters_vertices:
                 firefighter_map[vertex] = lc.Firefighter()
         
         return firefighter_map

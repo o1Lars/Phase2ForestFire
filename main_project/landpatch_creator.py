@@ -34,13 +34,15 @@ class Landpatch():
 
     # Class methods
 
-    def mutate_landpatch(self):
-        """Allows for swapping the subtype of the landpatch without loosing connection to neighbors and associations with firefighters,
-        eg. if initial instance is classified as a Rockpatch, swapped instance is then Treepatch
-        """
+    def mutate_landpatch(self, graph_instance) -> None: # Maybe just delete. Logic is already handled in graph class. 
+        """Swaps rock for tree patch and vice versa on graph instance it was called"""
 
-        # TODO
-        print("The landpatch has been swapped")
+        if isinstance(self, Rockpatch):
+            graph_instance.swap_patch(self._vertex_id, "Treepatch")
+        elif isinstance(self, Treepatch):
+            graph_instance.swap_patch(self._vertex_id, "Rockpatch")
+        else:
+            print("Unknown patch type.")
 
     def next_neighbours_ID(self):
         """Return the ID of the next neighbors to the present patch"""
