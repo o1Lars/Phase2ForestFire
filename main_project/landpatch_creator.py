@@ -54,7 +54,7 @@ class Landpatch():
         self._update_color_map()   
 
     # Class methods
-    def _populate_patches(self):
+    def _populate_patches(self) -> None:
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
         vertices = self._vertices_list
