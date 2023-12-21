@@ -188,16 +188,17 @@ class Landpatch():
         # Loop over patch map
         for patch in patches:
 
-
-
             # Identify if patch is tree or rock
             if isinstance(patches[patch], Treepatch):
                 # Firefighter skills
                 if patch in self._firefighters_map:
                     # Check for burning patch
                     if patches[patch]._ignited:
-                        self._firefighters_map[patch].extinguish_fire(patches[patch])
-                
+                        self._firefighters_map[patch].extinguish_fire(patches[patch])   # Try to fight fire
+                        self._firefighters_map[patch].update_health(patches[patch])     # Update firefighter health
+                        # Check if firefighter died
+                        if self._firefighters_map[patch]._heath < 0:
+                            del self._firefighters_map[patch]
                 # Update tree stats
                 patches[patch].update_treestats
 
@@ -278,9 +279,9 @@ class Firefighter:
         else:
             print("Firefighter failed to extinguish fire.")
 
-    def update_health(self) -> None:
+    def update_health(self, current_patch) -> None:
         """Updates the current instance of a firefighter's health."""
-        if self._current_patch and self._current_patch._ignited:
+        if current_patch._ignited:
             self._health -= 10
         else:
             self._health += 5
