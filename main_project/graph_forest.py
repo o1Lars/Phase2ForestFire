@@ -106,7 +106,6 @@ elif graph_type == 2:
 else:
     print("Invalid choice. Please enter '1' or '2'.")
 
-print(graph_edges)
 
 # Terrain configuration
 def get_valid_input(prompt):
@@ -156,9 +155,9 @@ else:
 assign_fire_spread_prob = get_valid_input("Enter '1' for user-defined fire spread probability or '2' for random assignment: ")
 
 if assign_fire_spread_prob == 1:
-    user_fire_spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
+    fire_spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
 else:
-    random_fire_spread_prob = round(random.uniform(0.4, 0.6), 1)
+    fire_spread_prob = round(random.uniform(0.4, 0.6), 1)
 
 assign_respawn_prob = get_valid_input("Enter '1' for user-defined respawn probability (likelihood of a rock patch turning into a tree patch over time) or '2' for random assignment: ")
 if assign_respawn_prob == 1:
@@ -169,12 +168,14 @@ else:
 # Similation time limit
 assign_sim_time_limit = get_valid_input("Enter '1' for user-defined simulation time limit or '2' for random assignment: ")
 if assign_sim_time_limit == 1:
-    user_sim_time_limit = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
+    sim_time_limit = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
 else:
-    random_sim_time_limit = round(random.randint(2, 50))
+    sim_time_limit = round(random.randint(2, 50))
 
 # Printing Terrain configuration
 print(f"The ratio of trees to rocks is {random_tree_percent} : {random_rock_percent}.")
 print(f"You have employed {random_firefighters} number of firefighters.")
-print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {random_fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
-print(f"The time limit set for this simulation is {random_sim_time_limit} years.")
+print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
+print(f"The time limit set for this simulation is {sim_time_limit} years.")
+
+graph_instance = gs.Graph(graph_edges, user_tree_percent, user_firefighters, fire_spread_prob, sim_time_limit)

@@ -113,7 +113,9 @@ class Graph():
         self,
         edges: list,
         tree_distribution: float,
-        firefighters: int = 0) -> None:
+        firefighters: int,
+        fire_spread_prob: int,
+        sim_time: int) -> None:
         """
         Parameters
         ----------
@@ -127,12 +129,14 @@ class Graph():
 
         self._edges = edges
         self._tree_distribution = tree_distribution
+        self.fire_spread_prob = fire_spread_prob
+        self.sim_time = sim_time
         self._vertices_list = self._create_vertices_list()
         self._vertices_neighbours = self._create_neighbour_dict()
         self._is_connected = False
 
         # Create instance of class landpatch for landpatches data
-        self._patches = lc.Landpatch(self._vertices_list, self._vertices_neighbours, firefighters, tree_distribution)      
+        self._patches = lc.Landpatch(self._vertices_list, self._vertices_neighbours, firefighters, tree_distribution, fire_spread_prob)      
 
         # visualize opening instance of graph
         self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
@@ -243,18 +247,6 @@ class Graph():
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
-test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66, firefighters=1)
-print("pre move", test_graph._patches._patches_map)
-print("pre move", test_graph._patches._firefighters_map)
-if isinstance(test_graph._patches._patches_map[1], lc.Treepatch):
-    test_graph._patches._patches_map[1]._ignited = True
-else:
-    test_graph._patches._patches_map[2]._ignited = True
-test_graph._patches.evolve_patches()
-print("post move", test_graph._patches._patches_map)
-print("post move", test_graph._patches._firefighters_map)
-
-sys.exit()
 # function for generating af g
 def user_file(fp, fn):
     """This function opens a file using a given file path (fp) and file name (fn), and reads its contents."""
@@ -324,44 +316,6 @@ def create_graph_from_file(filename: str) -> list[tuple]:
         return []
 
     return graph_edges
-
-# Load the functions
-graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
-
-if graph_type == 1:
-    file_path = input("Enter the file path: ")
-    file_name = input("Enter the file name: ") + ".dat"
-
-    # Compile file information
-    user_file_path = os.path.join(file_path, file_name)
-
-    user_graph = user_file(file_path, file_name)
-    graph_edges = create_graph_from_file(user_file_path)
-
-    # Verify that the graph is a planar graph
-    if gh.edges_planar(graph_edges):
-        print("Your graph is a planar graph. Yahoo!")
-    else:
-        print("Your graph is not a planar graph.")
-
-elif graph_type == 2:
-    n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
-    if n_random_graph > 500:
-        print("Your desired number of vertices exceeds the limit.")
-    else:
-        # Generate a random graph
-        graph_edges = gh.voronoi_to_edges(n_random_graph)
-
-        # Verify that the graph is a planar graph
-        if gh.edges_planar(graph_edges[0]):
-            print("Your graph is a planar graph. Yahoo!")
-        else:
-            print("Your graph is not a planar graph.")
-else:
-    print("Invalid choice. Please enter '1' or '2'.")
-
-print(graph_edges)
-
 
 # Import doctest module
 if __name__ == "__main__":

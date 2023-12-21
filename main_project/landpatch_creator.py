@@ -29,7 +29,8 @@ class Landpatch():
         vertices: List[int],
         neighbours: Dict[str, int],
         firefighters: int,
-        tree_distribution: int) -> None:
+        tree_distribution: int,
+        fire_spread_prob: int) -> None:
         """
         Parameters
         ----------
@@ -41,12 +42,15 @@ class Landpatch():
             Firefighters for initializing firefighter class
         tree_distribution: int
             The percentage distribution of tree patches on the graph
+        fire_spread_probability: int
+            Probability for fire to randomly spread to adjacent tree patch neighbours
         # TODO
         """
         self._vertices_list = vertices
         self._neighbours = neighbours
         self.firefighters = firefighters
-        self._tree_distribution = tree_distribution 
+        self._tree_distribution = tree_distribution
+        self._fire_spread_prob = fire_spread_prob
         self._patches_map = self._populate_patches()                           # Map patch type to vertex
         self._color_map = {}                                                   # Map color to vertex          
         self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
@@ -69,7 +73,7 @@ class Landpatch():
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch()
+                patch_map[vertex] = Treepatch(self._fire_spread_prob)
             else:
                 patch_map[vertex] = Rockpatch()
         
@@ -134,10 +138,11 @@ class Landpatch():
             print("Vertex not found in the graph.")
 
     def spread_fire(self, tree_patch: int) -> None:
-        """If treepatch is ignited, with probability 30%, spread fire to adjacent Treepatch(es)."""
-        if random.random() <= 1:
+        """If treepatch is ignited, spread fire to adjacent Treepatch(es)."""
+
+        # Check for probable fire spread
+        if random.random() <= self._patches_map[tree_patch]._fire_spread_prob:
             # Get the neighbors of the current Treepatch
-            print("treepatch", tree_patch, "neighbours",self._neighbours[tree_patch] )
             neighbors = self._neighbours[tree_patch]
 
             # Ignites adjacents treepatches not already on fire
@@ -194,11 +199,15 @@ class Landpatch():
                 if patch in self._firefighters_map:
                     # Check for burning patch
                     if patches[patch]._ignited:
+                        # Do fire fighter stuff
                         self._firefighters_map[patch].extinguish_fire(patches[patch])   # Try to fight fire
                         self._firefighters_map[patch].update_health(patches[patch])     # Update firefighter health
                         # Check if firefighter died
                         if self._firefighters_map[patch]._heath < 0:
                             del self._firefighters_map[patch]
+                        # Check for spread fire
+                        self.spread_fire(patch)
+                        
                 # Update tree stats
                 patches[patch].update_treestats
 
@@ -233,7 +242,7 @@ class Treepatch(Landpatch):
     tree_health: Optional[int]
         Attribute identifies the current health of the treepatch [0-256].
     """
-
+    _fire_spread_prob: float
     _tree_health: Optional[int] = 256
     _ignited: bool = False
 
@@ -273,7 +282,7 @@ class Firefighter:
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch."""
 
         extinguish_probability = self._firefighter_skill
-        if random.random(1, 100) <= extinguish_probability:
+        if random.random() <= extinguish_probability:
             treepatch._ignited = False
             print("Fire extinguished by firefighter.")
         else:
