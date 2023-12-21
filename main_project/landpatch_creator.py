@@ -23,26 +23,113 @@ import random
 class Landpatch():
     """This is the base class for representing a patch of land as a vertex of a graph"""
 
-    def __init__(self) -> None:
-        pass
-
+    def __init__(
+        self, 
+        vertices: List[int],
+        neighbours: Dict[str, int],
+        firefighters: int,
+        tree_distribution: int) -> None:
         """
         Parameters
         ----------
+        vertices: List[(int,int)]
+            List of vertices for mapping patches of land
+        neighbours: Dict[str, int]
+            List of neighbours for tracking neighbouring patches of land
+        firefighters: int
+            Firefighters for initializing firefighter class
+        tree_distribution: int
+            The percentage distribution of tree patches on the graph
         # TODO
         """
+        self._vertices_list = vertices
+        self._neighbours = neighbours
+        self.firefighters = firefighters
+        self._tree_distribution = tree_distribution 
+        self._patches_map = self._populate_patches()                            # Map patch type to vertex
+        self._color_map = self._create_color_map()                              # Map color to vertex          
+        self._firefighters_map = self._deploy_firefighters(firefighters)        # Map firefighters to vertex
 
     # Class methods
+    def _populate_patches(self):
+        """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
+        
+        vertices = self._vertices_list
+        tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches
 
-    def mutate_landpatch(self, graph_instance) -> None: # Maybe just delete. Logic is already handled in graph class. 
-        """Swaps rock for tree patch and vice versa on graph instance it was called"""
+        # Randomly select 'tree_count' vertices to be tree patches
+        tree_vertices = random.sample(vertices, tree_count)
 
-        if isinstance(self, Rockpatch):
-            graph_instance.swap_patch(self._vertex_id, "Treepatch")
-        elif isinstance(self, Treepatch):
-            graph_instance.swap_patch(self._vertex_id, "Rockpatch")
+        # Dictionary mapping vertex to patch class
+        patch_map = {}
+
+        for vertex in vertices:
+            # Check if the current vertex should be a tree or rock patch
+            if vertex in tree_vertices:
+                patch_map[vertex] = Treepatch()
+            else:
+                patch_map[vertex] = Rockpatch()
+        
+        return patch_map
+    
+    def _create_color_map(self) -> dict:
+        """Return dictionary with color mapped to vertex"""
+
+        patches = self._patches_map
+
+        color_map = {}
+
+        # Iterate over patches dictionary
+        for vertex, patch_type in patches.items():
+            color_code = 0
+
+            # Identify if patch is tree or rock
+            if isinstance(patch_type, Treepatch):
+                # Check if tree patch is ignited
+                if patch_type._ignited:
+                    color_code = patch_type._tree_health - 256
+                else:
+                    color_code = patch_type._tree_health
+            
+            color_map[vertex] = color_code
+        
+        return color_map
+    
+    def mutate_landpatch(self, vertex_id: int) -> None:
+        """Swaps the land patch instance associated with vertex. 
+        If vertex was populated by rock, becomes populated by tree and vice versa"""
+
+        patches_map = self._patches_map
+
+        # Check if the vertex exists in the patches_map
+        if vertex_id in patches_map:
+            if isinstance(patches_map[vertex_id], Treepatch):
+                patches_map[vertex_id] = Rockpatch()
+            elif isinstance(patches_map[vertex_id], Rockpatch):
+                patches_map[vertex_id] = Treepatch()
+            else:
+                print("Invalid patch type.")
         else:
-            print("Unknown patch type.")
+            print("Vertex not found in the graph.")
+    
+    def _deploy_firefighters(self, firefighters) -> dict:
+        """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
+
+        vertices = self._vertices_list
+
+        # Randomly select vertices for firefighters to be deployed
+        firefighters_vertices = random.sample(vertices, firefighters)
+
+        # Dictionary for mapping fire fighters to vertex
+        firefighter_map = {}
+
+        for vertex in vertices:
+            # Check if the current vertex should be a tree or rock patch
+            if vertex in firefighters_vertices:
+                firefighter_map[vertex] = Firefighter()
+        
+        return firefighter_map
+    
 
     def next_neighbours_ID(self):
         """Return the ID of the next neighbors to the present patch"""
@@ -58,7 +145,6 @@ class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch"""
 
     def __init__(self) -> None:
-        super().__init__()
         # TODO
         """
         Parameters
@@ -79,7 +165,6 @@ class Treepatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Treepatch"""
 
     def __init__(self, tree_health: Optional[int] = 100) -> None:
-        super().__init__()
         """
         Parameters
         ----------

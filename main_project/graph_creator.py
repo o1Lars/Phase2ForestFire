@@ -135,15 +135,14 @@ class Graph():
         self._tree_distribution = tree_distribution
         self._vertices_list = self._create_vertices_list()
         self._vertices_neighbours = self._create_neighbour_dict()
-        self._patches_map = self._populate_patches()                            # Map patch type to vertex
-        self._color_map = self._create_color_map()                              # Map color to vertex
-        self.firefighters = firefighters                       
-        self._firefighters_map = self._deploy_firefighters(firefighters)        # Map firefighters to vertex
         self._is_connected = False
+
+        # Create instance of class landpatch for landpatches data
+        self._patches = lc.Landpatch(self._vertices_list, self._vertices_neighbours, firefighters, tree_distribution)      
 
         # visualize opening instance of graph
         self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
-        self._vis_graph.update_node_colours(self._color_map)
+        self._vis_graph.update_node_colours(self._patches._color_map)
         sleep(0.6) # add delay to show initial graph
 
         # Create data class instance to store graph data
@@ -151,28 +150,6 @@ class Graph():
         self._initialize_data()
 
     # class methods
-    
-    def _populate_patches(self):
-        """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
-        
-        vertices = self._vertices_list
-        tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches
-
-        # Randomly select 'tree_count' vertices to be tree patches
-        tree_vertices = random.sample(vertices, tree_count)
-
-        # Dictionary mapping vertex to patch class
-        patch_map = {}
-
-        for vertex in vertices:
-            # Check if the current vertex should be a tree or rock patch
-            if vertex in tree_vertices:
-                patch_map[vertex] = lc.Treepatch()
-            else:
-                patch_map[vertex] = lc.Rockpatch()
-        
-        return patch_map
-
 
     def _create_vertices_list(self) -> list:
         """Return a list of vertices from tuple of edges"""
@@ -192,29 +169,6 @@ class Graph():
                 graph_vertices.append(y)
 
         return graph_vertices
-
-    def _create_color_map(self) -> dict:
-        """Return dictionary with color mapped to vertex"""
-
-        patches = self._patches_map
-
-        color_map = {}
-
-        # Iterate over patches dictionary
-        for vertex, patch_type in patches.items():
-            color_code = 0
-
-            # Identify if patch is tree or rock
-            if isinstance(patch_type, lc.Treepatch):
-                # Check if tree patch is ignited
-                if patch_type._ignited:
-                    color_code = patch_type._tree_health - 256
-                else:
-                    color_code = patch_type._tree_health
-            
-            color_map[vertex] = color_code
-        
-        return color_map
 
     def _create_neighbour_dict(self):
         """Return dictionary of vertices as key and neighbours (if any) as value"""
@@ -266,43 +220,8 @@ class Graph():
                     return True
                 else:
                     return False
-                    break # Finish the loop if an unconnected section has been found
-    
-    def swap_patch(self, vertex_id: int) -> None:
-        """Swaps the land patch instance associated with vertex. 
-        If vertex was populated by rock, becomes populated by tree and vice versa"""
+            break # Finish the loop if an unconnected section has been found
 
-        patches_map = self._patches_map
-
-        # Check if the vertex exists in the patches_map
-        if vertex_id in patches_map:
-            if isinstance(patches_map[vertex_id], lc.Treepatch):
-                patches_map[vertex_id] = lc.Rockpatch()
-            elif isinstance(patches_map[vertex_id], lc.Rockpatch):
-                patches_map[vertex_id] = lc.Treepatch()
-            else:
-                print("Invalid patch type.")
-        else:
-            print("Vertex not found in the graph.")
-    
-    def _deploy_firefighters(self, firefighters) -> dict:
-        """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
-
-        vertices = self._vertices_list
-
-        # Randomly select vertices for firefighters to be deployed
-        firefighters_vertices = random.sample(vertices, firefighters)
-
-        # Dictionary for mapping fire fighters to vertex
-        firefighter_map = {}
-
-        for vertex in vertices:
-            # Check if the current vertex should be a tree or rock patch
-            if vertex in firefighters_vertices:
-                firefighter_map[vertex] = lc.Firefighter()
-        
-        return firefighter_map
-    
     def _initialize_data(self):
         """Stores initital data from graph instance creation in dataclass"""
 
@@ -311,8 +230,7 @@ class Graph():
         data._land_patches = [len(self._vertices_list)]
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
         data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
-        data._firefighters = [self.firefighters]
-
+        data._firefighters = [self._patches.firefighters]
         
     def __eq__(self, other):
         """Return true if edges of this instance is equal to edges of other instance of same class"""
@@ -325,17 +243,17 @@ class Graph():
     def __str__(self):
         """Return a textual representation of the attributes of the graph"""
 
-        return f"vertices: {self._vertices_list}. Vertex colors: {self._color_map}. Vertex neighbours: {self._vertices_neighbours}."
+        return f"vertices: {self._vertices_list}. Vertex colors: {self._patches._color_map}. Vertex neighbours: {self._vertices_neighbours}."
     
     def __repr__(self):
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66, firefighters=2)
-print(test_graph._patches_map)
+print(test_graph._patches._patches_map)
 print("graph: ", test_graph)
-print(test_graph._patches_map[1].test())
-print("firefighters:", test_graph._firefighters_map)
+print(test_graph._patches._patches_map[1].test())
+print("firefighters:", test_graph._patches._firefighters_map)
 print("Data: ", test_graph._graph_data)
 
 sys.exit()
