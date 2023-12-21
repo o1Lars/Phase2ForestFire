@@ -155,25 +155,62 @@ class Landpatch():
 
         # Iterate over firefighter map
         for vertex, firefighter in firefighter_map.items():
-                
-            neighbors = self._neighbours[vertex]
-
-            # Check if there are adjacent Treepatches on fire
-            adjacent_fire_patches = [neighbor for neighbor in neighbors if
-                                    isinstance(self._patches_map[neighbor], Treepatch) and self._patches_map[neighbor]._ignited]
-
-            if adjacent_fire_patches:
-                # Move to a random adjacent Treepatch on fire
-                new_location = random.choice(adjacent_fire_patches)
+            
+            # Check if current patch is on fire
+            if isinstance(self._patches_map[vertex], Treepatch) and self._patches_map[vertex]._ignited:
+                new_firefighter_map[vertex] = firefighter
             else:
-                # Move to a random adjacent patch
-                new_location = random.choice(neighbors)
+                # Store neighbours list
+                neighbors = self._neighbours[vertex]
 
-            print(f"Firefighter moved from {vertex} to {new_location}.")
-            new_firefighter_map[new_location] = firefighter
+                # Check if there are adjacent Treepatches on fire
+                adjacent_fire_patches = [neighbor for neighbor in neighbors if
+                                        isinstance(self._patches_map[neighbor], Treepatch) and self._patches_map[neighbor]._ignited]
+
+                if adjacent_fire_patches:
+                    # Move to a random adjacent Treepatch on fire
+                    new_location = random.choice(adjacent_fire_patches)
+                else:
+                    # Move to a random adjacent patch
+                    new_location = random.choice(neighbors)
+
+                print(f"Firefighter moved from {vertex} to {new_location}.")
+                new_firefighter_map[new_location] = firefighter
 
         # add new map to instance attributes
         self._firefighters_map = new_firefighter_map
+    
+    def evolve_patches(self) -> None:
+        """Evolves the graph 1 simulation step"""
+        
+        patches = self._patches_map
+
+        # Loop over patch map
+        for patch in patches:
+
+
+
+            # Identify if patch is tree or rock
+            if isinstance(patches[patch], Treepatch):
+                # Firefighter skills
+                if patch in self._firefighters_map:
+                    # Check for burning patch
+                    if patches[patch]._ignited:
+                        self._firefighters_map[patch].extinguish_fire(patches[patch])
+                
+                # Update tree stats
+                patches[patch].update_treestats
+
+                # Check if all trees on patch have died.
+                if patches[patch]._tree_health < 0:
+                    self.mutate_landpatch(patch)
+        
+            if isinstance(patches[patch], Rockpatch):
+                if random.randint(0, 100) == patches[patch]._mutate_chance:
+                    self.mutate_landpatch(patches[patch])
+        
+        self.move_firefighters()
+
 
 @dataclass
 class Rockpatch(Landpatch):
@@ -216,7 +253,7 @@ class Treepatch(Landpatch):
 class Firefighter:
     """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
 
-    def __init__(self, firefighter_skill: Optional[float] = 1, health: Optional[float] = 100) -> None:
+    def __init__(self, firefighter_skill: Optional[float] = 25, health: Optional[float] = 100) -> None:
         """
         Initialize a Firefighter.
 
@@ -233,13 +270,13 @@ class Firefighter:
 
     def extinguish_fire(self, treepatch) -> None:
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch."""
-        if treepatch._ignited:
-            extinguish_probability = self._firefighter_skill
-            if random.random() < extinguish_probability:
-                treepatch._ignited = False
-                print("Fire extinguished by firefighter.")
-            else:
-                print("Firefighter failed to extinguish fire.")
+
+        extinguish_probability = self._firefighter_skill
+        if random.random(1, 100) <= extinguish_probability:
+            treepatch._ignited = False
+            print("Fire extinguished by firefighter.")
+        else:
+            print("Firefighter failed to extinguish fire.")
 
     def update_health(self) -> None:
         """Updates the current instance of a firefighter's health."""
