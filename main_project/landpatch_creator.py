@@ -47,9 +47,11 @@ class Landpatch():
         self._neighbours = neighbours
         self.firefighters = firefighters
         self._tree_distribution = tree_distribution 
-        self._patches_map = self._populate_patches()                            # Map patch type to vertex
-        self._color_map = self._create_color_map()                              # Map color to vertex          
-        self._firefighters_map = self._deploy_firefighters(firefighters)        # Map firefighters to vertex
+        self._patches_map = self._populate_patches()                           # Map patch type to vertex
+        self._color_map = {}                                                   # Map color to vertex          
+        self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
+
+        self._update_color_map()   
 
     # Class methods
     def _populate_patches(self):
@@ -73,7 +75,7 @@ class Landpatch():
         
         return patch_map
     
-    def _create_color_map(self) -> dict:
+    def _update_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
 
         patches = self._patches_map
@@ -175,6 +177,7 @@ class Treepatch(Landpatch):
             self._tree_health += 10
         else:
             self._tree_health -= 20
+
 
     def evolve(self) -> None:
         """Perform one evolution step for the Treepatch."""
