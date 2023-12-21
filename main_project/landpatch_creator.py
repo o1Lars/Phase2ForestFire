@@ -16,6 +16,7 @@ Notes
 -----
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
+from dataclasses import dataclass, field
 from typing import List, Optional, Dict
 import random
 
@@ -136,24 +137,16 @@ class Landpatch():
         # TODO
         print("This returns the next neighbors to the present patch")
 
-    def test(self) -> bool:
-        """test if created"""
-        return True
-
-
+@dataclass
 class Rockpatch(Landpatch):
-    """This class extends Landpatch and creates an instance of subclass Rockpatch"""
-
-    def __init__(self) -> None:
-        # TODO
-        """
-        Parameters
-        
-            
-        ----------
-        # TODO
-        """
-
+    """This class extends Landpatch and creates an instance of subclass Rockpatch
+    Parameters    
+    ----------
+    _mutate_chance: float, default = 1
+    Percentage chance for a rockpatch to mutate into treepatch
+    """
+    _mutate_chance: float = 1
+    
     def mutate(self):
         """Allows swapping a Rockpatch with a Treepatch without losing connections to neighbors and associations with firefighters."""
         ## Each Rockpatch has a possibility of becoming a Treepatch at each step (default 1%).
@@ -161,18 +154,18 @@ class Rockpatch(Landpatch):
             self.mutate_landpatch(Treepatch)
             print("The Rockpatch has mutated into a Treepatch.")
 
+@dataclass
 class Treepatch(Landpatch):
-    """This class extends Landpatch and creates an instance of subclass Treepatch"""
+    """This class extends Landpatch and creates an instance of subclass Treepatch
 
-    def __init__(self, tree_health: Optional[int] = 100) -> None:
-        """
-        Parameters
-        ----------
-        tree_health: Optional[int]
-            Attribute identifies the current health of the treepatch [0-256].
-        """
-        self._tree_health = tree_health
-        self._ignited = False
+    Parameters
+    ----------
+    tree_health: Optional[int]
+        Attribute identifies the current health of the treepatch [0-256].
+    """
+    
+    tree_health: Optional[int] = 100
+    ignited: bool = False
 
     def update_treestats(self) -> None:
         """Update treestats based on the specified conditions."""
@@ -187,7 +180,7 @@ class Treepatch(Landpatch):
 
     def spread_fire(self) -> None:
         """With probability 30%, spread fire to adjacent Treepatch."""
-        if random.random() < 0.3:
+        if random.random() <= 0.3:
             # Get the neighbors of the current Treepatch
             neighbors = self.next_neighbours_ID()
 

@@ -246,7 +246,6 @@ class Graph():
 test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66, firefighters=2)
 print(test_graph._patches._patches_map)
 print("graph: ", test_graph)
-print(test_graph._patches._patches_map[1].test())
 print("firefighters:", test_graph._patches._firefighters_map)
 print("Data: ", test_graph._graph_data)
 
