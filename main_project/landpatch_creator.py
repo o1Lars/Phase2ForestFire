@@ -147,6 +147,31 @@ class Landpatch():
                     if not current_neighbor._ignited:
                         current_neighbor._ignited = True
 
+    def move_firefighter(self) -> None:
+        """Move firefighter randomly to a neighboring patch based on the specified conditions."""
+
+        firefighter_map = self._firefighters_map
+
+        # Iterate over firefighter map
+        for vertex, firefighter in firefighter_map.items():
+                
+            neighbors = self._neighbours[vertex]
+
+            # Check if there are adjacent Treepatches on fire
+            adjacent_fire_patches = [neighbor for neighbor in neighbors if
+                                    isinstance(self._patches_map[neighbor], Treepatch) and self._patches_map[neighbor]._ignited]
+
+            if adjacent_fire_patches:
+                # Move to a random adjacent Treepatch on fire
+                new_location = random.choice(adjacent_fire_patches)
+            else:
+                # Move to a random adjacent patch
+                new_location = random.choice(neighbors)
+
+            print(f"Firefighter moved from {self.vertex} to {new_location}.")
+            self._current_patch = new_location
+
+
 @dataclass
 class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch
@@ -212,27 +237,6 @@ class Firefighter:
                 print("Fire extinguished by firefighter.")
             else:
                 print("Firefighter failed to extinguish fire.")
-
-    def move_firefighter(self) -> None:
-        """Move firefighter randomly to a neighboring patch based on the specified conditions."""
-        if self._current_patch is not None:
-            neighbors = self._current_patch.next_neighbours_ID()
-
-            # Check if there are adjacent Treepatches on fire
-            adjacent_fire_patches = [neighbor for neighbor in neighbors if
-                                     isinstance(neighbor, Treepatch) and neighbor._ignited]
-
-            if adjacent_fire_patches:
-                # Move to a random adjacent Treepatch on fire
-                new_location = random.choice(adjacent_fire_patches)
-            else:
-                # Move to a random adjacent patch
-                new_location = random.choice(neighbors)
-
-            print(f"Firefighter moved from {self._current_patch} to {new_location}.")
-            self._current_patch = new_location
-        else:
-            print("Firefighter has no current location.")
 
     def update_health(self) -> None:
         """Updates the current instance of a firefighter's health."""
