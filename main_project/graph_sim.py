@@ -17,7 +17,7 @@ Module is created as part of the group project for the final exam of DS830 Intro
 from dataclasses import dataclass, field
 import landpatch_creator as lc
 import visualiser_random_forest_graph as vis_rfg
-import main_project.graph_helper as gh
+import graph_helper as gh
 import matplotlib.pyplot as plt
 from typing import List, Optional, Dict, Type
 import random as random
@@ -244,10 +244,16 @@ class Graph():
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66, firefighters=2)
-print(test_graph._patches._patches_map)
-print("graph: ", test_graph)
-print("firefighters:", test_graph._patches._firefighters_map)
-print("Data: ", test_graph._graph_data)
+if isinstance(test_graph._patches._patches_map[1], lc.Treepatch):
+    test_graph._patches._patches_map[1]._ignited = True
+    test_graph._patches.spread_fire(1)
+    print("patch 1", test_graph._patches._patches_map)
+else:
+    test_graph._patches._patches_map[2]._ignited = True
+    test_graph._patches.spread_fire(2)
+    print("patch 2", test_graph._patches._patches_map)
+
+
 
 sys.exit()
 # function for generating af g

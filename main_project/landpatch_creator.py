@@ -95,24 +95,7 @@ class Landpatch():
             color_map[vertex] = color_code
         
         return color_map
-    
-    def mutate_landpatch(self, vertex_id: int) -> None:
-        """Swaps the land patch instance associated with vertex. 
-        If vertex was populated by rock, becomes populated by tree and vice versa"""
 
-        patches_map = self._patches_map
-
-        # Check if the vertex exists in the patches_map
-        if vertex_id in patches_map:
-            if isinstance(patches_map[vertex_id], Treepatch):
-                patches_map[vertex_id] = Rockpatch()
-            elif isinstance(patches_map[vertex_id], Rockpatch):
-                patches_map[vertex_id] = Treepatch()
-            else:
-                print("Invalid patch type.")
-        else:
-            print("Vertex not found in the graph.")
-    
     def _deploy_firefighters(self, firefighters) -> dict:
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
 
@@ -131,10 +114,36 @@ class Landpatch():
         
         return firefighter_map
 
-    def next_neighbours_ID(self):
-        """Return the ID of the next neighbors to the present patch"""
-        # TODO
-        print("This returns the next neighbors to the present patch")
+    def mutate_landpatch(self, vertex_id: int) -> None:
+        """Swaps the land patch instance associated with vertex. 
+        If vertex was populated by rock, becomes populated by tree and vice versa"""
+
+        patches_map = self._patches_map
+
+        # Check if the vertex exists in the patches_map
+        if vertex_id in patches_map:
+            if isinstance(patches_map[vertex_id], Treepatch):
+                patches_map[vertex_id] = Rockpatch()
+            elif isinstance(patches_map[vertex_id], Rockpatch):
+                patches_map[vertex_id] = Treepatch()
+            else:
+                print("Invalid patch type.")
+        else:
+            print("Vertex not found in the graph.")
+
+    def spread_fire(self, tree_patch: int) -> None:
+        """If treepatch is ignited, with probability 30%, spread fire to adjacent Treepatch(es)."""
+        if random.random() <= 1:
+            # Get the neighbors of the current Treepatch
+            print("treepatch", tree_patch, "neighbours",self._neighbours[tree_patch] )
+            neighbors = self._neighbours[tree_patch]
+
+            # Ignites adjacents treepatches not already on fire
+            for neighbor in neighbors:
+                current_neighbor = self._patches_map[neighbor]
+                if isinstance(current_neighbor, Treepatch):   # Check if neighbor is tree patch
+                    if not current_neighbor._ignited:
+                        current_neighbor._ignited = True
 
 @dataclass
 class Rockpatch(Landpatch):
@@ -142,16 +151,10 @@ class Rockpatch(Landpatch):
     Parameters    
     ----------
     _mutate_chance: float, default = 1
-    Percentage chance for a rockpatch to mutate into treepatch
+        Percentage chance for a rockpatch to mutate into treepatch
     """
     _mutate_chance: float = 1
-    
-    def mutate(self):
-        """Allows swapping a Rockpatch with a Treepatch without losing connections to neighbors and associations with firefighters."""
-        ## Each Rockpatch has a possibility of becoming a Treepatch at each step (default 1%).
-        if random.random() < 0.01:
-            self.mutate_landpatch(Treepatch)
-            print("The Rockpatch has mutated into a Treepatch.")
+
 
 @dataclass
 class Treepatch(Landpatch):
@@ -172,23 +175,6 @@ class Treepatch(Landpatch):
             self._tree_health += 10
         else:
             self._tree_health -= 20
-
-        if self._tree_health < 0:
-            self.mutate_landpatch(Rockpatch)
-        print("Treestats has been updated.")
-
-    def spread_fire(self) -> None:
-        """With probability 30%, spread fire to adjacent Treepatch."""
-        if random.random() <= 0.3:
-            # Get the neighbors of the current Treepatch
-            neighbors = self.next_neighbours_ID()
-
-            # Ignites adjacents treepatches not already on fire
-            for neighbor in neighbors:
-                if not neighbor._ignited:
-                    neighbor._ignited = True
-
-            print("Fire has spread to adjacent Treepatch")
 
     def evolve(self) -> None:
         """Perform one evolution step for the Treepatch."""

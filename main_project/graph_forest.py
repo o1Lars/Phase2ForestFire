@@ -1,4 +1,4 @@
-import main_project.graph_helper as gh
+import graph_helper as gh
 import os
 import random
 
