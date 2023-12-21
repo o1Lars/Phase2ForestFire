@@ -3,6 +3,7 @@ import graph_sim as gs
 import os
 import sys
 import random
+from typing import List, Tuple
 
 def main() -> None:
     """Execute main program, get user input, perform simulation and display report"""
@@ -11,12 +12,12 @@ def main() -> None:
     edges = get_edges()
     tree_rate = get_tree_rate()
     firefighters = get_firefighters()
-    autocombustion_prob = get_autocombustion_prob
+    autocombustion_prob = get_autocombustion_prob()
     fire_spread_prob = get_fire_spread_prob()
     rock_respawn_prob = get_rock_respawn_prob()
     sim_limit = get_sim_limit()
     # Show config
-    display_config()
+    display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
     # Ask if config needs updated
     # Run simulation
     # Display report
@@ -93,7 +94,7 @@ def create_graph_from_file(filename: str) -> list[tuple]:
     return graph_edges
 
 # Load the functions
-def get_edges() -> List[(int, int)]:
+def get_edges() -> List[Tuple]:
     """Return user-defined or pseudorandom edgelist"""
     graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
 
@@ -241,14 +242,15 @@ def quit() -> None:
     sys.exit()
 
 # Printing Terrain configuration
-def display_config() -> None:
+def display_config(edges: List[Tuple], tree_rate: int, firefighters: int, 
+                   autocombustion_prob: float, fire_spread_prob: float, rock_respawn_prob: float, sim_limit: int) -> None:
+
     """Displays current simulation configuration to the user"""
 
-    print(f"The ratio of trees to rocks is {user_tree_percent} : {user_rock_percent}.")
-    print(f"You have employed {user_firefighters} number of firefighters.")
-    print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
-    print(f"The time limit set for this simulation is {sim_time_limit} years.")
-    print(graph_edges)
+    print(f"The ratio of trees to rocks is {tree_rate} : {100 - tree_rate}.")
+    print(f"You have employed {firefighters} firefighters.")
+    print(f"The probability of fire ignition is {autocombustion_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of tree patch respawn is {rock_respawn_prob}.")
+    print(f"The time limit set for this simulation is {sim_limit} years.")
 
 # Execute random forest fire simulation
 if __name__ == "__main__":
