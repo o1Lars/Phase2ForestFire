@@ -147,10 +147,11 @@ class Landpatch():
                     if not current_neighbor._ignited:
                         current_neighbor._ignited = True
 
-    def move_firefighter(self) -> None:
+    def move_firefighters(self) -> None:
         """Move firefighter randomly to a neighboring patch based on the specified conditions."""
 
         firefighter_map = self._firefighters_map
+        new_firefighter_map = {}
 
         # Iterate over firefighter map
         for vertex, firefighter in firefighter_map.items():
@@ -168,9 +169,11 @@ class Landpatch():
                 # Move to a random adjacent patch
                 new_location = random.choice(neighbors)
 
-            print(f"Firefighter moved from {self.vertex} to {new_location}.")
-            self._current_patch = new_location
+            print(f"Firefighter moved from {vertex} to {new_location}.")
+            new_firefighter_map[new_location] = firefighter
 
+        # add new map to instance attributes
+        self._firefighters_map = new_firefighter_map
 
 @dataclass
 class Rockpatch(Landpatch):
