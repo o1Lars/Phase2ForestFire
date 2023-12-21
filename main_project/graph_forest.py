@@ -96,10 +96,10 @@ elif graph_type == 2:
     if n_random_graph > 500:
         print("Your desired number of vertices exceeds the limit.")
     else:
-        graph_edges = gh.voronoi_to_edges(n_random_graph)
+        graph_edges, graph_pos = gh.voronoi_to_edges(n_random_graph)
 
         # Verify that the graph is a planar graph
-        if gh.edges_planar(graph_edges[0]):
+        if gh.edges_planar(graph_edges):
             print("Your graph is a planar graph. Yahoo!")
         else:
             print("Your graph is not a planar graph.")
@@ -133,8 +133,8 @@ if assign_tree_percent == 1:
     user_tree_percent = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
     user_rock_percent = 100 - user_tree_percent
 else:
-    random_tree_percent = random.randint(1, 99)
-    random_rock_percent = 100 - random_tree_percent
+    user_tree_percent = random.randint(1, 99)
+    user_rock_percent = 100 - user_tree_percent
 
 # Simulation parameter
 assign_firefighters = get_valid_input("Enter '1' for user-defined number of firefighters or '2' for random assignment: ")
@@ -142,7 +142,7 @@ assign_firefighters = get_valid_input("Enter '1' for user-defined number of fire
 if assign_firefighters == 1:
     user_firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
 else:
-    random_firefighters = random.randint(2, 50)
+    user_firefighters = random.randint(2, 50)
 
 # Set of probabilities
 assign_fire_ignition_prob = get_valid_input("Enter '1' for user-defined fire ignition probability or '2' for random assignment: ")
@@ -173,9 +173,9 @@ else:
     sim_time_limit = round(random.randint(2, 50))
 
 # Printing Terrain configuration
-print(f"The ratio of trees to rocks is {random_tree_percent} : {random_rock_percent}.")
-print(f"You have employed {random_firefighters} number of firefighters.")
+print(f"The ratio of trees to rocks is {user_tree_percent} : {user_rock_percent}.")
+print(f"You have employed {user_firefighters} number of firefighters.")
 print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
 print(f"The time limit set for this simulation is {sim_time_limit} years.")
-
+print(graph_edges)
 graph_instance = gs.Graph(graph_edges, user_tree_percent, user_firefighters, fire_spread_prob, sim_time_limit)
