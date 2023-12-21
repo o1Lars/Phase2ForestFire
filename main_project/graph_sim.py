@@ -17,7 +17,7 @@ Module is created as part of the group project for the final exam of DS830 Intro
 from dataclasses import dataclass, field
 import landpatch_creator as lc
 import visualiser_random_forest_graph as vis_rfg
-import graph_helper as gh
+import main_project.graph_helper as gh
 import matplotlib.pyplot as plt
 from typing import List, Optional, Dict, Type
 import random as random

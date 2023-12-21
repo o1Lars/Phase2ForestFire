@@ -130,7 +130,6 @@ class Landpatch():
                 firefighter_map[vertex] = Firefighter()
         
         return firefighter_map
-    
 
     def next_neighbours_ID(self):
         """Return the ID of the next neighbors to the present patch"""
@@ -163,9 +162,9 @@ class Treepatch(Landpatch):
     tree_health: Optional[int]
         Attribute identifies the current health of the treepatch [0-256].
     """
-    
-    tree_health: Optional[int] = 100
-    ignited: bool = False
+
+    _tree_health: Optional[int] = 256
+    _ignited: bool = False
 
     def update_treestats(self) -> None:
         """Update treestats based on the specified conditions."""
