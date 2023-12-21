@@ -123,12 +123,6 @@ class Graph():
             Percentage distribution of tree to rock patches ratio
         firefighters: int, default = 0
             firefighters at instance creation
-        vertices_dict: Optional[dict], default = {}
-            dictionary with vertices as key and values for each vertex: color, frustration, neighbours
-        total_frustration: Optional[float], default = 0
-            The graphs total frustration over numbers of iterations/simulation
-        is_connected: Optional[Boolean], default = False
-            Is true if all graph vertices has at least one neighbour
         """
 
         self._edges = edges
