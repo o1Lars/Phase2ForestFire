@@ -96,7 +96,7 @@ class Landpatch():
             
             color_map[vertex] = color_code
         
-        return color_map
+        self._color_map = color_map
 
     def _deploy_firefighters(self, firefighters) -> dict:
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
