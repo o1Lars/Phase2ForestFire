@@ -1,7 +1,27 @@
 import graph_helper as gh
 import graph_sim as gs
 import os
+import sys
 import random
+
+def main() -> None:
+    """Execute main program, get user input, perform simulation and display report"""
+    # Show start menu
+    # get user input
+    edges = get_edges()
+    tree_rate = get_tree_rate()
+    firefighters = get_firefighters()
+    autocombustion_prob = get_autocombustion_prob
+    fire_spread_prob = get_fire_spread_prob()
+    rock_respawn_prob = get_rock_respawn_prob()
+    sim_limit = get_sim_limit()
+    # Show config
+    display_config()
+    # Ask if config needs updated
+    # Run simulation
+    # Display report
+    # Could ask if user wants to go again or exit? 
+    pass
 
 def user_file(fp, fn):
     """This function opens a file using a given file path (fp) and file name (fn), and reads its contents."""
@@ -73,39 +93,40 @@ def create_graph_from_file(filename: str) -> list[tuple]:
     return graph_edges
 
 # Load the functions
-graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
+def get_edges() -> List[(int, int)]:
+    """Return user-defined or pseudorandom edgelist"""
+    graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
 
-if graph_type == 1:
-    file_path = input("Enter the file path: ")
-    file_name = input("Enter the file name: ") + ".dat"
+    if graph_type == 1:
+        file_path = input("Enter the file path: ")
+        file_name = input("Enter the file name: ") + ".dat"
 
-    # Compile file information
-    user_file_path = os.path.join(file_path, file_name)
+        # Compile file information
+        user_file_path = os.path.join(file_path, file_name)
 
-    user_graph = user_file(file_path, file_name)
-    graph_edges = create_graph_from_file(user_file_path)
-
-    # Verify that the graph is a planar graph
-    if gh.edges_planar(graph_edges):
-        print("Your graph is a planar graph. Yahoo!")
-    else:
-        print("Your graph is not a planar graph.")
-
-elif graph_type == 2:
-    n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
-    if n_random_graph > 500:
-        print("Your desired number of vertices exceeds the limit.")
-    else:
-        graph_edges, graph_pos = gh.voronoi_to_edges(n_random_graph)
+        user_graph = user_file(file_path, file_name)
+        graph_edges = create_graph_from_file(user_file_path)
 
         # Verify that the graph is a planar graph
         if gh.edges_planar(graph_edges):
             print("Your graph is a planar graph. Yahoo!")
         else:
             print("Your graph is not a planar graph.")
-else:
-    print("Invalid choice. Please enter '1' or '2'.")
 
+    elif graph_type == 2:
+        n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
+        if n_random_graph > 500:
+            print("Your desired number of vertices exceeds the limit.")
+        else:
+            graph_edges, graph_pos = gh.voronoi_to_edges(n_random_graph)
+
+            # Verify that the graph is a planar graph
+            if gh.edges_planar(graph_edges):
+                print("Your graph is a planar graph. Yahoo!")
+            else:
+                print("Your graph is not a planar graph.")
+    else:
+        print("Invalid choice. Please enter '1' or '2'.")
 
 # Terrain configuration
 def get_valid_input(prompt):
@@ -127,55 +148,108 @@ def get_valid_float_input(prompt):
             print("Invalid input. Please enter a valid decimal number.")
 
 # Terrain configuration input parameters
-assign_tree_percent = get_valid_input("Enter '1' for user-defined tree percentage or '2' for random assignment: ")
+def get_tree_rate() -> int:
+    """Return the trees to rockpatches rate"""
 
-if assign_tree_percent == 1:
-    user_tree_percent = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
-    user_rock_percent = 100 - user_tree_percent
-else:
-    user_tree_percent = random.randint(1, 99)
-    user_rock_percent = 100 - user_tree_percent
+    tree_rate = None
+
+    assign_tree_percent = get_valid_input("Enter '1' for user-defined tree percentage or '2' for random assignment: ")
+
+    if assign_tree_percent == 1:
+        tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
+    else:
+        tree_rate = random.randint(1, 99)
+
+    return tree_rate
 
 # Simulation parameter
-assign_firefighters = get_valid_input("Enter '1' for user-defined number of firefighters or '2' for random assignment: ")
+def get_firefighters() -> int:
+    """Return user-defined or randomly generated number of firefighters between 2-50"""
 
-if assign_firefighters == 1:
-    user_firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
-else:
-    user_firefighters = random.randint(2, 50)
+    firefighters = None
+
+    assign_firefighters = get_valid_input("Enter '1' for user-defined number of firefighters or '2' for random assignment: ")
+
+    if assign_firefighters == 1:
+        firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
+    else:
+        firefighters = random.randint(2, 50)
+    
+    return firefighters
 
 # Set of probabilities
-assign_fire_ignition_prob = get_valid_input("Enter '1' for user-defined fire ignition probability or '2' for random assignment: ")
+def get_autocombustion_prob() -> float:
+    """Return user-defined or random probability for tree patch to randomly catch fire"""
 
-if assign_fire_ignition_prob == 1:
-    user_fire_ignition_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ")
-else:
-    random_fire_ignition_prob = round(random.uniform(0.6, 0.8), 1)
+    autocombustion_prob = None
 
-assign_fire_spread_prob = get_valid_input("Enter '1' for user-defined fire spread probability or '2' for random assignment: ")
+    assign_fire_ignition_prob = get_valid_input("Enter '1' for user-defined fire ignition probability or '2' for random assignment: ")
 
-if assign_fire_spread_prob == 1:
-    fire_spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
-else:
-    fire_spread_prob = round(random.uniform(0.4, 0.6), 1)
+    if assign_fire_ignition_prob == 1:
+        autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ")
+    else:
+        autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
+    
+    return autocombustion_prob
 
-assign_respawn_prob = get_valid_input("Enter '1' for user-defined respawn probability (likelihood of a rock patch turning into a tree patch over time) or '2' for random assignment: ")
-if assign_respawn_prob == 1:
-    user_respawn_prob = get_valid_float_input("Enter the fire spread probability (0.3-0.5): ")
-else:
-    random_respawn_prob = round(random.uniform(0.3, 0.5), 1)
+def get_fire_spread_prob() -> float:
+    """Return user-defined or random probability for fire to spread to adjacent non-ignited tree patches"""
+
+    spread_prob = None
+
+    assign_fire_spread_prob = get_valid_input("Enter '1' for user-defined fire spread probability or '2' for random assignment: ")
+
+    if assign_fire_spread_prob == 1:
+        spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
+    else:
+        spread_prob = round(random.uniform(0.4, 0.6), 1)
+    
+    return spread_prob
+
+def get_rock_respawn_prob() -> float:
+    """Return user-defined or random respawn probability for rockpatch to mutate to treepatch"""
+
+    rock_mutate_prob = 0
+
+    # get user input
+    assign_respawn_prob = get_valid_input("Enter '1' for user-defined respawn probability (likelihood of a rock patch turning into a tree patch over time) or '2' for random assignment: ")
+
+    if assign_respawn_prob == 1:
+        rock_mutate_prob = get_valid_float_input("Enter the fire spread probability (0.3-0.5): ")
+    else:
+        rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
+    
+    return rock_mutate_prob
 
 # Similation time limit
-assign_sim_time_limit = get_valid_input("Enter '1' for user-defined simulation time limit or '2' for random assignment: ")
-if assign_sim_time_limit == 1:
-    sim_time_limit = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
-else:
-    sim_time_limit = round(random.randint(2, 50))
+def get_sim_limit() -> int:
+    """Return the user defined simulation limit for the simulation"""
+
+    sim_time = None
+
+    # get user input
+    assign_sim_time_limit = get_valid_input("Enter '1' for user-defined simulation time limit or '2' for random assignment: ")
+    if assign_sim_time_limit == 1:
+        sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
+    else:
+        sim_time = round(random.randint(2, 50))
+    
+    return sim_time
+
+def quit() -> None:
+    """Exits the current program execution"""
+    sys.exit()
 
 # Printing Terrain configuration
-print(f"The ratio of trees to rocks is {user_tree_percent} : {user_rock_percent}.")
-print(f"You have employed {user_firefighters} number of firefighters.")
-print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
-print(f"The time limit set for this simulation is {sim_time_limit} years.")
-print(graph_edges)
-graph_instance = gs.Graph(graph_edges, user_tree_percent, user_firefighters, fire_spread_prob, sim_time_limit)
+def display_config() -> None:
+    """Displays current simulation configuration to the user"""
+
+    print(f"The ratio of trees to rocks is {user_tree_percent} : {user_rock_percent}.")
+    print(f"You have employed {user_firefighters} number of firefighters.")
+    print(f"The probability of fire ignition is {random_fire_ignition_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of respawn is {random_respawn_prob}.")
+    print(f"The time limit set for this simulation is {sim_time_limit} years.")
+    print(graph_edges)
+
+# Execute random forest fire simulation
+if __name__ == "__main__":
+    main()
