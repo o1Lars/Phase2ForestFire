@@ -244,15 +244,9 @@ class Graph():
         return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 test_graph = Graph([(1, 2), (1,3), (2,3)], tree_distribution=66, firefighters=2)
-if isinstance(test_graph._patches._patches_map[1], lc.Treepatch):
-    test_graph._patches._patches_map[1]._ignited = True
-    test_graph._patches.spread_fire(1)
-    print("patch 1", test_graph._patches._patches_map)
-else:
-    test_graph._patches._patches_map[2]._ignited = True
-    test_graph._patches.spread_fire(2)
-    print("patch 2", test_graph._patches._patches_map)
-
+print("pre move", test_graph._patches._firefighters_map)
+test_graph._patches.move_firefighters()
+print("post move", test_graph._patches._firefighters_map)
 
 
 sys.exit()
