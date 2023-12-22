@@ -154,12 +154,14 @@ def get_tree_rate() -> int:
 
     tree_rate = None
 
-    assign_tree_percent = get_valid_input("Enter '1' for user-defined tree percentage or '2' for random assignment: ")
+    assign_tree_percent = get_valid_input("Enter '1' for user-defined tree percentage or '2' for random assignment or '3' for more info: ")
 
     if assign_tree_percent == 1:
         tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
-    else:
+    elif assign_tree_percent == 2:
         tree_rate = random.randint(1, 99)
+    elif assign_tree_percent == 3:
+        config_info("tree_rate")
 
     return tree_rate
 
@@ -240,6 +242,20 @@ def get_sim_limit() -> int:
 def quit() -> None:
     """Exits the current program execution"""
     sys.exit()
+
+def start_menu() -> None:
+    """Present start menu (containing program info and required setup) to user"""
+
+def config_info(config:  any) -> None:
+    """Display configuration info to user"""
+
+    if config == "tree_rate":
+        print(f"Info for configuring tree rate:", 
+              "\n#This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
+                \n#Please enter an integer value beteween 1-99 representing the percentage of tree patches \
+                \n#in relation to rock patches")
+        get_tree_rate()
+
 
 # Printing Terrain configuration
 def display_config(edges: List[Tuple], tree_rate: int, firefighters: int, 
