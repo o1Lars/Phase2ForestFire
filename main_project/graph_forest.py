@@ -285,7 +285,8 @@ def config_info(config: str) -> None:
     Parameters
     ----------
     config: str
-        configuration paramater, the user is requesting info on
+        configuration parameter, the user is requesting info on: tree_rate, firefighters, autocombustion_prob, fire_spread_prob
+        rock_respawn_prob, sim_limit
     """
 
     if config == "tree_rate":
