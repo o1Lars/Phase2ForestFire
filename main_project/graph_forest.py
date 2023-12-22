@@ -2,6 +2,7 @@ import graph_helper as gh
 import graph_sim as gs
 import os
 import sys
+import time
 import random
 from typing import List, Tuple
 
@@ -150,7 +151,7 @@ def get_valid_float_input(prompt):
 
 # Terrain configuration input parameters
 def get_tree_rate() -> int:
-    """Return the trees to rockpatches rate"""
+    """Return the trees to rockpatches rate (1-99), from either user-specified input or randomly generated."""
 
     tree_rate = None
     getting_param = True
@@ -166,11 +167,14 @@ def get_tree_rate() -> int:
             tree_rate = random.randint(1, 99)
             getting_param = False
         elif assign_tree_percent == 3:
-            config_info("tree_rate")
+            config_info("tree rate")
         elif assign_tree_percent == 4: 
             quit()
         elif assign_tree_percent == 5:
             restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
 
     return tree_rate
 
@@ -179,13 +183,27 @@ def get_firefighters() -> int:
     """Return user-defined or randomly generated number of firefighters between 2-50"""
 
     firefighters = None
+    getting_param = True
 
-    assign_firefighters = get_valid_input("Enter '1' for user-defined number of firefighters or '2' for random assignment: ")
+    while getting_param:
+        get_input_menu("firefighters", "simulation parameter")
+        assign_firefighters = get_valid_input("Choice: ")
 
-    if assign_firefighters == 1:
-        firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
-    else:
-        firefighters = random.randint(2, 50)
+        if assign_firefighters == 1:
+            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
+            getting_param = False # break loop
+        elif assign_firefighters == 2:
+            firefighters = random.randint(2, 50)
+            getting_param = False # break loop
+        elif assign_firefighters == 3:
+            config_info("firefighters")
+        elif assign_firefighters == 4: 
+            quit()
+        elif assign_firefighters == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
     
     return firefighters
 
@@ -194,13 +212,27 @@ def get_autocombustion_prob() -> float:
     """Return user-defined or random probability for tree patch to randomly catch fire"""
 
     autocombustion_prob = None
+    getting_param = True
 
-    assign_fire_ignition_prob = get_valid_input("Enter '1' for user-defined fire ignition probability or '2' for random assignment: ")
+    while getting_param:
+        get_input_menu("autocombustion", "probability")
+        assign_fire_ignition_prob = get_valid_input("Choice: ")
 
-    if assign_fire_ignition_prob == 1:
-        autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ")
-    else:
-        autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
+        if assign_fire_ignition_prob == 1:
+            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ")
+            getting_param = False # break loop
+        elif assign_fire_ignition_prob == 2:
+            autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
+            getting_param = False # break loop
+        elif assign_fire_ignition_prob == 3:
+            config_info("autocombustion probability")
+        elif assign_fire_ignition_prob == 4: 
+            quit()
+        elif assign_fire_ignition_prob == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
     
     return autocombustion_prob
 
@@ -208,28 +240,55 @@ def get_fire_spread_prob() -> float:
     """Return user-defined or random probability for fire to spread to adjacent non-ignited tree patches"""
 
     spread_prob = None
+    getting_param = True
 
-    assign_fire_spread_prob = get_valid_input("Enter '1' for user-defined fire spread probability or '2' for random assignment: ")
+    while getting_param:
+        get_input_menu("fire spread", "probability")
+        assign_fire_spread_prob = get_valid_input("Choice: ")
 
-    if assign_fire_spread_prob == 1:
-        spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
-    else:
-        spread_prob = round(random.uniform(0.4, 0.6), 1)
-    
+        if assign_fire_spread_prob == 1:
+            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
+            getting_param = False # break loop
+        elif assign_fire_spread_prob == 2:
+            spread_prob = round(random.uniform(0.4, 0.6), 1)
+            getting_param = False # break loop
+        elif assign_fire_spread_prob == 3:
+            config_info("fire spread probability")
+        elif assign_fire_spread_prob == 4: 
+            quit()
+        elif assign_fire_spread_prob == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
+
     return spread_prob
 
 def get_rock_respawn_prob() -> float:
     """Return user-defined or random respawn probability for rockpatch to mutate to treepatch"""
 
     rock_mutate_prob = 0
+    getting_param = True
 
-    # get user input
-    assign_respawn_prob = get_valid_input("Enter '1' for user-defined respawn probability (likelihood of a rock patch turning into a tree patch over time) or '2' for random assignment: ")
+    while getting_param:
+        get_input_menu("rockpatch mutation", "probability")
+        assign_respawn_prob = get_valid_input = get_valid_input("Choice: ")
 
-    if assign_respawn_prob == 1:
-        rock_mutate_prob = get_valid_float_input("Enter the fire spread probability (0.3-0.5): ")
-    else:
-        rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
+        if assign_respawn_prob == 1:
+            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ")
+            getting_param = False # break loop
+        elif assign_respawn_prob == 2:
+            rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
+            getting_param = False # break loop
+        elif assign_respawn_prob == 3:
+            config_info("rock respawn probability")
+        elif assign_respawn_prob == 4: 
+            quit()
+        elif assign_respawn_prob == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
     
     return rock_mutate_prob
 
@@ -238,22 +297,38 @@ def get_sim_limit() -> int:
     """Return the user defined simulation limit for the simulation"""
 
     sim_time = None
+    getting_param = True
 
-    # get user input
-    assign_sim_time_limit = get_valid_input("Enter '1' for user-defined simulation time limit or '2' for random assignment: ")
-    if assign_sim_time_limit == 1:
-        sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
-    else:
-        sim_time = round(random.randint(2, 50))
+    while getting_param:
+        get_input_menu("simulation limit", "configuration")
+        assign_sim_time_limit = get_valid_input = get_valid_input("Choice: ")
+
+        if assign_sim_time_limit == 1:
+            sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
+            getting_param = False # break loop
+        elif assign_sim_time_limit == 2:
+            sim_time = round(random.randint(2, 50))
+            getting_param = False # break loop
+        elif assign_sim_time_limit == 3:
+            config_info("rock respawn probability")
+        elif assign_sim_time_limit == 4: 
+            quit()
+        elif assign_sim_time_limit == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
     
     return sim_time
 
 def quit() -> None:
     """Exits the current program execution"""
+    print("\n...Exiting program. Have a great day!")
     sys.exit()
 
 def restart_program() -> None:
     """Exits current program execution and returns to main menu"""
+    print("\n...Restarting program." )
     python = sys.executable
     os.execl(python, python, *sys.argv)
 
@@ -270,7 +345,11 @@ def get_input_menu(input: str, config_type: str) -> print:
     config_type: str
         Type of configuration argument, eg. graph, terrain, probability, simulation. 
     """
-    print(f"=============================================================\
+    time.sleep(1)
+    print(f"...Opening {input} configuraton menu")
+    time.sleep(1)
+
+    print(f"\n=============================================================\
           \nConfiguring {input} {config_type} parameter.\
           \nYou have the following options:\
           \n=> Enter '1' for user-defined {input}\
@@ -280,40 +359,69 @@ def get_input_menu(input: str, config_type: str) -> print:
           \n=> Enter '5' to restart program")
 
 def config_info(config: str) -> None:
-    """Display configuration info to user
+    """Display configuration information to user
 
     Parameters
     ----------
     config: str
-        configuration parameter, the user is requesting info on: tree_rate, firefighters, autocombustion_prob, fire_spread_prob
-        rock_respawn_prob, sim_limit
+        configuration parameter, the user is requesting info on: tree rate, firefighters, autocombustion probability, 
+        fire spread probability, rock respawn probability & simulation limit.
     """
 
-    if config == "tree_rate":
-        print(f"Info for configuring tree rate:", 
-               "\n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
-                \n# This parameter can be set either by the user or by randomly generating a percentage\
-                \n# If you wish to specify the rate, Please enter an integer value beteween 1-99")
-    elif config == "firefighters":
-        print(f"Info for configuring firefighters:", 
-               "\n# This parameter sets the configuration for the number of firefighters used in simulating the graph. \
-                \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
-                \n# If you wish to specify the number, please enter an integer value beteween 2-50")
-    elif config == "autocombustion_prob":
-        pass
-    elif config == "fire_spread_prob":
-        pass
-    elif config == "rock_respawn_prob":
-        pass
-    elif config == "sim_limit":
-        pass
+    time.sleep(1)
+    print(f"...Opening {config} information.")
+    time.sleep(1)
 
+    print('\n=============================================================')
+    # Display configuration information to user
+    if config == "tree rate":
+        print(f"Info for configuring tree rate:\
+              \n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
+              \n# This parameter can be set either by the user or by randomly generating a percentage\
+              \n# If you wish to specify the rate, Please enter an integer value beteween 1-99")
+    elif config == "firefighters":
+        print(f"Info for configuring firefighters:\
+              \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
+              \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
+              \n# If you wish to specify the number, please enter an integer value beteween 2-50")
+    elif config == "autocombustion probability":
+        print(f"Info for configuring autocombustion probability on tree patches:\
+              \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
+              \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
+              \n# If you wish to specify the number, please enter an integer value beteween 2-50")
+    elif config == "fire spread probability":
+        print(f"Info for configuring fire spread probability:\
+              \n# This parameter sets the probability that fire spreads from ignited tree patches.\
+              \n# This parameter can be set either by the user or by randomly generating the probability\
+              \n# If you wish to specify the number, please enter a floating point number between 0-1")
+    elif config == "rock respawn probability":
+        print(f"Info for configuring forest on rockpatches repawn probability:\
+              \n# This parameter sets the probability that a treepatch grows on a rockpatch\
+              \n# This parameter can be set either by the user or by randomly generating the probability\
+              \n# If you wish to specify the number, please enter a floating point number between 0-1")
+    elif config == "simulation limit":
+        print(f"Info for configuring simulation limit:\
+              \n# This parameter sets the limit for the simulation\
+              \n# This parameter can be set either by the user or by randomly generating the probability\
+              \n# If you wish to specify the number, please enter an integer between 2-50")
+
+    # redirect to called configuration
+    time.sleep(2)
+    print(f"\n...Redirecting to {config} configuration.")
+    time.sleep(2)
 
 # Printing Terrain configuration
 def display_config(edges: List[Tuple], tree_rate: int, firefighters: int, 
                    autocombustion_prob: float, fire_spread_prob: float, rock_respawn_prob: float, sim_limit: int) -> None:
     """Displays current simulation configuration to the user"""
 
+    time.sleep(1)
+    print(f"...Completing calculations.")
+    time.sleep(0.5)
+    print(f"...Finalizing configuration.")
+    time.sleep(0.5)
+
+    print("Your current configuration for the simulation:")
     print(f"The ratio of trees to rocks is {tree_rate} : {100 - tree_rate}.")
     print(f"You have employed {firefighters} firefighters.")
     print(f"The probability of fire ignition is {autocombustion_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of tree patch respawn is {rock_respawn_prob}.")
