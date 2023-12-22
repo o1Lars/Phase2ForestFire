@@ -272,7 +272,7 @@ def get_rock_respawn_prob() -> float:
 
     while getting_param:
         get_input_menu("rockpatch mutation", "probability")
-        assign_respawn_prob = get_valid_input = get_valid_input("Choice: ")
+        assign_respawn_prob = get_valid_input("Choice: ")
 
         if assign_respawn_prob == 1:
             rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ")
@@ -301,7 +301,7 @@ def get_sim_limit() -> int:
 
     while getting_param:
         get_input_menu("simulation limit", "configuration")
-        assign_sim_time_limit = get_valid_input = get_valid_input("Choice: ")
+        assign_sim_time_limit = get_valid_input("Choice: ")
 
         if assign_sim_time_limit == 1:
             sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
@@ -310,7 +310,7 @@ def get_sim_limit() -> int:
             sim_time = round(random.randint(2, 50))
             getting_param = False # break loop
         elif assign_sim_time_limit == 3:
-            config_info("rock respawn probability")
+            config_info("simulation limit")
         elif assign_sim_time_limit == 4: 
             quit()
         elif assign_sim_time_limit == 5:
@@ -346,7 +346,7 @@ def get_input_menu(input: str, config_type: str) -> print:
         Type of configuration argument, eg. graph, terrain, probability, simulation. 
     """
     time.sleep(1)
-    print(f"...Opening {input} configuraton menu")
+    print(f"\n...Opening {input} configuraton menu")
     time.sleep(1)
 
     print(f"\n=============================================================\
@@ -354,7 +354,7 @@ def get_input_menu(input: str, config_type: str) -> print:
           \nYou have the following options:\
           \n=> Enter '1' for user-defined {input}\
           \n=> Enter '2' for random assignment\
-          \n=> Enter '3' for info regarding this configuration parameter\
+          \n=> Enter '3' for info regarding the {input} configuration parameter\
           \n=> Enter '4' to exit program\
           \n=> Enter '5' to restart program")
 
@@ -369,7 +369,7 @@ def config_info(config: str) -> None:
     """
 
     time.sleep(1)
-    print(f"...Opening {config} information.")
+    print(f"\n...Opening {config} information.")
     time.sleep(1)
 
     print('\n=============================================================')
@@ -377,33 +377,34 @@ def config_info(config: str) -> None:
     if config == "tree rate":
         print(f"Info for configuring tree rate:\
               \n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
-              \n# This parameter can be set either by the user or by randomly generating a percentage\
-              \n# If you wish to specify the rate, Please enter an integer value beteween 1-99")
+              \n# This parameter can be set either by the user or by randomly generating a percentage.\
+              \n# If you wish to specify the rate, Please enter an integer value beteween 1-99.")
     elif config == "firefighters":
         print(f"Info for configuring firefighters:\
               \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
-              \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
-              \n# If you wish to specify the number, please enter an integer value beteween 2-50")
+              \n# This parameter can be set either by the user or by randomly generating a number of firefighters.\
+              \n# If you wish to specify the number, please enter an integer value beteween 2-50.")
     elif config == "autocombustion probability":
         print(f"Info for configuring autocombustion probability on tree patches:\
-              \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
-              \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
-              \n# If you wish to specify the number, please enter an integer value beteween 2-50")
+              \n# This parameter sets the probability for tree patches to autocombust (min 60%, max 80%).\
+              \n# This parameter can be set either by the user or by randomly generating the probability.\
+              \n# If you wish to specify the number, please enter a floating point number between 0.6-0.8.")
     elif config == "fire spread probability":
         print(f"Info for configuring fire spread probability:\
               \n# This parameter sets the probability that fire spreads from ignited tree patches.\
-              \n# This parameter can be set either by the user or by randomly generating the probability\
-              \n# If you wish to specify the number, please enter a floating point number between 0-1")
+              \n# This parameter can be set either by the user or by randomly generating the probability.\
+              \n# If you wish to specify the number, please enter a floating point number between 0-1.")
     elif config == "rock respawn probability":
         print(f"Info for configuring forest on rockpatches repawn probability:\
-              \n# This parameter sets the probability that a treepatch grows on a rockpatch\
-              \n# This parameter can be set either by the user or by randomly generating the probability\
-              \n# If you wish to specify the number, please enter a floating point number between 0-1")
+              \n# This parameter sets the probability that a treepatch grows on a rockpatch.\
+              \n# This parameter can be set either by the user or by randomly generating the probability.\
+              \n# If you wish to specify the number, please enter a floating point number between 0-1.")
     elif config == "simulation limit":
         print(f"Info for configuring simulation limit:\
-              \n# This parameter sets the limit for the simulation\
-              \n# This parameter can be set either by the user or by randomly generating the probability\
-              \n# If you wish to specify the number, please enter an integer between 2-50")
+              \n# This parameter sets the limit for the simulation.\
+              \n# This determines for how many evolution steps, the simulation will run.\
+              \n# This parameter can be set either by the user or by randomly generating the probability.\
+              \n# If you wish to specify the number, please enter an integer between 2-50.")
 
     # redirect to called configuration
     time.sleep(2)
