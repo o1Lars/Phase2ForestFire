@@ -251,9 +251,9 @@ def config_info(config:  any) -> None:
 
     if config == "tree_rate":
         print(f"Info for configuring tree rate:", 
-              "\n#This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
-                \n#Please enter an integer value beteween 1-99 representing the percentage of tree patches \
-                \n#in relation to rock patches")
+              "\n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
+                \n# Please enter an integer value beteween 1-99 representing the percentage of tree patches \
+                \n# in relation to rock patches")
         get_tree_rate()
 
 
