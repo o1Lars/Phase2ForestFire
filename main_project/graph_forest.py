@@ -153,15 +153,24 @@ def get_tree_rate() -> int:
     """Return the trees to rockpatches rate"""
 
     tree_rate = None
+    getting_param = True
 
-    assign_tree_percent = get_valid_input("Enter '1' for user-defined tree percentage or '2' for random assignment or '3' for more info: ")
+    while getting_param:
+        get_input_menu("tree_rate", "terrain")
+        assign_tree_percent = get_valid_input("Choice: ")
 
-    if assign_tree_percent == 1:
-        tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
-    elif assign_tree_percent == 2:
-        tree_rate = random.randint(1, 99)
-    elif assign_tree_percent == 3:
-        config_info("tree_rate")
+        if assign_tree_percent == 1:
+            tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
+            getting_param = False
+        elif assign_tree_percent == 2:
+            tree_rate = random.randint(1, 99)
+            getting_param = False
+        elif assign_tree_percent == 3:
+            config_info("tree_rate")
+        elif assign_tree_percent == 4: 
+            quit()
+        elif assign_tree_percent == 5:
+            restart_program()
 
     return tree_rate
 
@@ -243,24 +252,65 @@ def quit() -> None:
     """Exits the current program execution"""
     sys.exit()
 
-def start_menu() -> None:
-    """Present start menu (containing program info and required setup) to user"""
+def restart_program() -> None:
+    """Exits current program execution and returns to main menu"""
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
 
-def config_info(config:  any) -> None:
-    """Display configuration info to user"""
+def start_menu() -> None:
+    """Present start menu (containing program info and required setup to user"""
+
+def get_input_menu(input: str, config_type: str) -> print:
+    """Print the menu options for input configuration.
+
+    Parameters
+    ----------
+    input: str
+        Name of input for graph configuration
+    config_type: str
+        Type of configuration argument, eg. graph, terrain, probability, simulation. 
+    """
+    print(f"=============================================================\
+          \nConfiguring {input} {config_type} parameter.\
+          \nYou have the following options:\
+          \n=> Enter '1' for user-defined {input}\
+          \n=> Enter '2' for random assignment\
+          \n=> Enter '3' for info regarding this configuration parameter\
+          \n=> Enter '4' to exit program\
+          \n=> Enter '5' to restart program")
+
+def config_info(config: str) -> None:
+    """Display configuration info to user
+
+    Parameters
+    ----------
+    config: str
+        configuration paramater, the user is requesting info on
+    """
 
     if config == "tree_rate":
         print(f"Info for configuring tree rate:", 
-              "\n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
-                \n# Please enter an integer value beteween 1-99 representing the percentage of tree patches \
-                \n# in relation to rock patches")
-        get_tree_rate()
+               "\n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
+                \n# This parameter can be set either by the user or by randomly generating a percentage\
+                \n# If you wish to specify the rate, Please enter an integer value beteween 1-99")
+    elif config == "firefighters":
+        print(f"Info for configuring firefighters:", 
+               "\n# This parameter sets the configuration for the number of firefighters used in simulating the graph. \
+                \n# This parameter can be set either by the user or by randomly generating a number of firefighters\
+                \n# If you wish to specify the number, please enter an integer value beteween 2-50")
+    elif config == "autocombustion_prob":
+        pass
+    elif config == "fire_spread_prob":
+        pass
+    elif config == "rock_respawn_prob":
+        pass
+    elif config == "sim_limit":
+        pass
 
 
 # Printing Terrain configuration
 def display_config(edges: List[Tuple], tree_rate: int, firefighters: int, 
                    autocombustion_prob: float, fire_spread_prob: float, rock_respawn_prob: float, sim_limit: int) -> None:
-
     """Displays current simulation configuration to the user"""
 
     print(f"The ratio of trees to rocks is {tree_rate} : {100 - tree_rate}.")
