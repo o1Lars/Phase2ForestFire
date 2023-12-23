@@ -7,7 +7,7 @@ import random
 from typing import List, Tuple, Optional
 
 def main() -> None:
-    """Execute main program, get user input, perform simulation and display report"""
+    """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
     # Show start menu
     start_menu()
     configuration_done = False       # condition for breaking loop
@@ -230,12 +230,27 @@ def get_valid_input(prompt: str, valid_input_msg: str = None) -> int:
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
     """
-    while True:
+    getting_int = False
+
+    while not getting_int:
         try:
-            user_input = int(input(prompt))
-            return user_input
+            user_input = input(prompt)
+            user_input.isdigit()
+            getting_int = True
         except ValueError:
-            print("Invalid input. Please enter a valid integer.")
+            print("Invalid input. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except TypeError:
+            print("Invalid operation. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except KeyboardInterrupt:
+            print("\nOperation interrupted by the user.\
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+
+    return user_input
 
 def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
     """This function checks if the user input float is valid. (To be used in input parameters)
@@ -247,12 +262,26 @@ def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
     """
-    while True:
+
+    while not getting_float:
         try:
             user_input = round(float(input(prompt)), 1)
-            return user_input
+            user_input.isdigit()
+            getting_float = True
         except ValueError:
-            print("Invalid input. Please enter a valid decimal number.")
+            print("Invalid input. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except TypeError:
+            print("Invalid operation. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except KeyboardInterrupt:
+            print("\nOperation interrupted by the user.\
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+
+    return user_input
 
 def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
     """This function checks if the user input string is valid.
@@ -264,6 +293,7 @@ def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
     """
+    getting_str = False
 
     while not getting_str:
         try:
@@ -356,7 +386,7 @@ def get_autocombustion_prob() -> float:
         assign_fire_ignition_prob = get_valid_input("Choice: ")
 
         if assign_fire_ignition_prob == 1:
-            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ")
+            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ", "floating point between 0-1")
             getting_param = False # break loop
         elif assign_fire_ignition_prob == 2:
             autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
@@ -384,7 +414,7 @@ def get_fire_spread_prob() -> float:
         assign_fire_spread_prob = get_valid_input("Choice: ")
 
         if assign_fire_spread_prob == 1:
-            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ")
+            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ", "floating point between 0-1")
             getting_param = False # break loop
         elif assign_fire_spread_prob == 2:
             spread_prob = round(random.uniform(0.4, 0.6), 1)
@@ -412,7 +442,7 @@ def get_rock_respawn_prob() -> float:
         assign_respawn_prob = get_valid_input("Choice: ")
 
         if assign_respawn_prob == 1:
-            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ")
+            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ", "floating point between 0-1")
             getting_param = False # break loop
         elif assign_respawn_prob == 2:
             rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
