@@ -4,23 +4,53 @@ import os
 import sys
 import time
 import random
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 def main() -> None:
     """Execute main program, get user input, perform simulation and display report"""
     # Show start menu
     start_menu()
+    configuration_done = False       # condition for breaking loop
+
     # get user input
-    edges = get_edges()
-    tree_rate = get_tree_rate()
-    firefighters = get_firefighters()
-    autocombustion_prob = get_autocombustion_prob()
-    fire_spread_prob = get_fire_spread_prob()
-    rock_respawn_prob = get_rock_respawn_prob()
-    sim_limit = get_sim_limit()
-    # Show config
-    display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
-    # Ask if config needs updating
+    while not configuration_done:
+        edges = get_edges()
+        tree_rate = get_tree_rate()
+        firefighters = get_firefighters()
+        autocombustion_prob = get_autocombustion_prob()
+        fire_spread_prob = get_fire_spread_prob()
+        rock_respawn_prob = get_rock_respawn_prob()
+        sim_limit = get_sim_limit()
+
+        # Show config
+        display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
+
+        # Finalize configuration
+        print("\nDo you want to run simulation with these configurations?\
+              \n=> Select '1' to accept configuration and run simulation\
+              \n=> Select '2' to reconfigure parameters\
+              \n=> Select '3' to restart program\
+              \n=> Select '4' to exit program")
+        
+        finalize_configuration = get_valid_input("Choice: ")
+
+        if finalize_configuration == 1:
+            print("\n Simulation configuration has been accepted")
+            time.sleep(0.2)
+            print("\n... Initializing simulation.")
+            time.sleep(0.5)
+            configuration_done = True
+        elif finalize_configuration == 2:
+            print("...Redirecting")
+            time.sleep(0.2)
+        elif finalize_configuration == 3:
+            restart_program()
+        elif finalize_configuration == 4:
+            quit()
+        else:
+            print("Invalid choice.")
+            print("...Redirecting")
+            time.sleep(0.2)
     # Run simulation
     # Display report
     # Could ask if user wants to go again or exit? 
@@ -190,8 +220,16 @@ def get_edges() -> List[Tuple]:
 
 
 # Terrain configuration
-def get_valid_input(prompt):
-    """This function checks to if the user input integer is valid. (To be used in input parameters)"""
+def get_valid_input(prompt: str, valid_input_msg: str = None) -> int:
+    """This function checks to if the user input integer is valid. (To be used in input parameters)
+
+    Parameters
+    ----------
+    prompt: str
+        Prompt message for receiving user input. 
+    valid_input_msg: Optional[str], default = None
+        Will specify to the user, what input will be valid for where function is called
+    """
     while True:
         try:
             user_input = int(input(prompt))
@@ -199,14 +237,54 @@ def get_valid_input(prompt):
         except ValueError:
             print("Invalid input. Please enter a valid integer.")
 
-def get_valid_float_input(prompt):
-    """This function checks if the user input float is valid. (To be used in input parameters)"""
+def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
+    """This function checks if the user input float is valid. (To be used in input parameters)
+    
+    Parameters
+    ----------
+    prompt: str
+        Prompt message for receiving user input. 
+    valid_input_msg: Optional[str], default = None
+        Will specify to the user, what input will be valid for where function is called
+    """
     while True:
         try:
             user_input = round(float(input(prompt)), 1)
             return user_input
         except ValueError:
             print("Invalid input. Please enter a valid decimal number.")
+
+def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
+    """This function checks if the user input string is valid.
+    
+    Parameters
+    ----------
+    prompt: str
+        Prompt message for receiving user input. 
+    valid_input_msg: Optional[str], default = None
+        Will specify to the user, what input will be valid for where function is called
+    """
+
+    while not getting_str:
+        try:
+            user_input = input(prompt).strip()
+            isinstance(user_input, str)
+            getting_str = True
+        except ValueError:
+            print("Invalid input. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except TypeError:
+            print("Invalid operation. \
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+        except KeyboardInterrupt:
+            print("\nOperation interrupted by the user.\
+                  \nTry again!")
+            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+
+    
+    return user_input
 
 # Terrain configuration input parameters
 def get_tree_rate() -> int:
