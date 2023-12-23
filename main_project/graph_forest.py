@@ -9,6 +9,7 @@ from typing import List, Tuple
 def main() -> None:
     """Execute main program, get user input, perform simulation and display report"""
     # Show start menu
+    start_menu()
     # get user input
     edges = get_edges()
     tree_rate = get_tree_rate()
@@ -19,7 +20,7 @@ def main() -> None:
     sim_limit = get_sim_limit()
     # Show config
     display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
-    # Ask if config needs updated
+    # Ask if config needs updating
     # Run simulation
     # Display report
     # Could ask if user wants to go again or exit? 
@@ -94,41 +95,99 @@ def create_graph_from_file(filename: str) -> list[tuple]:
 
     return graph_edges
 
-# Load the functions
+def check_planar_graph(edges: List[Tuple]) -> bool:
+    """Return true if edges represent a planar graph.
+
+    Parameters
+    ----------
+    edges: List[Tuple]
+        test utilizes the edges_planar method from the graph_helper module.
+    """
+
+    time.sleep(1)
+    print(f"\n...Configuring internal test for verifying that edges represent a planar graph. Please wait.")
+    time.sleep(0.6)
+    print(f"...Finalizing parameter configuration for planar test")
+    time.sleep(0.6)
+    print(f"...Finalizing test")
+    time.sleep(0.6)
+    print(f"...Analyzing test data")
+    time.sleep(1)
+    print("\nTest result:")
+    time.sleep(0.3)
+
+    # Get test result
+    if gh.edges_planar(edges):
+        print("Your graph is a planar graph. Yahoo!")
+        return True
+    else:
+        print("Your graph is not a planar graph.")
+        print("Please try again with a new file of edges, or pseudo-randomly generating the edges for the graph.")
+        print("\n...Redirecting to graph configuration menu.")
+        return False
+
+# Graph edge configuration
 def get_edges() -> List[Tuple]:
-    """Return user-defined or pseudorandom edgelist"""
-    graph_type = int(input("Enter '1' to load your own graph or '2' to generate a pseudo-random graph: "))
+    """Return a list of user-defined or pseudorandomly generated edges representing a planar graph"""
 
-    if graph_type == 1:
-        file_path = input("Enter the file path: ")
-        file_name = input("Enter the file name: ") + ".dat"
+    graph_edges = None
+    getting_param = True
 
-        # Compile file information
-        user_file_path = os.path.join(file_path, file_name)
+    while getting_param:
+        get_input_menu("edges", "graph")
+        graph_type = get_valid_input("Choice: ")
 
-        user_graph = user_file(file_path, file_name)
-        graph_edges = create_graph_from_file(user_file_path)
+        if graph_type == 1:
+            print("Generating graph from input file.\
+                  \nfile must adhere to the following criteria:\
+                  \nEach non-empty line must represent an edge, identified by two integers separated by a comma")
+            file_path = input("Enter the file path: ")
+            file_name = input("Enter the file name: ") + ".dat"
 
-        # Verify that the graph is a planar graph
-        if gh.edges_planar(graph_edges):
-            print("Your graph is a planar graph. Yahoo!")
-        else:
-            print("Your graph is not a planar graph.")
+            # Compile file information
+            user_file_path = os.path.join(file_path, file_name)
 
-    elif graph_type == 2:
-        n_random_graph = int(input("Enter the number of patches (vertices) you'd like in your forest (graph): "))
-        if n_random_graph > 500:
-            print("Your desired number of vertices exceeds the limit.")
-        else:
-            graph_edges, graph_pos = gh.voronoi_to_edges(n_random_graph)
+            # Create edges from provided file
+            graph_edges = create_graph_from_file(user_file_path)
 
             # Verify that the graph is a planar graph
-            if gh.edges_planar(graph_edges):
-                print("Your graph is a planar graph. Yahoo!")
-            else:
-                print("Your graph is not a planar graph.")
-    else:
-        print("Invalid choice. Please enter '1' or '2'.")
+            check_planar_graph(graph_edges)
+
+            # Break loop
+            getting_param = False
+        elif graph_type == 2:
+            print("Generating random graph.")
+            
+            vertices_num = None
+
+            while vertices_num == None:
+                print("Graph must have atleast 4 patches (vertices) of land, and a maximum of 500 patches of land.\
+                      \nPlease enter the number of patches  you'd like in your forest (graph):")
+                vertices_num = int(input("Number of patches: "))
+                if vertices_num > 500:
+                    print("Your desired number of vertices exceeds the limit. Please try again!")
+                    time.sleep(0.4)
+                    print("...Redirecting")
+                    time.sleep(0.4)
+                    vertices_num = None
+                else:
+                    graph_edges, graph_pos = gh.voronoi_to_edges(vertices_num)
+
+            # Verify that the graph is a planar graph
+            check_planar_graph(graph_edges)
+
+            # Break loop
+            getting_param = False
+        elif graph_type == 3:
+            config_info("edges")
+        elif graph_type == 4: 
+            quit()
+        elif graph_type == 5:
+            restart_program()
+        else:
+            print("Invalid choice.\
+                  \n...Redirecting.")
+
 
 # Terrain configuration
 def get_valid_input(prompt):
@@ -333,7 +392,31 @@ def restart_program() -> None:
     os.execl(python, python, *sys.argv)
 
 def start_menu() -> None:
-    """Present start menu (containing program info and required setup to user"""
+    """Print start menu (containing program info and required setup to user"""
+
+    print("\
+          \n======================================\
+          \n=========Forest Fire Simulator========\
+          \n======================================")
+    
+    print("\nThis is the Forest Fire Simulator program.\
+          \nThis program uses a graph to simulate the evolution of a wildfire over patches of land.\
+          \nEach patch of land is considered either a rock patch or a tree patch.\
+          \nWhile simulating the evolution, a set number of firefighters will try to extinguish fires on tree patches.\
+          \nThe tree patches have a (small) probability of catching fire (autcombustion) and, once lit, fire can propagate\
+          \nto neighbouring tree patches. A tree patch that is devoured by the fire will turn into a rock patch.\
+          \nThe rock patches will not propagate fire, however, over time, they have a small probability of turning into a tree patch.")
+    
+    print("\nThe simulation needs the following parameters for the configuration\
+          \n and can be defined by the user or randomly generated:\
+          \n==>Vertices/land patches<==\
+          \n==>Tree to rock rate<==\
+          \n==>Firefighters<==\
+          \n==>Autocombustion probability<==\
+          \n==>Fire spread probability<==\
+          \n==>Rock Respawn Probability<==\
+          \n==>Simulation limit<==")
+    
 
 def get_input_menu(input: str, config_type: str) -> print:
     """Print the menu options for input configuration.
@@ -374,7 +457,15 @@ def config_info(config: str) -> None:
 
     print('\n=============================================================')
     # Display configuration information to user
-    if config == "tree rate":
+    if config == "edges":
+        print(f"Info for configuring land patches:\
+              \n# This parameter sets the configuration for the number of landpatches and how they are connected on the graph. \
+              \n# This parameter can be set either by the user or by randomly generating a percentage.\
+              \n# If you choose option 1 and generate the vertices from a file, the file must adhere to:\
+              \n# Each non-empty line represents an edge, identified by two integers separated by a comma.\
+              \n# The edges from the file must configure a graph, that can have a planar representation.\
+              \n# If you choose option 2, the graph will be pseudo-randomly generated and have a planar representation")
+    elif config == "tree rate":
         print(f"Info for configuring tree rate:\
               \n# This parameter sets the configuration for the ratio of tree patches to rock patches in the graph. \
               \n# This parameter can be set either by the user or by randomly generating a percentage.\
