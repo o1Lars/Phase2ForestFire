@@ -164,7 +164,7 @@ def get_edges() -> List[Tuple]:
     getting_param = True
 
     while getting_param:
-        get_input_menu("edges", "graph")
+        get_input_menu("landpatches", "graph")
         graph_type = get_valid_input("Choice: ")
 
         if graph_type == 1:
@@ -220,7 +220,7 @@ def get_edges() -> List[Tuple]:
 
 
 # Terrain configuration
-def get_valid_input(prompt: str, valid_input_msg: str = None) -> int:
+def get_valid_input(prompt: str, valid_input_msg: str = None,  min: int=None, max: int=None) -> int:
     """This function checks to if the user input integer is valid. (To be used in input parameters)
 
     Parameters
@@ -229,14 +229,34 @@ def get_valid_input(prompt: str, valid_input_msg: str = None) -> int:
         Prompt message for receiving user input. 
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
+    min: Optional[int], default = None
+        If provided, function will keep prompting user until user input > minimum
+    max: Optional[int], default = None
+        If provided, function will keep prompting user until user input < maximum
     """
-    getting_int = False
+    user_input = None
+    getting_input = False
 
-    while not getting_int:
+    while not getting_input:
         try:
-            user_input = input(prompt)
-            user_input.isdigit()
-            getting_int = True
+            user_input = int(input(prompt))
+            if user_input.isdigit() == False: raise ValueError
+
+            # Check for min
+            if min:
+                if user_input < min:
+                    print(f"Input is less than minimum ({min}). Please provide value between {min}-{max}")
+                    raise ValueError
+                
+            # Check for max
+            if max:
+                if user_input > max:
+                    print(f"Input is greater than maximum ({max}). Please provide value between {min}-{max}")
+                    raise ValueError
+            
+            # If everything is okay, break loop.
+            getting_input = True
+
         except ValueError:
             print("Invalid input. \
                   \nTry again!")
@@ -252,7 +272,7 @@ def get_valid_input(prompt: str, valid_input_msg: str = None) -> int:
 
     return user_input
 
-def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
+def get_valid_float_input(prompt: str, valid_input_msg: str = None, min: float=None, max: float=None) -> float:
     """This function checks if the user input float is valid. (To be used in input parameters)
     
     Parameters
@@ -261,13 +281,34 @@ def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
         Prompt message for receiving user input. 
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
+    min: Optional[float], default = None
+        If provided, function will keep prompting user until user input > minimum
+    max: Optional[float], default = None
+        If provided, function will keep prompting user until user input < maximum
     """
+    user_input = None
+    getting_input = False
 
-    while not getting_float:
+    while not getting_input:
         try:
             user_input = round(float(input(prompt)), 1)
-            user_input.isdigit()
-            getting_float = True
+            if user_input.isdigit() == False: raise ValueError
+
+            # Check for min
+            if min:
+                if user_input < min:
+                    print(f"Input is less than minimum ({min}). Please provide value between {min}-{max}")
+                    raise ValueError
+                
+            # Check for max
+            if max:
+                if user_input > max:
+                    print(f"Input is greater than maximum ({max}). Please provide value between {min}-{max}")
+                    raise ValueError
+            
+            # If everything is okay, break loop.
+            getting_input = True
+
         except ValueError:
             print("Invalid input. \
                   \nTry again!")
@@ -283,7 +324,7 @@ def get_valid_float_input(prompt: str, valid_input_msg: str = None) -> float:
 
     return user_input
 
-def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
+def get_valid_string_input(prompt: str, valid_input_msg: str = None, yes_no: bool=False) -> str:
     """This function checks if the user input string is valid.
     
     Parameters
@@ -292,16 +333,30 @@ def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
         Prompt message for receiving user input. 
     valid_input_msg: Optional[str], default = None
         Will specify to the user, what input will be valid for where function is called
+    yes_no: bool=False, default = None
+        If True, function validates input as either yes or no answer (y/n).
     """
-    getting_str = False
+    getting_input = False
+    user_input = None
 
-    while not getting_str:
+    while not getting_input:
         try:
             user_input = input(prompt).strip()
-            isinstance(user_input, str)
-            getting_str = True
+            if isinstance(user_input, str) == False: raise ValueError
+            if user_input.isdigit() == True: raise ValueError
+
+            # Check yes_no
+            if yes_no:
+                if not (user_input == "yes" or user_input == "y"):
+                    print("Please enter 'yes' or 'no (y/n)")
+                    raise ValueError
+                if not (user_input == "no" or user_input == "n"):
+                    print("Please enter 'yes' or 'no (y/n)")
+                    raise ValueError
+                
+            getting_input = True
         except ValueError:
-            print("Invalid input. \
+            print(f"Invalid input: {user_input}. \
                   \nTry again!")
             if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
         except TypeError:
@@ -312,8 +367,8 @@ def get_valid_string_input(prompt: str, valid_input_msg: str = None) -> str:
             print("\nOperation interrupted by the user.\
                   \nTry again!")
             if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            quit()
 
-    
     return user_input
 
 # Terrain configuration input parameters
@@ -517,13 +572,13 @@ def start_menu() -> None:
     
     print("\nThe simulation needs the following parameters for the configuration\
           \n and can be defined by the user or randomly generated:\
-          \n==>Vertices/land patches<==\
-          \n==>Tree to rock rate<==\
-          \n==>Firefighters<==\
-          \n==>Autocombustion probability<==\
-          \n==>Fire spread probability<==\
-          \n==>Rock Respawn Probability<==\
-          \n==>Simulation limit<==")
+          \n==> Vertices/land patches\
+          \n==> Tree to rock rate\
+          \n==> Firefighters\
+          \n==> Autocombustion probability\
+          \n==> Fire spread probability\
+          \n==> Rock Respawn Probability\
+          \n==> Simulation limit")
     
 
 def get_input_menu(input: str, config_type: str) -> print:
