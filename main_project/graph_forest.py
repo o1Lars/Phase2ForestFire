@@ -51,7 +51,9 @@ def main() -> None:
             print("Invalid choice.")
             print("...Redirecting")
             time.sleep(0.2)
+    
     # Run simulation
+    graph = gs.Graph(edges, tree_rate, firefighters, fire_spread_prob, sim_limit)
     # Display report
     # Could ask if user wants to go again or exit? 
     pass
@@ -165,7 +167,7 @@ def get_edges() -> List[Tuple]:
 
     while getting_param:
         get_input_menu("landpatches", "graph")
-        graph_type = get_valid_input("Choice: ")
+        graph_type = get_valid_input("Choice: ", max=6)
 
         if graph_type == 1:
             print("Generating graph from input file.\
@@ -218,6 +220,7 @@ def get_edges() -> List[Tuple]:
             print("Invalid choice.\
                   \n...Redirecting.")
 
+    return graph_edges
 
 # Terrain configuration
 def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: int=None) -> int:
@@ -242,12 +245,12 @@ def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: i
             user_input = int(input(prompt))
 
             # Check for min
-            if min or max:
-                assert user_input > min or user_input , f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
+            if min:
+                assert user_input >= min, f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
                 
             # Check for max
             if max:
-                assert user_input < max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
+                assert user_input <= max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
             
             # If everything is okay, break loop.
             getting_input = True
@@ -295,17 +298,17 @@ def get_valid_float_input(prompt: str, valid_input: str = None, min: float=None,
 
     while not getting_input:
         try:
-            user_input = input(prompt)
-            if user_input.isdigit() == False: raise ValueError
-            round(float(user_input), 1)
+            user_input = float(input(prompt))
+            #if user_input.isdigit() == False: raise ValueError
+            #round(float(user_input), 1)
 
             # Check for min
             if min:
-                assert user_input > min, f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
+                assert user_input >= min, f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
                 
             # Check for max
             if max:
-                assert user_input < max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
+                assert user_input <= max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
             
             # If everything is okay, break loop.
             getting_input = True

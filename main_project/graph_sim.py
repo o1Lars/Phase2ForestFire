@@ -139,9 +139,9 @@ class Graph():
         self._patches = lc.Landpatch(self._vertices_list, self._vertices_neighbours, firefighters, tree_distribution, fire_spread_prob)      
 
         # visualize opening instance of graph
-        self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=200)
+        self._vis_graph = vis_rfg.Visualiser(self._edges, vis_labels=True, node_size=50)
         self._vis_graph.update_node_colours(self._patches._color_map)
-        sleep(0.6) # add delay to show initial graph
+        sleep(1) # add delay to show initial graph
 
         # Create data class instance to store graph data
         self._graph_data = Graphdata()
