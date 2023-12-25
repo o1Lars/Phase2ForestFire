@@ -193,7 +193,7 @@ def get_edges() -> List[Tuple]:
             while vertices_num == None:
                 print("Graph must have atleast 4 patches (vertices) of land, and a maximum of 500 patches of land.\
                       \nPlease enter the number of patches  you'd like in your forest (graph):")
-                vertices_num = int(input("Number of patches: "))
+                vertices_num = get_valid_input("Number of patches: ", "atleast 4, maximum is 500", 4, 500)
                 if vertices_num > 500:
                     print("Your desired number of vertices exceeds the limit. Please try again!")
                     time.sleep(0.4)
@@ -209,7 +209,7 @@ def get_edges() -> List[Tuple]:
             # Break loop
             getting_param = False
         elif graph_type == 3:
-            config_info("edges")
+            config_info("landpatches")
         elif graph_type == 4: 
             quit()
         elif graph_type == 5:
@@ -220,7 +220,7 @@ def get_edges() -> List[Tuple]:
 
 
 # Terrain configuration
-def get_valid_input(prompt: str, valid_input_msg: str = None,  min: int=None, max: int=None) -> int:
+def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: int=None) -> int:
     """This function checks to if the user input integer is valid. (To be used in input parameters)
 
     Parameters
@@ -240,39 +240,43 @@ def get_valid_input(prompt: str, valid_input_msg: str = None,  min: int=None, ma
     while not getting_input:
         try:
             user_input = int(input(prompt))
-            if user_input.isdigit() == False: raise ValueError
 
             # Check for min
-            if min:
-                if user_input < min:
-                    print(f"Input is less than minimum ({min}). Please provide value between {min}-{max}")
-                    raise ValueError
+            if min or max:
+                assert user_input > min or user_input , f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
                 
             # Check for max
             if max:
-                if user_input > max:
-                    print(f"Input is greater than maximum ({max}). Please provide value between {min}-{max}")
-                    raise ValueError
+                assert user_input < max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
             
             # If everything is okay, break loop.
             getting_input = True
 
         except ValueError:
-            print("Invalid input. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid input.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except TypeError:
-            print("Invalid operation. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid operation.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except KeyboardInterrupt:
-            print("\nOperation interrupted by the user.\
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("\nOperation interrupted by the user.")
+            print("Do you want to exit program?")
+            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
+            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
+                quit()
+            else:
+                print("\n...Redirecting")
+        except AssertionError as e:
+            print(e)  # Print the error message from the failed assertion
+            if valid_input: 
+                print(f"Valid input is: {valid_input}")
+            print("Please try again.")
 
     return user_input
 
-def get_valid_float_input(prompt: str, valid_input_msg: str = None, min: float=None, max: float=None) -> float:
+def get_valid_float_input(prompt: str, valid_input: str = None, min: float=None, max: float=None) -> float:
     """This function checks if the user input float is valid. (To be used in input parameters)
     
     Parameters
@@ -291,40 +295,46 @@ def get_valid_float_input(prompt: str, valid_input_msg: str = None, min: float=N
 
     while not getting_input:
         try:
-            user_input = round(float(input(prompt)), 1)
+            user_input = input(prompt)
             if user_input.isdigit() == False: raise ValueError
+            round(float(user_input), 1)
 
             # Check for min
             if min:
-                if user_input < min:
-                    print(f"Input is less than minimum ({min}). Please provide value between {min}-{max}")
-                    raise ValueError
+                assert user_input > min, f"Input is less than minimum ({min}). Please provide value between {min}-{max}"
                 
             # Check for max
             if max:
-                if user_input > max:
-                    print(f"Input is greater than maximum ({max}). Please provide value between {min}-{max}")
-                    raise ValueError
+                assert user_input < max, f"Input is greater than maximum ({max}). Please provide value between {min}-{max}"
             
             # If everything is okay, break loop.
             getting_input = True
 
         except ValueError:
-            print("Invalid input. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid input.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except TypeError:
-            print("Invalid operation. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid operation.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except KeyboardInterrupt:
-            print("\nOperation interrupted by the user.\
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("\nOperation interrupted by the user.")
+            print("Do you want to exit program?")
+            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
+            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
+                quit()
+            else:
+                print("\n...Redirecting")
+        except AssertionError as e:
+            print(e)  # Print the error message from the failed assertion
+            if valid_input: 
+                print(f"Valid input is: {valid_input}")
+            print("Please try again.")
 
     return user_input
 
-def get_valid_string_input(prompt: str, valid_input_msg: str = None, yes_no: bool=False) -> str:
+def get_valid_string_input(prompt: str, valid_input: str = None, yes_no: bool=False) -> str:
     """This function checks if the user input string is valid.
     
     Parameters
@@ -341,33 +351,32 @@ def get_valid_string_input(prompt: str, valid_input_msg: str = None, yes_no: boo
 
     while not getting_input:
         try:
-            user_input = input(prompt).strip()
-            if isinstance(user_input, str) == False: raise ValueError
-            if user_input.isdigit() == True: raise ValueError
+            user_input = input(prompt).strip().lower()
+            assert isinstance(user_input, str), valid_input     # Check input is string
+            assert not user_input.isdigit(), valid_input        # Check input is not a digit
 
             # Check yes_no
             if yes_no:
-                if not (user_input == "yes" or user_input == "y"):
-                    print("Please enter 'yes' or 'no (y/n)")
-                    raise ValueError
-                if not (user_input == "no" or user_input == "n"):
-                    print("Please enter 'yes' or 'no (y/n)")
-                    raise ValueError
+                correct = ["yes", "y", "no", "n"]
+                assert user_input in correct, "Answer must be yes or no (y/n)"
                 
             getting_input = True
         except ValueError:
-            print(f"Invalid input: {user_input}. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid input.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except TypeError:
-            print("Invalid operation. \
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
+            print("Invalid operation.")
+            if valid_input: print(f"Valid input is: {valid_input}")
+            print("Please try again.")
         except KeyboardInterrupt:
-            print("\nOperation interrupted by the user.\
-                  \nTry again!")
-            if valid_input_msg: print(f"Valid input is: {valid_input_msg}")
-            quit()
+            print("\nOperation interrupted by the user.")
+            print("Do you want to exit program?")
+            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
+            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
+                quit()
+            else:
+                print("\n...Redirecting")
 
     return user_input
 
@@ -383,7 +392,7 @@ def get_tree_rate() -> int:
         assign_tree_percent = get_valid_input("Choice: ")
 
         if assign_tree_percent == 1:
-            tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ")
+            tree_rate = get_valid_input("Enter percentage of tree patches in the forest (1-99): ", "an integer between 1-99", 1, 99)
             getting_param = False
         elif assign_tree_percent == 2:
             tree_rate = random.randint(1, 99)
@@ -412,7 +421,7 @@ def get_firefighters() -> int:
         assign_firefighters = get_valid_input("Choice: ")
 
         if assign_firefighters == 1:
-            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ")
+            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ", "least 2 and at most 50 firefighters", 2, 50)
             getting_param = False # break loop
         elif assign_firefighters == 2:
             firefighters = random.randint(2, 50)
@@ -441,7 +450,7 @@ def get_autocombustion_prob() -> float:
         assign_fire_ignition_prob = get_valid_input("Choice: ")
 
         if assign_fire_ignition_prob == 1:
-            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ", "floating point between 0-1")
+            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ", "floating point between 0.6-0.8", 0.6, 0.8)
             getting_param = False # break loop
         elif assign_fire_ignition_prob == 2:
             autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
@@ -469,7 +478,7 @@ def get_fire_spread_prob() -> float:
         assign_fire_spread_prob = get_valid_input("Choice: ")
 
         if assign_fire_spread_prob == 1:
-            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ", "floating point between 0-1")
+            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ", "floating point between 0.4-0.6", 0.4, 0.6)
             getting_param = False # break loop
         elif assign_fire_spread_prob == 2:
             spread_prob = round(random.uniform(0.4, 0.6), 1)
@@ -497,7 +506,7 @@ def get_rock_respawn_prob() -> float:
         assign_respawn_prob = get_valid_input("Choice: ")
 
         if assign_respawn_prob == 1:
-            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ", "floating point between 0-1")
+            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ", "floating point between 0.3-0.5", 0.3, 0.5)
             getting_param = False # break loop
         elif assign_respawn_prob == 2:
             rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
@@ -526,7 +535,7 @@ def get_sim_limit() -> int:
         assign_sim_time_limit = get_valid_input("Choice: ")
 
         if assign_sim_time_limit == 1:
-            sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ")
+            sim_time = get_valid_input("Enter a time limit, between 2 and 50 years, for the simulation: ", "2-50", 2, 50)
             getting_param = False # break loop
         elif assign_sim_time_limit == 2:
             sim_time = round(random.randint(2, 50))
@@ -620,7 +629,7 @@ def config_info(config: str) -> None:
 
     print('\n=============================================================')
     # Display configuration information to user
-    if config == "edges":
+    if config == "landpatches":
         print(f"Info for configuring land patches:\
               \n# This parameter sets the configuration for the number of landpatches and how they are connected on the graph. \
               \n# This parameter can be set either by the user or by randomly generating a percentage.\
