@@ -71,7 +71,10 @@ def get_edges() -> List[Tuple]:
         graph_type = get_valid_input("Choice: ", max=6)
 
         if graph_type == 1:
-            print("Generating graph from input file.\
+            time.sleep(0.3)
+            print("\n=============================================================")
+            time.sleep(0.3)
+            print(f"Generating graph from input file.\
                   \nfile must adhere to the following criteria:\
                   \nEach non-empty line must represent an edge, identified by two integers separated by a comma")
             file_path = input("Enter the file path: ")
@@ -89,8 +92,10 @@ def get_edges() -> List[Tuple]:
             # Break loop
             getting_param = False
         elif graph_type == 2:
-            print("Generating random graph.")
-            
+            time.sleep(0.3)
+            print("\n=============================================================\
+                  \nGenerating random graph.")
+            time.sleep(0.3)
             vertices_num = None
 
             while vertices_num == None:
@@ -509,7 +514,7 @@ def get_input_menu(input: str, config_type: str) -> print:
     time.sleep(1)
 
     print(f"\n=============================================================\
-          \nConfiguring {input} {config_type} parameter.\
+          \nConfiguring the {input} {config_type} parameter.\
           \nYou have the following options:\
           \n=> Enter '1' for user-defined {input}\
           \n=> Enter '2' for random assignment\
