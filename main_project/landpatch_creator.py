@@ -18,6 +18,7 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict
+from graph_data import Graphdata
 import random
 
 
@@ -55,7 +56,12 @@ class Landpatch():
         self._color_map = {}                                                   # Map color to vertex          
         self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
 
-        self._update_color_map()   
+        self._update_color_map()
+
+        # Create data class instance to store graph data
+        self._graph_data = Graphdata()
+        self._initialize_data()
+
 
     # Class methods
     def _populate_patches(self) -> None:
@@ -220,6 +226,16 @@ class Landpatch():
                     self.mutate_landpatch(patches[patch])
         
         self.move_firefighters()
+    
+    def _initialize_data(self):
+        """Stores initital data from graph instance creation in dataclass"""
+
+        data = self._graph_data
+
+        data._land_patches = [len(self._vertices_list)]
+        data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
+        data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
+        data._firefighters = [self.firefighters]
 
 
 @dataclass
