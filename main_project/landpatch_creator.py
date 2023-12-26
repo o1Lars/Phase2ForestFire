@@ -17,24 +17,34 @@ Notes
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Tuple
 from graph_data import Graphdata
+from visualiser_random_forest_graph import Visualiser
+import time
 import random
 
 
 class Landpatch():
-    """This is the base class for representing a patch of land as a vertex of a graph"""
+    """This is the base class for representing patches of land as a vertices on a graph. Landpatches in the graph are either of type Tree or type rock. Additionally, the class is used to simulating the evolution of wild fire on the graph on storing data
+    associated with the simulation.
+    """
 
     def __init__(
-        self, 
-        vertices: List[int],
-        neighbours: Dict[str, int],
+        self,
+        edges: List[tuple[int,int]],
+        tree_distribution: float,
         firefighters: int,
-        tree_distribution: int,
-        fire_spread_prob: int) -> None:
+        autocombustion: float,
+        fire_spread_prob: float,
+        rock_mutate_prob: float,
+        sim_time: int,
+        vertices: List[int],
+        neighbours: Dict[str, int]) -> None:
         """
         Parameters
         ----------
+        edges: List[(int,int)]
+            List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
         vertices: List[(int,int)]
             List of vertices for mapping patches of land
         neighbours: Dict[str, int]
@@ -47,16 +57,27 @@ class Landpatch():
             Probability for fire to randomly spread to adjacent tree patch neighbours
         # TODO
         """
-        self._vertices_list = vertices
+        self._edges = edges
         self._neighbours = neighbours
         self.firefighters = firefighters
         self._tree_distribution = tree_distribution
         self._fire_spread_prob = fire_spread_prob
+        self._vertices_list = self._create_vertices_list()
+        self._vertices_neighbours = self._create_neighbour_dict() 
+        self._vertices_list = vertices
         self._patches_map = self._populate_patches()                           # Map patch type to vertex
         self._color_map = {}                                                   # Map color to vertex          
         self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
-
+        
+        # Initial mapping of landpatches color
         self._update_color_map()
+
+        
+        
+        # visualize opening instance of graph
+        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50)
+        self._vis_graph.update_node_colours(self._patches._color_map)
+        time.sleep(1) # add delay to show initial graph
 
         # Create data class instance to store graph data
         self._graph_data = Graphdata()
@@ -64,6 +85,78 @@ class Landpatch():
 
 
     # Class methods
+    # Basic graph methods
+    def _create_vertices_list(self) -> List[Tuple[int,int]]:
+        """Return a list of vertices from tuple of edges"""
+
+        edges = self._edges
+
+        # Create vertices list
+        graph_vertices = []
+
+        # Iterate over edges_list and append vertex
+        for edge_tuple in edges:
+            x, y = edge_tuple  # Unpack the tuple into x and y
+            # check if vertices already in graph_dict
+            if x not in graph_vertices:
+                graph_vertices.append(x)
+            if y not in graph_vertices:
+                graph_vertices.append(y)
+
+        return graph_vertices
+
+    def _create_neighbour_dict(self) -> Dict[int, List[int]]:
+        """Return dictionary of vertices as key and neighbours (if any) as value"""
+
+        vertices_list = self._vertices_list
+        edges = self._edges
+        vertices_neighbours = {}
+
+        # add neighbours to dictionary
+        # Iterate over dictionary
+        for vertex in vertices_list:
+            # Store list of neighbours
+            neighbours_list = []
+
+            # Iterate over edges
+            for edge_tuple in edges:
+                x, y = edge_tuple  # split tuple into two values
+
+                # If neighbour not already added, append to neighbours list
+                if x not in neighbours_list and x != vertex and y == vertex:
+                    neighbours_list.append(x)
+                if y not in neighbours_list and x == vertex and y != vertex:
+                    neighbours_list.append(y)
+
+                # add neighbour list to dictionary
+                vertices_neighbours[vertex] = neighbours_list
+
+        return vertices_neighbours
+
+    def update_graph_connection(self) -> None:
+        # Return True if graph is connected, otherwise return False
+        visited = set()
+        self._is_connected = False
+
+        for start_vertex in self._vertices_list:
+            if start_vertex not in visited:
+                stack = [start_vertex]
+
+                while stack:
+                    vertex = stack.pop()
+                    if vertex not in visited:
+                        visited.add(vertex)
+                        stack.extend(
+                            neighbour for neighbour in self._vertices_neighbours[vertex] if neighbour not in visited)
+
+                # If all vertices are visited, the graph is connected
+                self._is_connected = (len(visited) == len(self._vertices_list))
+                if self._is_connected:
+                    return True
+                else:
+                    return False
+            break # Finish the loop if an unconnected section has been found
+
     def _populate_patches(self) -> None:
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
@@ -227,6 +320,7 @@ class Landpatch():
         
         self.move_firefighters()
     
+    # Methods for working with data
     def _initialize_data(self):
         """Stores initital data from graph instance creation in dataclass"""
 
@@ -236,7 +330,24 @@ class Landpatch():
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
         data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
         data._firefighters = [self.firefighters]
+    
+    # Base methods overwriting python basic methods.
+    def __eq__(self, other) -> bool:
+        """Return true if edges of this instance is equal to edges of other instance of same class"""
+ 
+        if (self._edges == other.edges):
+            return True
+        else:
+            return False
 
+    def __str__(self) -> str:
+        """Return a textual representation of the attributes of the graph"""
+
+        return f"vertices: {self._vertices_list}. Vertex colors: {self._patches._color_map}. Vertex neighbours: {self._vertices_neighbours}."
+    
+    def __repr__(self) -> str:
+        """Return a Python-like representation of this this instance"""
+        return f"GraphCreater({self._edges}, {self._color_pattern})"
 
 @dataclass
 class Rockpatch(Landpatch):
