@@ -22,7 +22,6 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Tuple, Type
-from graph_data import Graphdata
 from visualiser_random_forest_graph import Visualiser
 import time
 import random
@@ -117,36 +116,41 @@ class Landpatch():
         edges: List[tuple[int,int]],
         tree_distribution: float,
         firefighters: int,
-        autocombustion: float,
-        fire_spread_prob: float,
-        rock_mutate_prob: float,
-        sim_time: int) -> None:
+        autocombustion: Optional[float] = 0.3,
+        fire_spread_prob: Optional[float] = 0.3,
+        rock_mutate_prob: Optional[float] = 0.1,
+        sim_time: Optional[int] = 10) -> None:
         """
         Parameters
         ----------
         edges: List[(int,int)]
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
-        vertices: List[(int,int)]
-            List of vertices for mapping patches of land
-        neighbours: Dict[str, int]
-            List of neighbours for tracking neighbouring patches of land
         firefighters: int
             Firefighters for initializing firefighter class
         tree_distribution: int
             The percentage distribution of tree patches on the graph
+        autocombustion: float
+            Probability for a tree patch to randomly ignite
         fire_spread_probability: int
             Probability for fire to randomly spread to adjacent tree patch neighbours
+        rock_mutate_prob: float
+            Probability for a rock patch to randomly mutate into a tree patch
+        sim_time: int
+            The number of simulation steps for the purpose of simulating wildfire evolution.
         # TODO
         """
         self._edges = edges
         self._firefighters = firefighters
+        self._autocombustion = autocombustion
         self._tree_distribution = tree_distribution
         self._fire_spread_prob = fire_spread_prob
+        self._rock_mutate_prob = rock_mutate_prob
+        self._sim_time = sim_time
         self._vertices_list = self._create_vertices_list()
         self._vertices_neighbours = self._create_neighbour_dict() 
-        self._patches_map = self._populate_patches()                           # Map patch type to vertex
-        self._color_map = {}                                                   # Map color to vertex          
-        self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
+        self._patches_map = self._populate_patches()                    # Map patch type to vertex
+        self._color_map = {}                                            # Map color to vertex          
+        self._firefighters_map = self._deploy_firefighters()            # Map firefighters to vertex
         
         # Initial mapping of landpatches color
         self._update_color_map()
@@ -279,10 +283,11 @@ class Landpatch():
         
         self._color_map = color_map
 
-    def _deploy_firefighters(self, firefighters) -> dict:
+    def _deploy_firefighters(self) -> dict:
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
 
         vertices = self._vertices_list
+        firefighters = self._firefighters
 
         # Randomly select vertices for firefighters to be deployed
         firefighters_vertices = random.sample(vertices, firefighters)
@@ -407,7 +412,7 @@ class Landpatch():
         data._land_patches = [len(self._vertices_list)]
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
         data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
-        data._firefighters = [self.firefighters]
+        data._firefighters = [self._firefighters]
     
     # Base methods overwriting python basic methods.
     def __eq__(self, other) -> bool:
