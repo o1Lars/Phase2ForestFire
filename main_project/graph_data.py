@@ -14,7 +14,7 @@ Module is created as part of the group project for the final exam of DS830 Intro
 
 from dataclasses import dataclass, field
 from typing import List, Dict, Type
-import landpatch_creator as lc
+from graph_sim import Rockpatch
 
 @dataclass
 class Graphdata:
@@ -64,7 +64,7 @@ class Graphdata:
         # Iterate over patches_map
         for vertex, patch in patches_map.items():
             # check if patch mapped to vertex is rock or tree
-            if isinstance(patch, lc.Rockpatch):
+            if isinstance(patch, Rockpatch):
                 rockpatches_counter += 1
             else:
                 treepatches_counter += 1

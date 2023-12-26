@@ -37,9 +37,7 @@ class Landpatch():
         autocombustion: float,
         fire_spread_prob: float,
         rock_mutate_prob: float,
-        sim_time: int,
-        vertices: List[int],
-        neighbours: Dict[str, int]) -> None:
+        sim_time: int) -> None:
         """
         Parameters
         ----------
@@ -58,25 +56,21 @@ class Landpatch():
         # TODO
         """
         self._edges = edges
-        self._neighbours = neighbours
-        self.firefighters = firefighters
+        self._firefighters = firefighters
         self._tree_distribution = tree_distribution
         self._fire_spread_prob = fire_spread_prob
         self._vertices_list = self._create_vertices_list()
         self._vertices_neighbours = self._create_neighbour_dict() 
-        self._vertices_list = vertices
         self._patches_map = self._populate_patches()                           # Map patch type to vertex
         self._color_map = {}                                                   # Map color to vertex          
         self._firefighters_map = self._deploy_firefighters(firefighters)       # Map firefighters to vertex
         
         # Initial mapping of landpatches color
         self._update_color_map()
-
-        
         
         # visualize opening instance of graph
         self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50)
-        self._vis_graph.update_node_colours(self._patches._color_map)
+        self._vis_graph.update_node_colours(self._color_map)
         time.sleep(1) # add delay to show initial graph
 
         # Create data class instance to store graph data
@@ -157,6 +151,7 @@ class Landpatch():
                     return False
             break # Finish the loop if an unconnected section has been found
 
+    # Landpatces specific methods
     def _populate_patches(self) -> None:
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
@@ -343,7 +338,7 @@ class Landpatch():
     def __str__(self) -> str:
         """Return a textual representation of the attributes of the graph"""
 
-        return f"vertices: {self._vertices_list}. Vertex colors: {self._patches._color_map}. Vertex neighbours: {self._vertices_neighbours}."
+        return f"vertices: {self._vertices_list}. Vertex colors: {self._color_map}. Vertex neighbours: {self._vertices_neighbours}."
     
     def __repr__(self) -> str:
         """Return a Python-like representation of this this instance"""

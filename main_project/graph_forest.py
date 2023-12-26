@@ -1,5 +1,6 @@
 import graph_helper as gh
 import file_helper as fh
+import graph_sim as gs
 import os
 import sys
 import time
@@ -53,6 +54,7 @@ def main() -> None:
             time.sleep(0.2)
     
     # Run simulation
+    graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
     # Display report
     # Could ask if user wants to go again or exit? 
     pass
