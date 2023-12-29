@@ -10,6 +10,7 @@ This module provides:
                 The class stores data related to rock patches
 - Firefighter:  A class that is used in simulating wild fires. Each instance of the firefighter class tries to extinguish 
                 fires on tree patches
+- ConfigData    A dataclass that stores graph configuration to make previous configurations easily accessible
 
 Requirements
 #TODO
@@ -114,8 +115,9 @@ class Landpatch():
     def __init__(
         self,
         edges: List[tuple[int,int]],
-        tree_distribution: float,
-        firefighters: int,
+        pos_nodes: Optional[dict] = {},
+        tree_distribution: float = 30,
+        firefighters: int = 3,
         autocombustion: Optional[float] = 0.3,
         fire_spread_prob: Optional[float] = 0.3,
         rock_mutate_prob: Optional[float] = 0.1,
@@ -125,6 +127,8 @@ class Landpatch():
         ----------
         edges: List[(int,int)]
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
+        pos_nodes: Optional[dict], default = {}
+            Optional argument. Stores graph position of nodes if provided.
         firefighters: int
             Firefighters for initializing firefighter class
         tree_distribution: int
@@ -137,9 +141,9 @@ class Landpatch():
             Probability for a rock patch to randomly mutate into a tree patch
         sim_time: int
             The number of simulation steps for the purpose of simulating wildfire evolution.
-        # TODO
         """
         self._edges = edges
+        self._pos_nodes = pos_nodes
         self._firefighters = firefighters
         self._autocombustion = autocombustion
         self._tree_distribution = tree_distribution
@@ -156,7 +160,7 @@ class Landpatch():
         self._update_color_map()
         
         # visualize opening instance of graph
-        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50)
+        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50, pos_nodes=self._pos_nodes)
         self._vis_graph.update_node_colours(self._color_map)
         time.sleep(1) # add delay to show initial graph
 
@@ -511,3 +515,36 @@ class Firefighter:
         """Perform one evolution step for the firefighter."""
         self.move_firefighter()
         # Additional logic for the firefighter's evolution, if needed.
+
+@dataclass
+class ConfigData():
+    """This is a dataclass where each instance represents a collection of data from a privious simulation configuration.
+
+    Parameters
+    ----------
+    edges: List[(int,int)]
+        List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
+    pos_nodes: Optional[dict], default = {}
+        Optional argument. Stores graph position of nodes if provided.
+    firefighters: int
+        Firefighters for initializing firefighter class
+    tree_distribution: int
+        The percentage distribution of tree patches on the graph
+    autocombustion: float
+        Probability for a tree patch to randomly ignite
+    fire_spread_probability: int
+        Probability for fire to randomly spread to adjacent tree patch neighbours
+    rock_mutate_prob: float
+        Probability for a rock patch to randomly mutate into a tree patch
+    sim_time: int
+        The number of simulation steps for the purpose of simulating wildfire evolution.
+    """
+
+    edges: List[tuple[int,int]]
+    pos_nodes: Optional[dict] = {}
+    tree_distribution: float = 30
+    firefighters: int = 3
+    autocombustion: Optional[float] = 0.3
+    fire_spread_prob: Optional[float] = 0.3
+    rock_mutate_prob: Optional[float] = 0.1
+    sim_time: Optional[int] = 10
