@@ -259,6 +259,7 @@ class Landpatch():
                 patch_map[vertex] = Rockpatch() # TODO add mutate probability
         
         return patch_map
+    #fix above
     
     def _update_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
