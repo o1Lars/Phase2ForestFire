@@ -10,6 +10,7 @@ This module provides:
                 The class stores data related to rock patches
 - Firefighter:  A class that is used in simulating wild fires. Each instance of the firefighter class tries to extinguish 
                 fires on tree patches
+- ConfigData    A dataclass that stores graph configuration to make previous configurations easily accessible
 
 Requirements
 #TODO
@@ -513,3 +514,36 @@ class Firefighter:
         """Perform one evolution step for the firefighter."""
         self.move_firefighter()
         # Additional logic for the firefighter's evolution, if needed.
+
+@dataclass
+class ConfigData():
+    """This is a dataclass where each instance represents a collection of data from a privious simulation configuration.
+
+    Parameters
+    ----------
+    edges: List[(int,int)]
+        List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
+    pos_nodes: Optional[dict], default = {}
+        Optional argument. Stores graph position of nodes if provided.
+    firefighters: int
+        Firefighters for initializing firefighter class
+    tree_distribution: int
+        The percentage distribution of tree patches on the graph
+    autocombustion: float
+        Probability for a tree patch to randomly ignite
+    fire_spread_probability: int
+        Probability for fire to randomly spread to adjacent tree patch neighbours
+    rock_mutate_prob: float
+        Probability for a rock patch to randomly mutate into a tree patch
+    sim_time: int
+        The number of simulation steps for the purpose of simulating wildfire evolution.
+    """
+
+    edges: List[tuple[int,int]]
+    pos_nodes: Optional[dict] = {}
+    tree_distribution: float = 30
+    firefighters: int = 3
+    autocombustion: Optional[float] = 0.3
+    fire_spread_prob: Optional[float] = 0.3
+    rock_mutate_prob: Optional[float] = 0.1
+    sim_time: Optional[int] = 10

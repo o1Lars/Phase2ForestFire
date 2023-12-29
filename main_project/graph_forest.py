@@ -1,12 +1,13 @@
 import graph_helper as gh
 import file_helper as fh
 import graph_sim as gs
-from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input
 import os
 import sys
 import time
 import random
 from typing import List, Tuple, Optional
+from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input
+from dataclasses import dataclass
 
 def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
@@ -36,7 +37,8 @@ def main() -> None:
                 configuration_done = True
 
                 # Store current config
-                store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+                configuration_storage.append(gs.ConfigData((edges, tree_rate, firefighters, autocombustion_prob, 
+                                                            fire_spread_prob, rock_mutate_prob, sim_limit)))
         
         # Run simulation
         graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
@@ -55,6 +57,9 @@ def main() -> None:
 
         if choice == 1:
             time.sleep(0.3)
+            get_stored_config()
+            # Get user choice
+            # Sim stored data
             pass
         elif choice == 2:
             time.sleep(0.3)
@@ -64,7 +69,32 @@ def main() -> None:
         else:
             print("Invalid choice\
                   \n...Redirecting")
+# Main program functions
+def start_menu() -> None:
+    """Print start menu (containing program info and required setup to user"""
 
+    print("\
+          \n======================================\
+          \n=========Forest Fire Simulator========\
+          \n======================================")
+    
+    print("\nThis is the Forest Fire Simulator program.\
+          \nThis program uses a graph to simulate the evolution of a wildfire over patches of land.\
+          \nEach patch of land is considered either a rock patch or a tree patch.\
+          \nWhile simulating the evolution, a set number of firefighters will try to extinguish fires on tree patches.\
+          \nThe tree patches have a (small) probability of catching fire (autcombustion) and, once lit, fire can propagate\
+          \nto neighbouring tree patches. A tree patch that is devoured by the fire will turn into a rock patch.\
+          \nThe rock patches will not propagate fire, however, over time, they have a small probability of turning into a tree patch.")
+    
+    print("\nThe simulation needs the following parameters for the configuration\
+          \n and can be defined by the user or randomly generated:\
+          \n==> Vertices/land patches\
+          \n==> Tree to rock rate\
+          \n==> Firefighters\
+          \n==> Autocombustion probability\
+          \n==> Fire spread probability\
+          \n==> Rock Respawn Probability\
+          \n==> Simulation limit")
 # Graph edge configuration
 def get_edges() -> List[Tuple]:
     """Return a list of user-defined or pseudorandomly generated edges representing a planar graph"""
@@ -304,44 +334,6 @@ def get_sim_limit() -> int:
     
     return sim_time
 
-def quit() -> None:
-    """Exits the current program execution"""
-    print("\n...Exiting program. Have a great day!")
-    sys.exit()
-
-def restart_program() -> None:
-    """Exits current program execution and returns to main menu"""
-    print("\n...Restarting program." )
-    python = sys.executable
-    os.execl(python, python, *sys.argv)
-
-def start_menu() -> None:
-    """Print start menu (containing program info and required setup to user"""
-
-    print("\
-          \n======================================\
-          \n=========Forest Fire Simulator========\
-          \n======================================")
-    
-    print("\nThis is the Forest Fire Simulator program.\
-          \nThis program uses a graph to simulate the evolution of a wildfire over patches of land.\
-          \nEach patch of land is considered either a rock patch or a tree patch.\
-          \nWhile simulating the evolution, a set number of firefighters will try to extinguish fires on tree patches.\
-          \nThe tree patches have a (small) probability of catching fire (autcombustion) and, once lit, fire can propagate\
-          \nto neighbouring tree patches. A tree patch that is devoured by the fire will turn into a rock patch.\
-          \nThe rock patches will not propagate fire, however, over time, they have a small probability of turning into a tree patch.")
-    
-    print("\nThe simulation needs the following parameters for the configuration\
-          \n and can be defined by the user or randomly generated:\
-          \n==> Vertices/land patches\
-          \n==> Tree to rock rate\
-          \n==> Firefighters\
-          \n==> Autocombustion probability\
-          \n==> Fire spread probability\
-          \n==> Rock Respawn Probability\
-          \n==> Simulation limit")
-    
-
 def get_input_menu(input: str, config_type: str) -> print:
     """Print the menu options for input configuration.
 
@@ -365,6 +357,17 @@ def get_input_menu(input: str, config_type: str) -> print:
           \n=> Enter '4' to exit program\
           \n=> Enter '5' to restart program")
 
+def quit() -> None:
+    """Exits the current program execution"""
+    print("\n...Exiting program. Have a great day!")
+    sys.exit()
+
+def restart_program() -> None:
+    """Exits current program execution and returns to main menu"""
+    print("\n...Restarting program." )
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+    
 def config_info(config: str) -> None:
     """Display configuration information to user
 
@@ -476,41 +479,7 @@ def finalize_configuration() -> bool:
     
     return False
 
-# dictionary for storing in memory
-configuration_storage = {}
-
-def store_configuration(edges: List[Tuple[int,int]], tree_rate: int, firefighters: int, 
-                        autocombustion_prob: float, fire_spread_prob: float, rock_mutate_prob: float,
-                          sim_limit: int) -> None:
-    """Store parameters in dictionary to make later accessible"""
-
-    # Check for first store graph
-    if len(configuration_storage) == 0:
-        configuration_storage['graph_1'] = {}
-        configuration_storage['graph_1']['edges'] = edges
-        configuration_storage['graph_1']['tree_rate'] = tree_rate
-        configuration_storage['graph_1']['firefighters'] = firefighters
-        configuration_storage['graph_1']['autocombustion_prob'] = autocombustion_prob
-        configuration_storage['graph_1']['fire_sprea_prob'] = fire_spread_prob
-        configuration_storage['graph_1']['rock_mutate_prob'] = rock_mutate_prob
-        configuration_storage['graph_1']['sim_limit'] = sim_limit
-    else:
-        # Get latest graph in dictionary
-        configuration_list = list(configuration_storage.keys())     # get list of keys
-        latest_graph = configuration_list[-1].split('_')            # get latest graph and isolate number
-        num = int(latest_graph[-1])                                 # get latest graph number
-        next_graph = f"graph_{num + 1}"                             # get key for next graph in list
-
-        # Store configuration
-        configuration_storage[next_graph] = {}
-        configuration_storage[next_graph]['edges'] = edges
-        configuration_storage[next_graph]['tree_rate'] = tree_rate
-        configuration_storage[next_graph]['firefighters'] = firefighters
-        configuration_storage[next_graph]['autocombustion_prob'] = autocombustion_prob
-        configuration_storage[next_graph]['fire_sprea_prob'] = fire_spread_prob
-        configuration_storage[next_graph]['rock_mutate_prob'] = rock_mutate_prob
-        configuration_storage[next_graph]['sim_limit'] = sim_limit
-    configuration_storage
+configuration_storage = []
 
 # Execute random forest fire simulation
 if __name__ == "__main__":
