@@ -169,5 +169,10 @@ def get_valid_string_input(prompt: str, valid_input: str = None, yes_no: bool=Fa
                 quit()
             else:
                 print("\n...Redirecting")
+        except AssertionError as e:
+            print(e)  # Print the error message from the failed assertion
+            if valid_input: 
+                print(f"Valid input is: {valid_input}")
+            print("Please try again.")
 
     return user_input
