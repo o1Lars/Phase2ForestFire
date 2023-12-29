@@ -480,6 +480,16 @@ def store_configuration(edges: List[Tuple[int,int]], tree_rate: int, firefighter
         latest_graph = configuration_list[-1].split('_')            # get latest graph and isolate number
         num = int(latest_graph[-1])                                 # get latest graph number
         next_graph = f"graph_{num + 1}"                             # get key for next graph in list
+
+        # Store configuration
+        configuration_storage[next_graph] = {}
+        configuration_storage[next_graph]['edges'] = edges
+        configuration_storage[next_graph]['tree_rate'] = tree_rate
+        configuration_storage[next_graph]['firefighters'] = firefighters
+        configuration_storage[next_graph]['autocombustion_prob'] = autocombustion_prob
+        configuration_storage[next_graph]['fire_sprea_prob'] = fire_spread_prob
+        configuration_storage[next_graph]['rock_mutate_prob'] = rock_mutate_prob
+        configuration_storage[next_graph]['sim_limit'] = sim_limit
     configuration_storage
 
 # Execute random forest fire simulation
