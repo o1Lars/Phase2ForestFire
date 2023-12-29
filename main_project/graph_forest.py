@@ -32,6 +32,7 @@ def main() -> None:
             configuration_done = True
             # Store current config
             store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+            print(configuration_storage)
     
     # Run simulation
     graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
@@ -461,12 +462,26 @@ configuration_storage = {}
 def store_configuration(edges: List[Tuple[int,int]], tree_rate: int, firefighters: int, 
                         autocombustion_prob: float, fire_spread_prob: float, rock_mutate_prob: float,
                           sim_limit: int) -> None:
-    """Store parameters in dictionary to make later accessible
-    
-    Parameters
-    ----------
+    """Store parameters in dictionary to make later accessible"""
 
-    """
+    # Check for first store graph
+    if len(configuration_storage) == 0:
+        configuration_storage['graph_1'] = {}
+        configuration_storage['graph_1']['edges'] = edges
+        configuration_storage['graph_1']['tree_rate'] = tree_rate
+        configuration_storage['graph_1']['firefighters'] = firefighters
+        configuration_storage['graph_1']['autocombustion_prob'] = autocombustion_prob
+        configuration_storage['graph_1']['fire_sprea_prob'] = fire_spread_prob
+        configuration_storage['graph_1']['rock_mutate_prob'] = rock_mutate_prob
+        configuration_storage['graph_1']['sim_limit'] = sim_limit
+    else:
+        # Get latest graph in dictionary
+        configuration_list = list(configuration_storage.keys())     # get list of keys
+        latest_graph = configuration_list[-1].split('_')            # get latest graph and isolate number
+        num = int(latest_graph[-1])                                 # get latest graph number
+        next_graph = f"graph_{num + 1}"                             # get key for next graph in list
+    configuration_storage
+
 # Execute random forest fire simulation
 if __name__ == "__main__":
     main()
