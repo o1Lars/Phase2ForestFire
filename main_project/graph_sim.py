@@ -243,7 +243,7 @@ class Landpatch():
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
         vertices = self._vertices_list
-        tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches
+        tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches from input tree percentage
 
         # Randomly select 'tree_count' vertices to be tree patches
         tree_vertices = random.sample(vertices, tree_count)
@@ -254,9 +254,9 @@ class Landpatch():
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(self._fire_spread_prob)
+                patch_map[vertex] = Treepatch(self._fire_spread_prob) # TODO Add autocombustion
             else:
-                patch_map[vertex] = Rockpatch()
+                patch_map[vertex] = Rockpatch() # TODO add mutate probability
         
         return patch_map
     
@@ -325,14 +325,14 @@ class Landpatch():
         # Check for probable fire spread
         if random.random() <= self._patches_map[tree_patch]._fire_spread_prob:
             # Get the neighbors of the current Treepatch
-            neighbors = self._neighbours[tree_patch]
+            neighbours = self._neighbours[tree_patch]
 
             # Ignites adjacents treepatches not already on fire
-            for neighbor in neighbors:
-                current_neighbor = self._patches_map[neighbor]
-                if isinstance(current_neighbor, Treepatch):   # Check if neighbor is tree patch
-                    if not current_neighbor._ignited:
-                        current_neighbor._ignited = True
+            for neighbor in neighbours:
+                current_neighbour = self._patches_map[neighbor]
+                if isinstance(current_neighbour, Treepatch):   # Check if neighbor is tree patch
+                    if not current_neighbour._ignited:
+                        current_neighbour._ignited = True
 
     def move_firefighters(self) -> None:
         """Move firefighter randomly to a neighboring patch based on the specified conditions."""
