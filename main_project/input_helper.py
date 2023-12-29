@@ -1,25 +1,16 @@
 """
 This module provides a set of helper functions, to:
-get_valid_input: generate collection of edges defining a planar graph.
-get_valid_float_input:
-get_valid_string_input
-edges_planar: verifies if the given set of edges defines a planar graph
+get_valid_input: validate user input that returns a number
+get_valid_float_input: validate user input that returns a float
+get_valid_string_input: validate user input that returns a string
 
 Requirements
 ------------
-
-Package networkx https://networkx.org/ which can be installed via PIP.
-Package scipy https://scipy.org/  which can be installed via PIP.
-Package 
 Python 3.7 or higher.
-
-
-
-
 
 Notes
 -----
-This module provided as material for the phase 2 project for DM857, DS830 (2023). 
+This module created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: int=None) -> int:
     """This function checks to if the user input integer is valid. (To be used in input parameters)

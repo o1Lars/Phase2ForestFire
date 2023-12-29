@@ -12,33 +12,53 @@ def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
     # Show start menu
     start_menu()
-    configuration_done = False       # condition for breaking loop
+    program_running = True
 
-    # get user input
-    while not configuration_done:
-        edges = get_edges()
-        tree_rate = get_tree_rate()
-        firefighters = get_firefighters()
-        autocombustion_prob = get_autocombustion_prob()
-        fire_spread_prob = get_fire_spread_prob()
-        rock_mutate_prob = get_rock_mutate_prob()
-        sim_limit = get_sim_limit()
+    # run program
+    while program_running:
+        configuration_done = False
+        # get user input
+        while not configuration_done:
+            edges = get_edges()
+            tree_rate = get_tree_rate()
+            firefighters = get_firefighters()
+            autocombustion_prob = get_autocombustion_prob()
+            fire_spread_prob = get_fire_spread_prob()
+            rock_mutate_prob = get_rock_mutate_prob()
+            sim_limit = get_sim_limit()
 
-        # Show config
-        display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+            # Show config
+            display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
 
-        # Finalize configuration
-        if finalize_configuration():
-            configuration_done = True
-            # Store current config
-            store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
-            print(configuration_storage)
-    
-    # Run simulation
-    graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
-    # Display report
-    # Could ask if user wants to go again or exit? 
-    pass
+            # Finalize configuration
+            if finalize_configuration():
+                configuration_done = True
+
+                # Store current config
+                store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        
+        # Run simulation
+        graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        # Display report
+
+        # Ask to run simulation again
+        print("\n=============================================================\
+              \nYou have the following options:\
+              \n=> Select '1' to rerun simulation with stored parameters\
+              \n=> Select '2' to run simulation with different parameters\
+              \n=> Select '3' to quit program (stored configuration is lost).")
+        choice = get_valid_input("Choice: ", "Option 1, 2 or 3.")
+
+        if choice == 1:
+            time.sleep(0.3)
+            pass
+        elif choice == 2:
+            pass
+        elif choice == 3:
+            quit()
+        else:
+            print("Invalid choice\
+                  \n...Redirecting")
 
 # Graph edge configuration
 def get_edges() -> List[Tuple]:
