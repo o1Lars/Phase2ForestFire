@@ -548,3 +548,29 @@ class ConfigData():
     fire_spread_prob: Optional[float] = 0.3
     rock_mutate_prob: Optional[float] = 0.1
     sim_time: Optional[int] = 10
+
+    def get_config(self) -> Tuple:
+        """Return a tuple of all attributes. Used to easility acces attributes from previous configurations
+        
+        Return: Tuple[edges, pos_nodes, tree_distribution, firefighters, autocombustion, fire_spread_prob, rock_mutate_prob, sim_time]
+        ----------
+        edges: List[(int,int)]
+            List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
+        pos_nodes: Optional[dict], default = {}
+            Optional argument. Stores graph position of nodes if provided.
+        firefighters: int
+            Firefighters for initializing firefighter class
+        tree_distribution: int
+            The percentage distribution of tree patches on the graph
+        autocombustion: float
+            Probability for a tree patch to randomly ignite
+        fire_spread_probability: int
+            Probability for fire to randomly spread to adjacent tree patch neighbours
+        rock_mutate_prob: float
+            Probability for a rock patch to randomly mutate into a tree patch
+        sim_time: int
+            The number of simulation steps for the purpose of simulating wildfire evolution.
+        """
+
+        return self.edges, self.pos_nodes, self.tree_distribution, self.firefighters, \
+                self.autocombustion, self.fire_spread_prob, self.rock_mutate_prob, self.sim_time

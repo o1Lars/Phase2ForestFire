@@ -37,8 +37,8 @@ def main() -> None:
                 configuration_done = True
 
                 # Store current config
-                configuration_storage.append(gs.ConfigData((edges, tree_rate, firefighters, autocombustion_prob, 
-                                                            fire_spread_prob, rock_mutate_prob, sim_limit)))
+                configuration_storage.append(gs.ConfigData(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, 
+                                                            fire_spread_prob, rock_mutate_prob, sim_limit))
         
         # Run simulation
         graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
@@ -57,10 +57,22 @@ def main() -> None:
 
         if choice == 1:
             time.sleep(0.3)
-            print("The following configuration is the latest in storage:")
-            print(configuration_storage[0])
+            display_config_storage()
+            index = get_config_choice() - 1
+            edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit = configuration_storage[index].get_config()
+            # Create graph
+            graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
             # Sim stored data
-            pass
+            time.sleep(0.3)
+
+            # Get next graph
+            print("Configure new graph?")
+            answer = False
+            while not answer:
+                answer_choice = get_valid_string_input("(y/n)", "Yes (y) to continue, no (n) to wait", True)
+                if answer_choice == "yes" or answer_choice == "y":
+                    answer = True
+            graph._vis_graph.close()
         elif choice == 2:
             time.sleep(0.3)
             print("\n...Redirecting")
@@ -69,6 +81,11 @@ def main() -> None:
         else:
             print("Invalid choice\
                   \n...Redirecting")
+        
+        time.sleep(0.4)
+        print("\n...Redirecting to new graph configuration")
+        time.sleep(0.4)
+
 # Main program functions
 def start_menu() -> None:
     """Print start menu (containing program info and required setup to user"""
@@ -480,6 +497,37 @@ def finalize_configuration() -> bool:
     return False
 
 configuration_storage = []
+
+def display_config_storage() -> None:
+    """Display previous configurations from storage"""
+
+    time.sleep(0.5)
+    print("...Retrieving privious configurations")
+    time.sleep(0.5)
+    print("\n=============================================================\
+          \nCurrent configurations in storage:")
+
+    # Iterate over configuration storage
+    for index, config in enumerate(configuration_storage):
+        print(f"Graph: {index + 1}")
+        print(config)
+        time.sleep(0.2)
+
+def get_config_choice() -> int:
+    """Return user-specified choice of configuration from configuration storage"""
+    
+    print("\n=============================================================\
+          \nCurrent configurations in storage:")
+    print("You have the following options for configuration:")
+    
+    # Display list of choices
+    for index, config in enumerate(configuration_storage):
+        print(f"==> Graph: {index + 1}")
+
+    # Get user choice
+    config_choice = get_valid_input("Choice: ", f"Numbers: 1-{len(configuration_storage)}.", 1, len(configuration_storage))
+
+    return config_choice
 
 # Execute random forest fire simulation
 if __name__ == "__main__":
