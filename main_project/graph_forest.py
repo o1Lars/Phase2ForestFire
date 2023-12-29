@@ -21,41 +21,20 @@ def main() -> None:
         firefighters = get_firefighters()
         autocombustion_prob = get_autocombustion_prob()
         fire_spread_prob = get_fire_spread_prob()
-        rock_respawn_prob = get_rock_respawn_prob()
+        rock_mutate_prob = get_rock_mutate_prob()
         sim_limit = get_sim_limit()
 
         # Show config
-        display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
+        display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
 
         # Finalize configuration
-        print("\nDo you want to run simulation with these configurations?\
-              \n=> Select '1' to accept configuration and run simulation\
-              \n=> Select '2' to reconfigure parameters\
-              \n=> Select '3' to restart program\
-              \n=> Select '4' to exit program")
-        
-        finalize_configuration = get_valid_input("Choice: ")
-
-        if finalize_configuration == 1:
-            print("\n Simulation configuration has been accepted")
-            time.sleep(0.2)
-            print("\n... Initializing simulation.")
-            time.sleep(0.5)
+        if finalize_configuration():
             configuration_done = True
-        elif finalize_configuration == 2:
-            print("...Redirecting")
-            time.sleep(0.2)
-        elif finalize_configuration == 3:
-            restart_program()
-        elif finalize_configuration == 4:
-            quit()
-        else:
-            print("Invalid choice.")
-            print("...Redirecting")
-            time.sleep(0.2)
+            # Store current config
+            store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
     
     # Run simulation
-    graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_respawn_prob, sim_limit)
+    graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
     # Display report
     # Could ask if user wants to go again or exit? 
     pass
@@ -247,7 +226,7 @@ def get_fire_spread_prob() -> float:
 
     return spread_prob
 
-def get_rock_respawn_prob() -> float:
+def get_rock_mutate_prob() -> float:
     """Return user-defined or random respawn probability for rockpatch to mutate to treepatch"""
 
     rock_mutate_prob = 0
@@ -428,7 +407,7 @@ def config_info(config: str) -> None:
 
 # Printing Terrain configuration
 def display_config(edges: List[Tuple], tree_rate: int, firefighters: int, 
-                   autocombustion_prob: float, fire_spread_prob: float, rock_respawn_prob: float, sim_limit: int) -> None:
+                   autocombustion_prob: float, fire_spread_prob: float, rock_mutate_prob: float, sim_limit: int) -> None:
     """Displays current simulation configuration to the user"""
 
     time.sleep(1)
@@ -440,9 +419,54 @@ def display_config(edges: List[Tuple], tree_rate: int, firefighters: int,
     print("Your current configuration for the simulation:")
     print(f"The ratio of trees to rocks is {tree_rate} : {100 - tree_rate}.")
     print(f"You have employed {firefighters} firefighters.")
-    print(f"The probability of fire ignition is {autocombustion_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of tree patch respawn is {rock_respawn_prob}.")
+    print(f"The probability of fire ignition is {autocombustion_prob}, the probability of fire spread is {fire_spread_prob}, and the probability of tree patch respawn is {rock_mutate_prob}.")
     print(f"The time limit set for this simulation is {sim_limit} years.")
 
+def finalize_configuration() -> bool:
+    """Return true if final configuration parameters are accepted, false otherwise"""
+
+    # Menu
+    print("\nDo you want to run simulation with these configurations?\
+              \n=> Select '1' to accept configuration and run simulation\
+              \n=> Select '2' to reconfigure parameters\
+              \n=> Select '3' to restart program\
+              \n=> Select '4' to exit program")
+    
+    # Get choice
+    choice = get_valid_input("Choice: ")
+
+    if choice == 1:
+        print("\n Simulation configuration has been accepted")
+        time.sleep(0.2)
+        print("\n... Initializing simulation.")
+        time.sleep(0.5)
+        return True
+    elif choice == 2:
+        print("...Redirecting")
+        time.sleep(0.2)
+    elif choice == 3:
+        restart_program()
+    elif choice == 4:
+        quit()
+    else:
+        print("Invalid choice.")
+        print("...Redirecting")
+        time.sleep(0.2)
+    
+    return False
+
+# dictionary for storing in memory
+configuration_storage = {}
+
+def store_configuration(edges: List[Tuple[int,int]], tree_rate: int, firefighters: int, 
+                        autocombustion_prob: float, fire_spread_prob: float, rock_mutate_prob: float,
+                          sim_limit: int) -> None:
+    """Store parameters in dictionary to make later accessible
+    
+    Parameters
+    ----------
+
+    """
 # Execute random forest fire simulation
 if __name__ == "__main__":
     main()
