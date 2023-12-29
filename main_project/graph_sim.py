@@ -541,7 +541,7 @@ class ConfigData():
     """
 
     edges: List[tuple[int,int]]
-    pos_nodes: Optional[dict] = {}
+    pos_nodes: Optional[dict] = field(default_factory=dict)
     tree_distribution: float = 30
     firefighters: int = 3
     autocombustion: Optional[float] = 0.3
