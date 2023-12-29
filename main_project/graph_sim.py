@@ -114,8 +114,9 @@ class Landpatch():
     def __init__(
         self,
         edges: List[tuple[int,int]],
-        tree_distribution: float,
-        firefighters: int,
+        pos_nodes: Optional[dict] = {},
+        tree_distribution: float = 30,
+        firefighters: int = 3,
         autocombustion: Optional[float] = 0.3,
         fire_spread_prob: Optional[float] = 0.3,
         rock_mutate_prob: Optional[float] = 0.1,
@@ -125,6 +126,8 @@ class Landpatch():
         ----------
         edges: List[(int,int)]
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
+        pos_nodes: Optional[dict], default = {}
+            Optional argument. Stores graph position of nodes if provided.
         firefighters: int
             Firefighters for initializing firefighter class
         tree_distribution: int
@@ -137,9 +140,9 @@ class Landpatch():
             Probability for a rock patch to randomly mutate into a tree patch
         sim_time: int
             The number of simulation steps for the purpose of simulating wildfire evolution.
-        # TODO
         """
         self._edges = edges
+        self._pos_nodes = pos_nodes
         self._firefighters = firefighters
         self._autocombustion = autocombustion
         self._tree_distribution = tree_distribution
@@ -156,7 +159,7 @@ class Landpatch():
         self._update_color_map()
         
         # visualize opening instance of graph
-        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50)
+        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50, pos_nodes=self._pos_nodes)
         self._vis_graph.update_node_colours(self._color_map)
         time.sleep(1) # add delay to show initial graph
 

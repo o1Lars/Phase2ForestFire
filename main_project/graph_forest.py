@@ -16,10 +16,11 @@ def main() -> None:
 
     # run program
     while program_running:
-        configuration_done = False
+
         # get user input
+        configuration_done = False
         while not configuration_done:
-            edges = get_edges()
+            edges, pos_nodes = get_edges()
             tree_rate = get_tree_rate()
             firefighters = get_firefighters()
             autocombustion_prob = get_autocombustion_prob()
@@ -38,10 +39,11 @@ def main() -> None:
                 store_configuration(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
         
         # Run simulation
-        graph = gs.Landpatch(edges, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
         # Display report
 
         # Ask to run simulation again
+        time.sleep(0.3)
         print("\n=============================================================\
               \nYou have the following options:\
               \n=> Select '1' to rerun simulation with stored parameters\
@@ -49,11 +51,14 @@ def main() -> None:
               \n=> Select '3' to quit program (stored configuration is lost).")
         choice = get_valid_input("Choice: ", "Option 1, 2 or 3.")
 
+        graph._vis_graph.close()    # close current sim window
+
         if choice == 1:
             time.sleep(0.3)
             pass
         elif choice == 2:
-            pass
+            time.sleep(0.3)
+            print("\n...Redirecting")
         elif choice == 3:
             quit()
         else:
@@ -65,6 +70,7 @@ def get_edges() -> List[Tuple]:
     """Return a list of user-defined or pseudorandomly generated edges representing a planar graph"""
 
     graph_edges = None
+    graph_pos = {}
     getting_param = True
 
     while getting_param:
@@ -103,14 +109,8 @@ def get_edges() -> List[Tuple]:
                 print("Graph must have atleast 4 patches (vertices) of land, and a maximum of 500 patches of land.\
                       \nPlease enter the number of patches  you'd like in your forest (graph):")
                 vertices_num = get_valid_input("Number of patches: ", "atleast 4, maximum is 500", 4, 500)
-                if vertices_num > 500:
-                    print("Your desired number of vertices exceeds the limit. Please try again!")
-                    time.sleep(0.4)
-                    print("...Redirecting")
-                    time.sleep(0.4)
-                    vertices_num = None
-                else:
-                    graph_edges, graph_pos = gh.voronoi_to_edges(vertices_num)
+
+                graph_edges, graph_pos = gh.voronoi_to_edges(vertices_num)
 
             # Verify that the graph is a planar graph
             fh.check_planar_graph(graph_edges)
@@ -127,7 +127,7 @@ def get_edges() -> List[Tuple]:
             print("Invalid choice.\
                   \n...Redirecting.")
 
-    return graph_edges
+    return graph_edges, graph_pos
 
 # Terrain configuration
 
