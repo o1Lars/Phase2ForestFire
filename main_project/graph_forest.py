@@ -57,8 +57,8 @@ def main() -> None:
 
         if choice == 1:
             time.sleep(0.3)
-            get_stored_config()
-            # Get user choice
+            print("The following configuration is the latest in storage:")
+            print(configuration_storage[0])
             # Sim stored data
             pass
         elif choice == 2:
@@ -367,7 +367,7 @@ def restart_program() -> None:
     print("\n...Restarting program." )
     python = sys.executable
     os.execl(python, python, *sys.argv)
-    
+
 def config_info(config: str) -> None:
     """Display configuration information to user
 
