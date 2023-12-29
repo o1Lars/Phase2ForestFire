@@ -263,7 +263,6 @@ class Landpatch():
                 patch_map[vertex] = Rockpatch() # TODO add mutate probability
         
         return patch_map
-    #fix above
     
     def _update_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
@@ -325,7 +324,7 @@ class Landpatch():
             print("Vertex not found in the graph.")
 
     def spread_fire(self, tree_patch: int) -> None:
-        """If treepatch is ignited, spread fire to adjacent Treepatch(es)."""
+        """If treepatch is ignited, randomly spread fire to adjacent Treepatch(es)."""
 
         # Check for probable fire spread
         if random.random() <= self._patches_map[tree_patch]._fire_spread_prob:
@@ -478,7 +477,7 @@ class Treepatch(Landpatch):
 class Firefighter:
     """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
 
-    def __init__(self, firefighter_skill: Optional[float] = 25, health: Optional[float] = 100) -> None:
+    def __init__(self, firefighter_skill: Optional[float] = 25) -> None:
         """
         Initialize a Firefighter.
 
@@ -486,11 +485,8 @@ class Firefighter:
         ----------
         firefighter_skill: Optional[float]
             Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
-        health: Optional[float], default=100
-            Represents the instance of a firefighter's current health.
         """
         self._firefighter_skill = firefighter_skill
-        self._health = health
         self._current_patch = None
 
     def extinguish_fire(self, treepatch) -> None:
@@ -502,14 +498,6 @@ class Firefighter:
             print("Fire extinguished by firefighter.")
         else:
             print("Firefighter failed to extinguish fire.")
-
-    def update_health(self, current_patch) -> None:
-        """Updates the current instance of a firefighter's health."""
-        if current_patch._ignited:
-            self._health -= 10
-        else:
-            self._health += 5
-        print(f"Firefighter health updated to {self._health}.")
 
     def evolve(self) -> None:
         """Perform one evolution step for the firefighter."""
@@ -541,7 +529,7 @@ class ConfigData():
     """
 
     edges: List[tuple[int,int]]
-    pos_nodes: Optional[dict] = {}
+    #pos_nodes: Optional[dict] = {}
     tree_distribution: float = 30
     firefighters: int = 3
     autocombustion: Optional[float] = 0.3
