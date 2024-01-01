@@ -144,17 +144,14 @@ def get_edges() -> List[Tuple]:
             time.sleep(0.3)
             print(f"Generating graph from input file.\
                   \nfile must adhere to the following criteria:\
-                  \nEach non-empty line must represent an edge, identified by two integers separated by a comma")
+                  \nEach non-empty line must represent an edge, identified by two integers separated by a comma\
+                  \nFilepath example: /Users/JohnDoe/examplePath/filename.dat ")
             
             # Get valid file
             validating_file = True
             while validating_file:
                 file_path = get_valid_file("Enter the file path: ", "Each non-empty line must represent an edge,\
                                            identified by two integers separated by a comma")
-                #file_name = input("Enter the file name: ") + ".dat"
-
-                # Compile file information
-                # user_file_path = os.path.join(file_path, file_name)
 
                 # Create edges from provided file
                 graph_edges = fh.create_graph_from_file(file_path)
