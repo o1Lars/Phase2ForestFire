@@ -12,6 +12,9 @@ Notes
 -----
 This module created as material for the phase 2 project for DM857, DS830 (2023). 
 """
+import os
+from typing import Optional
+
 def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: int=None) -> int:
     """This function checks to if the user input integer is valid. (To be used in input parameters)
 
@@ -176,3 +179,27 @@ def get_valid_string_input(prompt: str, valid_input: str = None, yes_no: bool=Fa
             print("Please try again.")
 
     return user_input
+
+def get_valid_file(prompt: str, file_req: Optional[str]=None) -> str:
+    """Keep prompting user for filepath until a valid filepath is provided
+    
+    Parameters
+    ---------
+    prompt: str
+        prompt message to display to user while getting input
+    file_req: Optional[str], default = None
+        If provided, will let user know the requirements for the file they are prompted for
+    """
+
+    getting_file = True
+
+    while getting_file:
+        file_path = input(prompt)
+
+        if os.path.isfile(file_path):
+            print(f"The filepath '{file_path}' is a valid file.")
+            getting_file = False
+        else:
+            print(f"The filepath '{file_path}' is not a valid file.")
+            if file_req: print("File must adhere to the following:", file_req)
+ 

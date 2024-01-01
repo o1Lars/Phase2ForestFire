@@ -18,7 +18,7 @@ import sys
 import time
 import random
 from typing import List, Tuple, Optional
-from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input
+from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input, get_valid_file
 from dataclasses import dataclass
 
 def main() -> None:
@@ -147,7 +147,7 @@ def get_edges() -> List[Tuple]:
             # Get valid file
             validating_file = True
             while validating_file:
-                file_path = input("Enter the file path: ")
+                file_path = get_valid_file("Enter the file path: ")
                 file_name = input("Enter the file name: ") + ".dat"
 
                 # Compile file information
