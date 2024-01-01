@@ -229,7 +229,7 @@ def get_tree_rate() -> int:
 
 # Simulation parameter
 def get_firefighters() -> int:
-    """Return user-defined or randomly generated number of firefighters between 2-50"""
+    """Return user-defined or randomly generated number of firefighters between 2-15"""
 
     firefighters = None
     getting_param = True
@@ -239,10 +239,10 @@ def get_firefighters() -> int:
         assign_firefighters = get_valid_input("Choice: ")
 
         if assign_firefighters == 1:
-            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ", "least 2 and at most 50 firefighters", 2, 50)
+            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-15): ", "least 2 and at most 15 firefighters", 2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 2:
-            firefighters = random.randint(2, 50)
+            firefighters = random.randint(2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 3:
             config_info("firefighters")
@@ -437,7 +437,7 @@ def config_info(config: str) -> None:
         print(f"Info for configuring firefighters:\
               \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
               \n# This parameter can be set either by the user or by randomly generating a number of firefighters.\
-              \n# If you wish to specify the number, please enter an integer value beteween 2-50.")
+              \n# If you wish to specify the number, please enter an integer value beteween 2-15.")
     elif config == "autocombustion probability":
         print(f"Info for configuring autocombustion probability on tree patches:\
               \n# This parameter sets the probability for tree patches to autocombust (min 60%, max 80%).\
