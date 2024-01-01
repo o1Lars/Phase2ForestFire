@@ -3,7 +3,7 @@ This module provides a set of helper functions, to:
 - user_file:                opens a file using a given file path (fp) and file name (fn), and reads its contents
 - add_edges_from_lines:     Read lines, check if line represent an edge of a graph. Return list of edges
 - create_graph_from_file:   Reads a file, checks if it's valid, and returns a list of edges for a graph
-- check_planar_graph:       
+- check_planar_graph:       Checks if a list of edges on a graph can be represented planar
 
 Requirements
 ------------

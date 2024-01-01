@@ -1,3 +1,15 @@
+"""
+This module is the main executable and thus is the main module for the random forest simulator program. 
+The program utilizes various modules to build a graph and simulate the evolution of wild fires. 
+
+Requirements
+------------
+Python 3.7 or higher.
+
+Notes
+-----
+This module is created as material for the phase 2 project for DM857, DS830 (2023). 
+"""
 import graph_helper as gh
 import file_helper as fh
 import graph_sim as gs
