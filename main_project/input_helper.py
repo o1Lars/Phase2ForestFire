@@ -202,4 +202,6 @@ def get_valid_file(prompt: str, file_req: Optional[str]=None) -> str:
         else:
             print(f"The filepath '{file_path}' is not a valid file.")
             if file_req: print("File must adhere to the following:", file_req)
+    
+    return file_path
  

@@ -81,9 +81,11 @@ def main() -> None:
             print("Configure new graph?")
             answer = False
             while not answer:
-                answer_choice = get_valid_string_input("(y/n)", "Yes (y) to continue, no (n) to wait", True)
+                answer_choice = get_valid_string_input("(y/n)", "Yes (y) to continue, no (n) to wait", True).lower()
                 if answer_choice == "yes" or answer_choice == "y":
                     answer = True
+                elif answer_choice == "no" or answer_choice == "n":
+                    quit()
             graph._vis_graph.close()
         elif choice == 2:
             time.sleep(0.3)
@@ -147,14 +149,15 @@ def get_edges() -> List[Tuple]:
             # Get valid file
             validating_file = True
             while validating_file:
-                file_path = get_valid_file("Enter the file path: ")
-                file_name = input("Enter the file name: ") + ".dat"
+                file_path = get_valid_file("Enter the file path: ", "Each non-empty line must represent an edge,\
+                                           identified by two integers separated by a comma")
+                #file_name = input("Enter the file name: ") + ".dat"
 
                 # Compile file information
-                user_file_path = os.path.join(file_path, file_name)
+                # user_file_path = os.path.join(file_path, file_name)
 
                 # Create edges from provided file
-                graph_edges = fh.create_graph_from_file(user_file_path)
+                graph_edges = fh.create_graph_from_file(file_path)
 
                 # Verify that the graph is a planar graph
                 fh.check_planar_graph(graph_edges)
@@ -528,7 +531,7 @@ def display_config_storage() -> None:
 
     # Iterate over configuration storage
     for index, config in enumerate(configuration_storage):
-        print(f"Graph: {index + 1}")
+        print(f"\nGraph: {index + 1}")
         print(config)
         time.sleep(0.2)
 
