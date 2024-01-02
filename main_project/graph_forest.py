@@ -1,3 +1,15 @@
+"""
+This module is the main executable and thus is the main module for the random forest simulator program. 
+The program utilizes various modules to build a graph and simulate the evolution of wild fires. 
+
+Requirements
+------------
+Python 3.7 or higher.
+
+Notes
+-----
+This module is created as material for the phase 2 project for DM857, DS830 (2023). 
+"""
 import graph_helper as gh
 import file_helper as fh
 import graph_sim as gs
@@ -6,7 +18,7 @@ import sys
 import time
 import random
 from typing import List, Tuple, Optional
-from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input
+from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input, get_valid_file
 from dataclasses import dataclass
 
 def main() -> None:
@@ -69,9 +81,11 @@ def main() -> None:
             print("Configure new graph?")
             answer = False
             while not answer:
-                answer_choice = get_valid_string_input("(y/n)", "Yes (y) to continue, no (n) to wait", True)
+                answer_choice = get_valid_string_input("(y/n)", "Yes (y) to continue, no (n) to wait", True).lower()
                 if answer_choice == "yes" or answer_choice == "y":
                     answer = True
+                elif answer_choice == "no" or answer_choice == "n":
+                    quit()
             graph._vis_graph.close()
         elif choice == 2:
             time.sleep(0.3)
@@ -130,19 +144,17 @@ def get_edges() -> List[Tuple]:
             time.sleep(0.3)
             print(f"Generating graph from input file.\
                   \nfile must adhere to the following criteria:\
-                  \nEach non-empty line must represent an edge, identified by two integers separated by a comma")
+                  \nEach non-empty line must represent an edge, identified by two integers separated by a comma\
+                  \nFilepath example: /Users/JohnDoe/examplePath/filename.dat ")
             
             # Get valid file
             validating_file = True
             while validating_file:
-                file_path = input("Enter the file path: ")
-                file_name = input("Enter the file name: ") + ".dat"
-
-                # Compile file information
-                user_file_path = os.path.join(file_path, file_name)
+                file_path = get_valid_file("Enter the file path: ", "Each non-empty line must represent an edge,\
+                                           identified by two integers separated by a comma")
 
                 # Create edges from provided file
-                graph_edges = fh.create_graph_from_file(user_file_path)
+                graph_edges = fh.create_graph_from_file(file_path)
 
                 # Verify that the graph is a planar graph
                 fh.check_planar_graph(graph_edges)
@@ -217,7 +229,7 @@ def get_tree_rate() -> int:
 
 # Simulation parameter
 def get_firefighters() -> int:
-    """Return user-defined or randomly generated number of firefighters between 2-50"""
+    """Return user-defined or randomly generated number of firefighters between 2-15"""
 
     firefighters = None
     getting_param = True
@@ -227,10 +239,10 @@ def get_firefighters() -> int:
         assign_firefighters = get_valid_input("Choice: ")
 
         if assign_firefighters == 1:
-            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-50): ", "least 2 and at most 50 firefighters", 2, 50)
+            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-15): ", "least 2 and at most 15 firefighters", 2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 2:
-            firefighters = random.randint(2, 50)
+            firefighters = random.randint(2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 3:
             config_info("firefighters")
@@ -425,7 +437,7 @@ def config_info(config: str) -> None:
         print(f"Info for configuring firefighters:\
               \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
               \n# This parameter can be set either by the user or by randomly generating a number of firefighters.\
-              \n# If you wish to specify the number, please enter an integer value beteween 2-50.")
+              \n# If you wish to specify the number, please enter an integer value beteween 2-15.")
     elif config == "autocombustion probability":
         print(f"Info for configuring autocombustion probability on tree patches:\
               \n# This parameter sets the probability for tree patches to autocombust (min 60%, max 80%).\
@@ -516,7 +528,7 @@ def display_config_storage() -> None:
 
     # Iterate over configuration storage
     for index, config in enumerate(configuration_storage):
-        print(f"Graph: {index + 1}")
+        print(f"\nGraph: {index + 1}")
         print(config)
         time.sleep(0.2)
 

@@ -13,7 +13,6 @@ This module provides:
 - ConfigData    A dataclass that stores graph configuration to make previous configurations easily accessible
 
 Requirements
-#TODO
 ------------
 Python 3.7 or higher.
 
