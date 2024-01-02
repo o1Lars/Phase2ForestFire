@@ -57,12 +57,7 @@ def get_valid_input(prompt: str, valid_input: str = None,  min: int=None, max: i
             print("Please try again.")
         except KeyboardInterrupt:
             print("\nOperation interrupted by the user.")
-            print("Do you want to exit program?")
-            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
-            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
-                quit()
-            else:
-                print("\n...Redirecting")
+            quit()
         except AssertionError as e:
             print(e)  # Print the error message from the failed assertion
             if valid_input: 
@@ -91,8 +86,6 @@ def get_valid_float_input(prompt: str, valid_input: str = None, min: float=None,
     while not getting_input:
         try:
             user_input = float(input(prompt))
-            #if user_input.isdigit() == False: raise ValueError
-            #round(float(user_input), 1)
 
             # Check for min
             if min:
@@ -115,12 +108,7 @@ def get_valid_float_input(prompt: str, valid_input: str = None, min: float=None,
             print("Please try again.")
         except KeyboardInterrupt:
             print("\nOperation interrupted by the user.")
-            print("Do you want to exit program?")
-            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
-            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
-                quit()
-            else:
-                print("\n...Redirecting")
+            quit()
         except AssertionError as e:
             print(e)  # Print the error message from the failed assertion
             if valid_input: 
