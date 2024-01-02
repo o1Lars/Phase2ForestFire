@@ -13,6 +13,7 @@ This module provides:
 - ConfigData    A dataclass that stores graph configuration to make previous configurations easily accessible
 
 Requirements
+#TODO
 ------------
 Python 3.7 or higher.
 
@@ -79,7 +80,7 @@ class Graphdata:
             else:
                 treepatches_counter += 1
                 # check if tree patch is ignited
-                if patch.is_ignited:
+                if patch._ignited:
                     forest_fires_counter += 1
         
         # Append patch count to instance data
@@ -302,7 +303,6 @@ class Landpatch():
         firefighter_map = {}
 
         for vertex in vertices:
-            # Check if the current vertex should be a tree or rock patch
             if vertex in firefighters_vertices:
                 firefighter_map[vertex] = Firefighter()
         
