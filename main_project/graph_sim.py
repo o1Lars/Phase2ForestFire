@@ -108,7 +108,9 @@ class Graphdata:
         self._dead_firefighters_counter += 1
 
 class Landpatch():
-    """This is the base class for representing patches of land as a vertices on a graph. Landpatches in the graph are either of type Tree or type rock. Additionally, the class is used to simulating the evolution of wild fire on the graph on storing data
+    """This is the base class for representing patches of land as a vertices on a graph. 
+    Landpatches in the graph are either of type Tree or type rock. 
+    Additionally, the class is used to simulating the evolution of wild fire on the graph on storing data
     associated with the simulation.
     """
 
