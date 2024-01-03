@@ -35,7 +35,7 @@ def main() -> None:
         while not configuration_done:
             edges, pos_nodes = get_edges()
             tree_rate = get_tree_rate()
-            firefighters = get_firefighters()
+            firefighters = get_firefighters(len(edges))
             autocombustion_prob = get_autocombustion_prob()
             fire_spread_prob = get_fire_spread_prob()
             rock_mutate_prob = get_rock_mutate_prob()
@@ -131,7 +131,7 @@ def get_edges() -> List[Tuple]:
     """Return a list of user-defined or pseudorandomly generated edges representing a planar graph"""
 
     graph_edges = None
-    graph_pos = {}
+    graph_pos = None
     getting_param = True
 
     while getting_param:
@@ -228,7 +228,7 @@ def get_tree_rate() -> int:
     return tree_rate
 
 # Simulation parameter
-def get_firefighters() -> int:
+def get_firefighters(max_fighters: Optional[int]=None) -> int:
     """Return user-defined or randomly generated number of firefighters between 2-15"""
 
     firefighters = None
@@ -239,10 +239,10 @@ def get_firefighters() -> int:
         assign_firefighters = get_valid_input("Choice: ")
 
         if assign_firefighters == 1:
-            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-15): ", "least 2 and at most 15 firefighters", 2, 15)
+            firefighters = get_valid_input(f"Enter the number of firefighters in the forest (2-{max_fighters}): ", f"least 2 and at most {max_fighters} firefighters", 2, max_fighters)
             getting_param = False # break loop
         elif assign_firefighters == 2:
-            firefighters = random.randint(2, 15)
+            firefighters = random.randint(2, max_fighters)
             getting_param = False # break loop
         elif assign_firefighters == 3:
             config_info("firefighters")

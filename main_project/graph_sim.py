@@ -117,7 +117,7 @@ class Landpatch():
     def __init__(
         self,
         edges: List[tuple[int,int]],
-        pos_nodes: Optional[dict] = {},
+        pos_nodes: Optional[dict] = None,
         tree_distribution: float = 30,
         firefighters: int = 3,
         autocombustion: Optional[float] = 0.3,
@@ -157,7 +157,8 @@ class Landpatch():
         self._vertices_list = self._create_vertices_list()
         self._vertices_neighbours = self._create_neighbour_dict() 
         self._patches_map = self._populate_patches()                    # Map patch type to vertex
-        self._color_map = {}                                            # Map color to vertex          
+        self._color_map = {}                                            # Map color to vertex
+        self._firefighters_list = []          
         self._firefighters_map = self._deploy_firefighters()            # Map firefighters to vertex
         
         # Initial mapping of landpatches color
@@ -176,7 +177,7 @@ class Landpatch():
         self._id = id
         self._neighbour_ids = neighbour_ids
 
-        self._firefighters_list = None
+        
 
     def get_id(self) -> int:
         return self._id
