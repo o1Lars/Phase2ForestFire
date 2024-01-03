@@ -154,12 +154,7 @@ def get_valid_string_input(prompt: str, valid_input: str = None, yes_no: bool=Fa
             print("Please try again.")
         except KeyboardInterrupt:
             print("\nOperation interrupted by the user.")
-            print("Do you want to exit program?")
-            user_exit = get_valid_string_input("Yes or no (y/n): ", "Yes or no (y/n)", True)
-            if user_exit == "yes" or user_exit == "y" or user_exit == "no" or user_exit == "n":
-                quit()
-            else:
-                print("\n...Redirecting")
+            quit()
         except AssertionError as e:
             print(e)  # Print the error message from the failed assertion
             if valid_input: 
@@ -182,14 +177,18 @@ def get_valid_file(prompt: str, file_req: Optional[str]=None) -> str:
     getting_file = True
 
     while getting_file:
-        file_path = input(prompt)
+        try:
+            file_path = input(prompt)
 
-        if os.path.isfile(file_path):
-            print(f"The filepath '{file_path}' is a valid file.")
-            getting_file = False
-        else:
-            print(f"The filepath '{file_path}' is not a valid file.")
-            if file_req: print("File must adhere to the following:", file_req)
-    
+            if os.path.isfile(file_path):
+                print(f"The filepath '{file_path}' is a valid file.")
+                getting_file = False
+            else:
+                print(f"The filepath '{file_path}' is not a valid file.")
+                if file_req: print("File must adhere to the following:", file_req)
+        except KeyboardInterrupt:
+            print("\nOperation interrupted by the user.")
+            quit()
+
     return file_path
  
