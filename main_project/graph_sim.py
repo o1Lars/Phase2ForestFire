@@ -123,7 +123,9 @@ class Landpatch():
         autocombustion: Optional[float] = 0.3,
         fire_spread_prob: Optional[float] = 0.3,
         rock_mutate_prob: Optional[float] = 0.1,
-        sim_time: Optional[int] = 10) -> None:
+        sim_time: Optional[int] = 10,
+        id: Optional[int] = None,
+        neighbour_ids: Optional[List[int]] = None) -> None:
         """
         Parameters
         ----------
@@ -146,7 +148,7 @@ class Landpatch():
         """
         self._edges = edges
         self._pos_nodes = pos_nodes
-        self._firefighters = firefighters
+        self._number_of_firefighters = firefighters
         self._autocombustion = autocombustion
         self._tree_distribution = tree_distribution
         self._fire_spread_prob = fire_spread_prob
@@ -169,6 +171,18 @@ class Landpatch():
         # Create data class instance to store graph data
         self._graph_data = Graphdata()
         self._initialize_data()
+
+        # Assign id and neighbour parameters to corresponding attributes
+        self._id = id
+        self._neighbour_ids = neighbour_ids
+
+        self._firefighters_list = None
+
+    def get_id(self) -> int:
+        return self._id
+
+    def get_neighbour_ids(self) -> List[int]:
+        return self._neighbour_ids    
 
 
     # Class methods
@@ -294,7 +308,7 @@ class Landpatch():
         """Creates fire fighters and maps them to vertices (landpatches) on the graph"""
 
         vertices = self._vertices_list
-        firefighters = self._firefighters
+        firefighters = self._number_of_firefighters
 
         # Randomly select vertices for firefighters to be deployed
         firefighters_vertices = random.sample(vertices, firefighters)
@@ -305,6 +319,8 @@ class Landpatch():
         for vertex in vertices:
             if vertex in firefighters_vertices:
                 firefighter_map[vertex] = Firefighter()
+                firefighter_map[vertex]._current_patch = vertex
+                self._firefighters_list.append(firefighter_map[vertex])
         
         return firefighter_map
 
@@ -418,7 +434,7 @@ class Landpatch():
         data._land_patches = [len(self._vertices_list)]
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
         data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
-        data._firefighters = [self._firefighters]
+        data._firefighters = [self._number_of_firefighters]
     
     # Base methods overwriting python basic methods.
     def __eq__(self, other) -> bool:
