@@ -208,6 +208,7 @@ class Landpatch():
 
     def _create_neighbour_dict(self) -> Dict[int, List[int]]:
         """Return dictionary of vertices as key and neighbours (if any) as value"""
+        # TODO "(if any)" should probably be removed, since vertices of our planar graph always have at least 1 neighbour?
 
         vertices_list = self._vertices_list
         edges = self._edges
@@ -224,7 +225,7 @@ class Landpatch():
                 x, y = edge_tuple  # split tuple into two values
 
                 # If neighbour not already added, append to neighbours list
-                if x not in neighbours_list and x != vertex and y == vertex:
+                if x not in neighbours_list and x != vertex and y == vertex: 
                     neighbours_list.append(x)
                 if y not in neighbours_list and x == vertex and y != vertex:
                     neighbours_list.append(y)
@@ -274,12 +275,11 @@ class Landpatch():
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(self._fire_spread_prob) # TODO Add autocombustion
+                patch_map[vertex] = Treepatch(self._fire_spread_prob) # TODO Add autocombustion, id and neighbour ids
             else:
-                patch_map[vertex] = Rockpatch() # TODO add mutate probability
+                patch_map[vertex] = Rockpatch() # TODO add mutate probability, id and neighbour ids
         
         return patch_map
-    #fix above
     
     def _update_color_map(self) -> dict:
         """Return dictionary with color mapped to vertex"""
@@ -324,27 +324,28 @@ class Landpatch():
         
         return firefighter_map
 
-    def mutate(self) -> None:
+    def mutate(self, vertex_id: int) -> None:
         """Swaps the land patch instance associated with vertex. 
         If vertex was populated by rock, becomes populated by tree and vice versa"""
+        patches_map = self._patches_map
+
+       # Check if the vertex exists in the patches_map (is problematic - only updates internal map and not current instance of landpatch)
+        if vertex_id in patches_map:
+            if isinstance(patches_map[vertex_id], Treepatch):
+                patches_map[vertex_id] = Rockpatch()
+            elif isinstance(patches_map[vertex_id], Rockpatch):
+                patches_map[vertex_id] = Treepatch()
+            else:
+                print("Invalid patch type.")
+        else:
         
-        # Check if the vertex exists in the patches_map (is problematic - only updates internal map and not current instance of landpatch)
-        # if vertex_id in patches_map:
-        #     if isinstance(patches_map[vertex_id], Treepatch):
-        #         patches_map[vertex_id] = Rockpatch()
-        #     elif isinstance(patches_map[vertex_id], Rockpatch):
-        #         patches_map[vertex_id] = Treepatch()
-        #     else:
-        #         print("Invalid patch type.")
-        # else:
-        #
-        #      print("Vertex not found in the graph.")
+             print("Vertex not found in the graph.")
         
-        # Change attributes of current Landpatch instance using __dict__
-        if isinstance(self, Treepatch):
-            self.__dict__ = Rockpatch(id=self._id, neighbours = self._neighbours)
-        if isinstance(self, Rockpatch):
-            self.__dict__ = Treepatch(id=self._id, neighbours = self._neighbours)
+        # # Change attributes of current Landpatch instance using __dict__
+        # if isinstance(self, Treepatch):
+        #     self.__dict__ = Rockpatch(id=self._id, neighbours = self._neighbours)
+        # if isinstance(self, Rockpatch):
+        #     self.__dict__ = Treepatch(id=self._id, neighbours = self._neighbours)
             
 
         
