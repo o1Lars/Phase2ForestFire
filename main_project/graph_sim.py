@@ -187,7 +187,7 @@ class Landpatch():
 
     # Class methods
     # Basic graph methods
-    def _create_vertices_list(self) -> List[Tuple[int,int]]:
+    def _create_vertices_list(self) -> List[int]:
         """Return a list of vertices from tuple of edges"""
 
         edges = self._edges
@@ -259,7 +259,7 @@ class Landpatch():
             break # Finish the loop if an unconnected section has been found
 
     # Landpatces specific methods
-    def _populate_patches(self) -> None:
+    def _populate_patches(self) -> dict:
         """Populates the vertices of a graph by connecting it to an instance of either Rockpatch or Treepatch class"""
         
         vertices = self._vertices_list
@@ -324,22 +324,30 @@ class Landpatch():
         
         return firefighter_map
 
-    def mutate_landpatch(self, vertex_id: int) -> None:
+    def mutate(self) -> None:
         """Swaps the land patch instance associated with vertex. 
         If vertex was populated by rock, becomes populated by tree and vice versa"""
+        
+        # Check if the vertex exists in the patches_map (is problematic - only updates internal map and not current instance of landpatch)
+        # if vertex_id in patches_map:
+        #     if isinstance(patches_map[vertex_id], Treepatch):
+        #         patches_map[vertex_id] = Rockpatch()
+        #     elif isinstance(patches_map[vertex_id], Rockpatch):
+        #         patches_map[vertex_id] = Treepatch()
+        #     else:
+        #         print("Invalid patch type.")
+        # else:
+        #
+        #      print("Vertex not found in the graph.")
+        
+        # Change attributes of current Landpatch instance using __dict__
+        if isinstance(self, Treepatch):
+            self.__dict__ = Rockpatch(id=self._id, neighbours = self._neighbours)
+        if isinstance(self, Rockpatch):
+            self.__dict__ = Treepatch(id=self._id, neighbours = self._neighbours)
+            
 
-        patches_map = self._patches_map
-
-        # Check if the vertex exists in the patches_map
-        if vertex_id in patches_map:
-            if isinstance(patches_map[vertex_id], Treepatch):
-                patches_map[vertex_id] = Rockpatch()
-            elif isinstance(patches_map[vertex_id], Rockpatch):
-                patches_map[vertex_id] = Treepatch()
-            else:
-                print("Invalid patch type.")
-        else:
-            print("Vertex not found in the graph.")
+        
 
     def spread_fire(self, tree_patch: int) -> None:
         """If treepatch is ignited, spread fire to adjacent Treepatch(es)."""
@@ -417,11 +425,11 @@ class Landpatch():
 
                 # Check if all trees on patch have died.
                 if patches[patch]._tree_health < 0:
-                    self.mutate_landpatch(patch)
+                    self.mutate(patch)
         
             if isinstance(patches[patch], Rockpatch):
                 if random.randint(0, 100) == patches[patch]._mutate_chance:
-                    self.mutate_landpatch(patches[patch])
+                    self.mutate(patches[patch])
         
         self.move_firefighters()
     
@@ -453,6 +461,8 @@ class Landpatch():
     def __repr__(self) -> str:
         """Return a Python-like representation of this this instance"""
         return f"GraphCreater({self._edges}, {self._color_pattern})"
+    
+    
 
 @dataclass
 class Rockpatch(Landpatch):
@@ -478,7 +488,7 @@ class Treepatch(Landpatch):
     _tree_health: Optional[int] = 256
     _ignited: bool = False
 
-    def update_treestats(self) -> None:
+    def updateland(self) -> None:
         """Update treestats based on the specified conditions."""
         if not self._ignited:
             self._tree_health += 10
@@ -488,7 +498,7 @@ class Treepatch(Landpatch):
 
     def evolve(self) -> None:
         """Perform one evolution step for the Treepatch."""
-        self.update_treestats()
+        self.updateland()
         self.spread_fire()
         # Additional logic for the Treepatch's evolution? maybe later not sure
 
@@ -591,3 +601,4 @@ class ConfigData():
 
         return self.edges, self.pos_nodes, self.tree_distribution, self.firefighters, \
                 self.autocombustion, self.fire_spread_prob, self.rock_mutate_prob, self.sim_time
+    
