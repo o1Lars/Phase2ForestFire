@@ -30,6 +30,9 @@ def user_file(fp, fn):
         return e
     except IOError as e:
         return e
+    except KeyboardInterrupt as e:
+        print(e)
+        quit()
 
 def add_edges_from_lines(lines: str) -> list[tuple]:
     """Read lines, check if line represent an edge of a graph. Return list of edges"""
