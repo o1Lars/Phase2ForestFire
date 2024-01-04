@@ -108,8 +108,36 @@ class Graphdata:
         """Updates counter of dead fire fighters"""
         
         self._dead_firefighters_counter += 1
+      
+    def report_forest_evolution(steps: int) -> None:
+        """Displays a plot of evolution of tree patches, rock patches, and wildfires over a specified number of steps"""
 
-
+        # Retrieve data for visualisation
+        tree_patches = self._tree_patches
+        rock_patches = self._rock_patches
+        wildfires = self._ignited_tree_patches
+    
+        # Create a list of steps for the x-axis
+        step_list = list(range(steps + 1))
+    
+        # Create a figure and axis for the plot
+        plt.figure(figsize=(10, 6))
+    
+        # Plot individual lines for each metric
+        plt.plot(step_list, tree_patches, color='r', label='Trees Population')
+        plt.plot(step_list, rock_patches, color='b', label='Non-combustible Land')
+        plt.plot(step_list, wildfires, color='g', label='Wildfires')
+    
+        # Labels, title, legend, and grid
+        plt.xlabel("Simulation Steps")
+        plt.ylabel("Count")
+        plt.title("Evolution of Wildfire")
+        plt.legend(loc="upper right")
+        plt.grid(True)
+    
+        # Show the plot
+        plt.show()
+    
 class Landpatch():
     """This is the base class for representing patches of land as vertices on a graph. 
     Landpatches in the graph are either of type Tree or type rock."""
