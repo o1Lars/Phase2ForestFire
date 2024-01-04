@@ -1,5 +1,6 @@
 import time
-from graph_sim import Firefighter, Treepatch, Rockpatch, Visualiser, Graphdata
+from graph_sim import Firefighter, Treepatch, Rockpatch, Graphdata
+from visualiser_random_forest_graph import Visualiser
 import random
 from typing import List, Dict, Optional, Tuple
 
@@ -12,15 +13,15 @@ class ForestFireGraph:
 
     def __init__(
         self,
-        edges: Optional[List[Tuple[int,int]]],
+        edges: List[Tuple[int,int]],
         pos_nodes: Optional[Dict] = {},
-        tree_distribution: float = 30,
-        firefighters: int = 3,
-        autocombustion: float = 0.3,
-        fire_spread_prob: float = 0.3,
-        rock_mutate_prob: float = 0.1,
-        sim_time: int = 10,
-        firefighter_average_skill: int = 25
+        tree_distribution: Optional[float] = 30,
+        firefighters: Optional[int] = 3,
+        autocombustion: Optional[float] = 0.3,
+        fire_spread_prob: Optional[float] = 0.3,
+        rock_mutate_prob: Optional[float] = 0.1,
+        sim_time: Optional[int] = 10,
+        firefighter_average_skill: Optional[int] = 25
         ):
         """
         Parameters
@@ -29,18 +30,20 @@ class ForestFireGraph:
             List containing the edges (Tuples of 2 vertices) forming the 2D surface for the graph.
         pos_nodes: Optional[dict], default = {}
             Optional argument. Stores graph position of nodes if provided.
-        firefighters: int
+        firefighters: Optional[int], default = 3
             Firefighters for initializing firefighter class
-        tree_distribution: int
+        tree_distribution: Optional[int], default = 30
             The percentage distribution of tree patches on the graph
-        autocombustion: float
+        autocombustion: Optional[float], default = 0.3
             Probability for a tree patch to randomly ignite
-        fire_spread_probability: int
+        fire_spread_probability: Optional[int], default = 0.3
             Probability for fire to randomly spread to adjacent tree patch neighbours
-        rock_mutate_prob: float
+        rock_mutate_prob: Optional[float], default = 0.1
             Probability for a rock patch to randomly mutate into a tree patch
-        sim_time: int
+        sim_time: Optional[int], default = 10
             The number of simulation steps for the purpose of simulating wildfire evolution.
+        firefighter_average_skill: Optional[int], default = 25
+            The average skill of instances of class firefighter
         """
 
         self._edges = edges
@@ -52,8 +55,8 @@ class ForestFireGraph:
         self._rock_mutate_prob = rock_mutate_prob
         self._sim_time = sim_time
         self._vertices_list = self._create_vertices_list()
-        self._patches_map = self._populate_patches()                    # Map patch type to vertex
         self._vertices_neighbours = self._create_neighbour_dict() 
+        self._patches_map = self._populate_patches()                    # Map patch type to vertex
         self._color_map = {}                                            # Map color to vertex          
         self._firefighters_list = []
         self._firefighter_average_skill = firefighter_average_skill     #skill level is probability (in percentage) of extinguishing fire
@@ -118,7 +121,6 @@ class ForestFireGraph:
 
                 # add neighbour list to dictionary
                 vertices_neighbours[vertex] = neighbours_list
-                self._patches_map[vertex]._neighbour_ids = neighbours_list
 
         return vertices_neighbours
 
@@ -160,11 +162,13 @@ class ForestFireGraph:
         patch_map = {}
 
         for vertex in vertices:
+            # Get list of neighbours
+            neighbours = self._vertices_neighbours[vertex]
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(id = vertex, fire_spread_prob=self._fire_spread_prob, autocombustion_prob=self._autocombustion) # TODO Add autocombustion, id and neighbour ids
+                patch_map[vertex] = Treepatch(id = vertex, fire_spread_prob=self._fire_spread_prob, autocombustion_prob=self._autocombustion, neighbour_ids=neighbours)
             else:
-                patch_map[vertex] = Rockpatch(id = vertex) # TODO add mutate probability, id and neighbour ids
+                patch_map[vertex] = Rockpatch(id = vertex, neighbour_ids=neighbours, mutate_chance=self._rock_mutate_prob)
         
         return patch_map
     

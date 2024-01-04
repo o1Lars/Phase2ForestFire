@@ -19,7 +19,7 @@ Notes
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Tuple, Type, Class
+from typing import List, Optional, Dict, Tuple, Type
 import random
 
 @dataclass
@@ -233,7 +233,7 @@ class Firefighter():
         self._health = health
         self._current_patch: int = None
 
-    def extinguish_fire(self, treepatch: Class) -> None:
+    def extinguish_fire(self, treepatch: Type) -> None:
         """Based on firefighter_skill, extinguishes fire if toggled on Treepatch.
 
         Parameters
