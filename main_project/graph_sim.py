@@ -162,21 +162,7 @@ class Rockpatch(Landpatch):
 
 
 class Treepatch(Landpatch):
-    """This class extends Landpatch and creates an instance of subclass Treepatch
-
-    Parameters
-    ----------
-    id: [int] = None
-        Represents a unique identifier for each unique instance of the class
-    fire_spread_prob: Optional[float], default = 0.3
-        Represents the probability for an ignited tree patch to spread fire to neighbouring tree patches
-    neighbour_ids: [List[int]] = None
-        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
-    autocombustion_prob: Optional[float], default = 0.6
-        Represents the probability for each instance of tree patch to self-ignite
-    tree_health: Optional[int], default = 256
-        Attribute identifies the current health of the treepatch [0-256].
-    """
+    """This class extends Landpatch and creates an instance of subclass Treepatch"""
     def __init__(self, 
                  id: int, 
                  fire_spread_prob: Optional[float]=0.3, 
@@ -185,6 +171,20 @@ class Treepatch(Landpatch):
                  tree_health: Optional[int] = 256)->None:
         super().__init__(id, 
                          neighbour_ids = neighbour_ids)
+        """
+        Parameters
+        ----------
+        id: [int] = None
+            Represents a unique identifier for each unique instance of the class
+        fire_spread_prob: Optional[float], default = 0.3
+            Represents the probability for an ignited tree patch to spread fire to neighbouring tree patches
+        neighbour_ids: [List[int]] = None
+            List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
+        autocombustion_prob: Optional[float], default = 0.6
+            Represents the probability for each instance of tree patch to self-ignite
+        tree_health: Optional[int], default = 256
+            Attribute identifies the current health of the treepatch [0-256].
+        """
         self._fire_spread_prob = fire_spread_prob
         self._autocombustion_prob = autocombustion_prob
         self._tree_health = tree_health
@@ -218,19 +218,17 @@ class Treepatch(Landpatch):
 
 
 class Firefighter():
-    """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches
-
-    Parameters
-    ----------
-    firefighter_skill: Optional[float]
-        Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
-    health: Optional[float], default=100
-        Represents the instance of a firefighter's current health.
-    """
+    """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
     def __init__(self, 
                  firefighter_skill: Optional[float] = 25, 
                  health: Optional[float] = 100) -> None:
-        
+        """
+        Parameters
+        ----------
+        firefighter_skill: Optional[float]
+            Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
+        health: Optional[float], default=100
+            Represents the instance of a firefighter's current health."""
         self._firefighter_skill = firefighter_skill
         self._health = health
         self._current_patch: int = None
