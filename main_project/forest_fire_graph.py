@@ -218,7 +218,8 @@ class ForestFireGraph:
     def simulate(self): 
         simulation_count = 0
         while simulation_count < self._sim_time:
-
+            
+            # Evolve patches 1 evolution step
             # Iterates over patches map
             for vertex, patch in self._patches_map.items():
                 # Applies treepatch dynamics
@@ -236,9 +237,10 @@ class ForestFireGraph:
                                                                  autocombustion_prob=self._autocombustion, 
                                                                  tree_health=random.randint(1,256))
 
+            # Evolve firefighters 1 evolution step
             for firefighter in self._firefighters_list:
                 firefighter_patch = self._patches_map[firefighter._current_patch]
-                if isinstance(firefighter_patch, Treepatch) and firefighter_patch._ignited:
+                if isinstance(firefighter_patch, Treepatch) and firefighter_patch._ignited and firefighter.isAlive:
                     firefighter.extinguish_fire(firefighter_patch)
                 else:
                     for id in firefighter_patch.get_neighbour_ids():
@@ -250,16 +252,12 @@ class ForestFireGraph:
             print(self._patches_map)
             for firefighter in self._firefighters_list:
                 print(firefighter)
-                    ### remove old placement of firefighter in firefighter_map
-                    ##del self._firefighters_map[vertex]
-                    ##self._firefighters_map[vertex] = firefighter
-            
-            #TODO Er det rigtig anvendelse af graph data???
+
+            # Update data
             self._graph_data.update_patches(self._patches_map)
 
-            # visualize instance of graph
+            # update graph
             self._update_color_map()
-            #self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50, pos_nodes=self._pos_nodes)
             self._vis_graph.update_node_colours(self._color_map)
             time.sleep(0.5) # add delay to show graph between steps
             print("Simulation count is currently" + str(simulation_count))

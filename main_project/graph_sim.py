@@ -233,9 +233,11 @@ class Firefighter():
         self._firefighter_skill = firefighter_skill
         self._health = health
         self._current_patch: int = None
+        self.isAlive = True
 
     def extinguish_fire(self, treepatch: Type) -> None:
-        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch.
+        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch. 
+        If fail, small chance for firefighter to die
 
         Parameters
         ----------
@@ -249,6 +251,7 @@ class Firefighter():
             print("Fire extinguished by firefighter.")
         else:
             print("Firefighter failed to extinguish fire.")
+            self.check_death()
 
     def update_health(self) -> None:
         """Updates the current instance of a firefighter's health."""
@@ -264,6 +267,16 @@ class Firefighter():
     def evolve(self) -> None:
         """Perform one evolution step for the firefighter."""
         self.move_firefighter()
+    
+    def check_death(self) -> None:
+        """Checks if firefighter is killed by forestfire"""
+
+        save_check = 3 - (self._firefighter_skill/100)
+        death_roll = random.randint(0, 100)
+
+        # check for death
+        if death_roll <= save_check:
+            self.isAlive = False
 
 
 @dataclass
