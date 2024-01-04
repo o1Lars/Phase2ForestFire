@@ -63,6 +63,26 @@ def main() -> None:
                                 fire_spread_prob, rock_mutate_prob, sim_limit)
         graph.simulate()
         # Display report
+        time.sleep(0.3)
+        print("\n============================================================="
+              "\nYou have the following options:"
+              "\n=> Select '1' to generate and display a report on the evolution of the wildfires"
+              "\n=> Select '2' to exit the program")
+        choice = get_valid_input("Choice: ", "Option 1 or 2.")
+
+        if choice == 1:
+            time.sleep(0.3)
+            # Create instance of class
+            my_instance = gs.Graphdata
+            # Call method using created instance
+            my_instance.report_forest_evolution(steps=sim_time)
+        elif choice == 2:
+            time.sleep(0.3)
+            print("Sure, I spent a whole hour configuring the report only for you to be ungrateful.")
+            quit()
+        else:
+            print("Invalid choice"
+                  "\n...Redirecting")
 
         # Ask to run simulation again
         time.sleep(0.3)
