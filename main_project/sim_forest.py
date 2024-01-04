@@ -1,5 +1,5 @@
 import time
-from graph_sim import Firefighter, Treepatch, Rockpatch, Graphdata
+from class_helper import Firefighter, Treepatch, Rockpatch, Graphdata
 from visualiser_random_forest_graph import Visualiser
 import random
 from typing import List, Dict, Optional, Tuple
@@ -13,7 +13,7 @@ class ForestFireGraph:
 
     def __init__(
         self,
-        edges: List[Tuple[int,int]],
+        edges: Optional[List[Tuple[int,int]]],
         pos_nodes: Optional[Dict] = {},
         tree_distribution: Optional[float] = 30,
         firefighters: Optional[int] = 3,
@@ -55,20 +55,19 @@ class ForestFireGraph:
         self._rock_mutate_prob = rock_mutate_prob
         self._sim_time = sim_time
         self._vertices_list = self._create_vertices_list()
-        self._vertices_neighbours = self._create_neighbour_dict() 
         self._patches_map = self._populate_patches()                    # Map patch type to vertex
-        self._color_map = {}                                            # Map color to vertex          
-        self._firefighters_list = []
-        self._firefighter_average_skill = firefighter_average_skill     #skill level is probability (in percentage) of extinguishing fire
-        self._deploy_firefighters()            # Map firefighters to vertex
-        
+        self._vertices_neighbours = self._create_neighbour_dict() 
+        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=100, pos_nodes=self._pos_nodes)
+        self._color_map : List[Tuple[int,int]] = {}                                            # Contains int for vertex/id of patch and color
         # Initial mapping of landpatches color
         self._update_color_map()
-        
-        # visualize opening instance of graph
-        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50, pos_nodes=self._pos_nodes)
         self._vis_graph.update_node_colours(self._color_map)
-        time.sleep(1) # add delay to show initial graph
+
+        self._firefighters_list :List[Firefighter] = []
+        self._firefighter_average_skill = firefighter_average_skill #skill level is probability (in percentage) of extinguishing fire
+        self._deploy_firefighters()            # Map firefighters to vertex
+        
+        
 
         # Create data class instance to store graph data
         self._graph_data = Graphdata()
@@ -121,6 +120,7 @@ class ForestFireGraph:
 
                 # add neighbour list to dictionary
                 vertices_neighbours[vertex] = neighbours_list
+                self._patches_map[vertex]._neighbour_ids = neighbours_list
 
         return vertices_neighbours
 
@@ -162,17 +162,15 @@ class ForestFireGraph:
         patch_map = {}
 
         for vertex in vertices:
-            # Get list of neighbours
-            neighbours = self._vertices_neighbours[vertex]
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(id = vertex, fire_spread_prob=self._fire_spread_prob, autocombustion_prob=self._autocombustion, neighbour_ids=neighbours)
+                patch_map[vertex] = Treepatch(id = vertex, self_combustion_prob=self._autocombustion)
             else:
-                patch_map[vertex] = Rockpatch(id = vertex, neighbour_ids=neighbours, mutate_chance=self._rock_mutate_prob)
+                patch_map[vertex] = Rockpatch(id = vertex, mutate_chance = self._rock_mutate_prob) 
         
         return patch_map
     
-    def _update_color_map(self) -> Dict:
+    def _update_color_map(self) -> None:
         """Return dictionary with color mapped to vertex"""
 
         patches = self._patches_map
@@ -181,7 +179,7 @@ class ForestFireGraph:
 
         # Iterate over patches dictionary
         for vertex, patch_type in patches.items():
-            color_code = 0
+            color_code = 0 
 
             # Identify if patch is tree or rock
             if isinstance(patch_type, Treepatch):
@@ -190,9 +188,8 @@ class ForestFireGraph:
                     color_code = patch_type._tree_health - 256
                 else:
                     color_code = patch_type._tree_health
+                color_map[vertex] = color_code
             
-            color_map[vertex] = color_code
-        
         self._color_map = color_map
 
     def _deploy_firefighters(self) -> None:
@@ -224,18 +221,18 @@ class ForestFireGraph:
             for vertex, patch in self._patches_map.items():
                 # Applies treepatch dynamics
                 if isinstance(patch, Treepatch):
-                    patch.evolve()
+                    patch.updateland() #fix evolve method and replace with updateland method ## create autocombustion in updateland
                     if patch._ignited:
-                        patch.spread_fire(patch.get_id)
+                        self.spread_fire(patch._neighbour_ids)
                     if patch._tree_health < 0:
                         self._patches_map[vertex] = patch.mutate()
-                # Applies rockpatch dynamics
+                    else:
+                        patch.updateland()
+                
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
-                    if random.random() <= patch._mutate_chance:
-                        self._patches_map[vertex] = patch.mutate(fire_spread_prob_input = self._fire_spread_prob, 
-                                                                 autocombustion_prob=self._autocombustion, 
-                                                                 tree_health=random.randint(1,256))
+                    if random.random() <= patch._mutate_chance/100:
+                        self._patches_map[vertex] = patch.mutate(fire_spread_prob_input = self._fire_spread_prob)
 
             # Evolve firefighters 1 evolution step
             for firefighter in self._firefighters_list:
@@ -246,9 +243,9 @@ class ForestFireGraph:
                     for id in firefighter_patch.get_neighbour_ids():
                         if(isinstance(self._patches_map[id], Treepatch) and self._patches_map[id]._ignited):
                             firefighter._current_patch = id
-                        else:
-                            #change firefighters _current_patch attribute
-                            firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
+
+                    #change firefighters _current_patch attribute
+                    firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
             print(self._patches_map)
             for firefighter in self._firefighters_list:
                 print(firefighter)
@@ -258,23 +255,27 @@ class ForestFireGraph:
 
             # update graph
             self._update_color_map()
-            self._vis_graph.update_node_colours(self._color_map)
+            self._vis_graph.update_node_colours(self._color_map) 
+
+            # add firefigther patch ids to list of ids, and use this to color map edges blue where firefighters are present
+            firefighter_patch_ids = []
+            for firefighter in self._firefighters_list:
+                firefighter_patch_ids.append(firefighter._current_patch)
+            self._vis_graph.update_node_edges(firefighter_patch_ids)
+
             time.sleep(0.5) # add delay to show graph between steps
             print("Simulation count is currently" + str(simulation_count))
 
             simulation_count += 1
 
-    def spread_fire(self, id: int) -> None:
-        """If treepatch is ignited, spread fire to adjacent Treepatch(es)."""
-
-        # Get the neighbors of the current Treepatch
-        neighbours = self._patches_map._neighbours_list
+    def spread_fire(self, neighbour_ids: List[int]) -> None:
+        """If treepatch is ignited, spread fire to any adjacent Treepatch(es)."""
 
         # Ignites adjacents treepatches not already on fire
-        for neighbor_id in neighbours:
+        for neighbor_id in neighbour_ids:
             current_neighbour = self._patches_map[neighbor_id]
 
             # Check if neighbor is tree patch AND simulate chance of igniting
-            if isinstance(current_neighbour, Treepatch) and random.random() <= self._patches_map[id]._fire_spread_prob:   
+            if isinstance(current_neighbour, Treepatch) and random.random() <= self._fire_spread_prob:   
                 current_neighbour._ignited = True
         # Check for probable fire spread

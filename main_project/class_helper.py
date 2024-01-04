@@ -109,7 +109,38 @@ class Graphdata:
         
         self._dead_firefighters_counter += 1
       
-    def report_forest_evolution(steps: int) -> None:
+      
+    def report_forest_evolution(self, steps: int) -> None:
+        """Displays a plot of evolution of tree patches, rock patches, and wildfires over a specified number of steps"""
+
+        # Retrieve data for visualisation
+        tree_patches = self._tree_patches
+        rock_patches = self._rock_patches
+        wildfires = self._ignited_tree_patches
+    
+        # Create a list of steps for the x-axis
+        step_list = list(range(steps + 1))
+    
+        # Create a figure and axis for the plot
+        plt.figure(figsize=(10, 6))
+    
+        # Plot individual lines for each metric
+        plt.plot(step_list, tree_patches, color='r', label='Trees Population')
+        plt.plot(step_list, rock_patches, color='b', label='Non-combustible Land')
+        plt.plot(step_list, wildfires, color='g', label='Wildfires')
+    
+        # Labels, title, legend, and grid
+        plt.xlabel("Simulation Steps")
+        plt.ylabel("Count")
+        plt.title("Evolution of Wildfire")
+        plt.legend(loc="upper right")
+        plt.grid(True)
+    
+        # Show the plot
+        plt.show()
+    
+
+    def report_forest_evolution(self, steps: int) -> None:
         """Displays a plot of evolution of tree patches, rock patches, and wildfires over a specified number of steps"""
 
         # Retrieve data for visualisation
@@ -157,6 +188,8 @@ class Landpatch():
         self._id = id
         self._neighbour_ids = neighbour_ids
 
+        self._firefighters_list = None
+
     def get_id(self) -> int:
         return self._id
 
@@ -171,6 +204,7 @@ class Rockpatch(Landpatch):
                  neighbour_ids: List[int]=None, 
                  mutate_chance: Optional[float]=1)->None:
         super().__init__(id, neighbour_ids=neighbour_ids)
+        self._mutate_chance = mutate_chance
         """
         Parameters    
         ----------
@@ -181,20 +215,20 @@ class Rockpatch(Landpatch):
         mutate_chance: float, default = 1
             Percentage chance for a rockpatch to mutate into treepatch
         """
-        self._mutate_chance = mutate_chance
 
-    def mutate(self, fire_spread_prob_input:float, autocombustion_prob:float, tree_health: Optional[int]=256) -> Landpatch:
+    def mutate(self, autocombustion_prob:float, tree_health: Optional[int]=256) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
+        #patches_map = self._patches_map
+        #return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, self_combustion_prob=autocombustion_prob)
 
-        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, fire_spread_prob=fire_spread_prob_input, 
-                         autocombustion_prob=autocombustion_prob, tree_health=tree_health)
+        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, 
+                         self_combustion_prob=autocombustion_prob, tree_health=tree_health)
 
 
 class Treepatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Treepatch"""
     def __init__(self, 
                  id: int, 
-                 fire_spread_prob: Optional[float]=0.3, 
                  neighbour_ids: list[int] = None, 
                  autocombustion_prob: Optional[float] = 0.6, 
                  tree_health: Optional[int] = 256)->None:
@@ -214,9 +248,10 @@ class Treepatch(Landpatch):
         tree_health: Optional[int], default = 256
             Attribute identifies the current health of the treepatch [0-256].
         """
-        self._fire_spread_prob = fire_spread_prob
-        self._autocombustion_prob = autocombustion_prob
-        self._tree_health = tree_health
+    def __init__(self, id: int, self_combustion_prob: float, neighbour_ids: list[int] = None):
+        super().__init__(id, neighbour_ids = neighbour_ids)
+        self._self_combustion_prob = self_combustion_prob
+        self._tree_health = 256
         self._ignited = False
 
     def check_autocombust(self) -> None:
@@ -229,24 +264,21 @@ class Treepatch(Landpatch):
 
     def updateland(self) -> None:
         """Update treestats based on the specified conditions."""
-        if not self._ignited:
+        if self._ignited:
+            self._tree_health -= 20
+        else:
             self._tree_health += 10
             if self._tree_health > 256:
                 self._tree_health = 256
-        else:
-            self._tree_health -= 20
-
-    def evolve(self) -> None:
-        """Perform one evolution step for the Treepatch."""
-        self.updateland()
-        self.check_autocombust()
+            if random.random() <= self._self_combustion_prob:
+                self._ignited = True 
 
     def mutate(self) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
-        return Rockpatch(id=self._id, neighbours = self._neighbours)
+        return Rockpatch(id=self._id, neighbour_ids=self._neighbour_ids)
 
 
-class Firefighter():
+class Firefighter:
     """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
     def __init__(self, 
                  firefighter_skill: Optional[float] = 25, 

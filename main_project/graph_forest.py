@@ -11,8 +11,8 @@ Notes
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 import graph_helper as gh
-import file_helper as fh
 import class_helper as ch
+import file_helper as fh
 import os
 import sys
 import time
@@ -20,7 +20,6 @@ import random
 from sim_forest import ForestFireGraph
 from typing import List, Tuple, Optional
 from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input, get_valid_file
-from dataclasses import dataclass
 
 def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
@@ -31,9 +30,9 @@ def main() -> None:
     # run program
     while program_running:
 
-        #graph_edges, graph_pos = gh.voronoi_to_edges(10)
-        #graph = ForestFireGraph(graph_edges, graph_pos, sim_time = 50)
-        #graph.simulate()
+        graph_edges, graph_pos = gh.voronoi_to_edges(100)
+        graph = ForestFireGraph(graph_edges, graph_pos, firefighters= 30, autocombustion=0.05, tree_distribution=50, sim_time = 50)
+        graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:
