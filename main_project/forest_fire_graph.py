@@ -56,7 +56,7 @@ class ForestFireGraph:
         self._vertices_neighbours = self._create_neighbour_dict() 
         self._color_map = {}                                            # Map color to vertex          
         self._firefighters_list = []
-        self._firefighter_average_skill = firefighter_average_skill #skill level is probability (in percentage) of extinguishing fire
+        self._firefighter_average_skill = firefighter_average_skill     #skill level is probability (in percentage) of extinguishing fire
         self._deploy_firefighters()            # Map firefighters to vertex
         
         # Initial mapping of landpatches color
@@ -309,8 +309,8 @@ class ForestFireGraph:
                         patch.spread_fire(patch.get_id)
                     if patch._tree_health < 0:
                         self._patches_map[vertex] = patch.mutate()
-                    else:
-                        patch.updateland()
+                    #else:
+                    #    patch.updateland() Delete? Patch is already calling update land on the evolve method
                 
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
@@ -325,9 +325,9 @@ class ForestFireGraph:
                     for id in firefighter_patch.get_neighbour_ids():
                         if(isinstance(self._patches_map[id], Treepatch) and self._patches_map[id]._ignited):
                             firefighter._current_patch = id
-
-                    #change firefighters _current_patch attribute
-                    firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
+                        else:
+                            #change firefighters _current_patch attribute
+                            firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
 
                     ### remove old placement of firefighter in firefighter_map
                     ##del self._firefighters_map[vertex]
