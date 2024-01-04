@@ -19,7 +19,7 @@ Notes
 This module is created as material for the phase 2 project for DM857, DS830 (2023). 
 """
 from dataclasses import dataclass, field
-from typing import List, Optional, Dict, Tuple, Type
+from typing import List, Optional, Dict, Tuple, Type, Class
 import random
 
 @dataclass
@@ -150,26 +150,17 @@ class Rockpatch(Landpatch):
     mutate_chance: float, default = 1
         Percentage chance for a rockpatch to mutate into treepatch
     """
-    def __init__(self, id: int, neighbour_ids: List[int]=None, mutate_chance: Optional[float]= 1):
+    def __init__(self, 
+                 id: int, 
+                 neighbour_ids: List[int]=None, 
+                 mutate_chance: Optional[float]=1)->None:
         super().__init__(id, neighbour_ids=neighbour_ids)
         self._mutate_chance = mutate_chance
 
     def mutate(self, fire_spread_prob_input:float) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
-        #patches_map = self._patches_map
-        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, fire_spread_prob=fire_spread_prob_input)
 
-       # Check if the vertex exists in the patches_map (is problematic - only updates internal map and not current instance of landpatch)
-       ## if vertex_id in patches_map:
-       ##     if isinstance(patches_map[vertex_id], Treepatch):
-       ##         patches_map[vertex_id] = Rockpatch(id=vertex_id, neighbour_ids=patches_map[vertex_id]._neighbours_list)
-       ##     elif isinstance(patches_map[vertex_id], Rockpatch):
-       ##         patches_map[vertex_id] = Treepatch(id=vertex_id, neighbour_ids=patches_map[vertex_id]._neighbours_list)
-       ##     else:
-       ##         print("Invalid patch type.")
-       ## else:
-       ## 
-       ##      print("Vertex not found in the graph.")
+        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, fire_spread_prob=fire_spread_prob_input)
 
 
 class Treepatch(Landpatch):
@@ -177,14 +168,28 @@ class Treepatch(Landpatch):
 
     Parameters
     ----------
-    tree_health: Optional[int]
+    id: [int] = None
+        Represents a unique identifier for each unique instance of the class
+    fire_spread_prob: Optional[float], default = 0.3
+        Represents the probability for an ignited tree patch to spread fire to neighbouring tree patches
+    neighbour_ids: [List[int]] = None
+        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
+    autocombustion_prob: Optional[float], default = 0.6
+        Represents the probability for each instance of tree patch to self-ignite
+    tree_health: Optional[int], default = 256
         Attribute identifies the current health of the treepatch [0-256].
     """
-    def __init__(self, id: int, fire_spread_prob: float, neighbour_ids: list[int] = None, autocombustion_prob: float = 0.6):
-        super().__init__(id, neighbour_ids = neighbour_ids)
+    def __init__(self, 
+                 id: int, 
+                 fire_spread_prob: Optional[float]=0.3, 
+                 neighbour_ids: list[int] = None, 
+                 autocombustion_prob: Optional[float] = 0.6, 
+                 tree_health: Optional[int] = 256)->None:
+        super().__init__(id, 
+                         neighbour_ids = neighbour_ids)
         self._fire_spread_prob = fire_spread_prob
         self._autocombustion_prob = autocombustion_prob
-        self._tree_health = 256
+        self._tree_health = tree_health
         self._ignited = False
 
     def check_autocombust(self) -> None:
@@ -208,34 +213,38 @@ class Treepatch(Landpatch):
         """Perform one evolution step for the Treepatch."""
         self.updateland()
         self.check_autocombust()
-        # Additional logic for the Treepatch's evolution? maybe later not sure
 
     def mutate(self) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
-        #patches_map = self._patches_map
         return Rockpatch(id=self._id, neighbours = self._neighbours)
 
 
 class Firefighter():
-    """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
+    """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches
 
-    def __init__(self, firefighter_skill: Optional[float] = 25, health: Optional[float] = 100) -> None:
-        """
-        Initialize a Firefighter.
-
-        Parameters
-        ----------
-        firefighter_skill: Optional[float]
-            Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
-        health: Optional[float], default=100
-            Represents the instance of a firefighter's current health.
-        """
+    Parameters
+    ----------
+    firefighter_skill: Optional[float]
+        Represents the instance of a firefighter's ability to extinguish fires on a Treepatch.
+    health: Optional[float], default=100
+        Represents the instance of a firefighter's current health.
+    """
+    def __init__(self, 
+                 firefighter_skill: Optional[float] = 25, 
+                 health: Optional[float] = 100) -> None:
+        
         self._firefighter_skill = firefighter_skill
         self._health = health
         self._current_patch: int = None
 
-    def extinguish_fire(self, treepatch) -> None:
-        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch."""
+    def extinguish_fire(self, treepatch: Class) -> None:
+        """Based on firefighter_skill, extinguishes fire if toggled on Treepatch.
+
+        Parameters
+        ----------
+        treepatch: Class
+            A patch of land of type tree, created as an instance of class Treepatch
+        """
 
         extinguish_probability = self._firefighter_skill/100
         if random.random() <= extinguish_probability:
@@ -244,8 +253,11 @@ class Firefighter():
         else:
             print("Firefighter failed to extinguish fire.")
 
-    def update_health(self, current_patch) -> None:
+    def update_health(self) -> None:
         """Updates the current instance of a firefighter's health."""
+
+        current_patch = self._current_patch
+
         if current_patch._ignited:
             self._health -= 10
         else:
@@ -255,7 +267,7 @@ class Firefighter():
     def evolve(self) -> None:
         """Perform one evolution step for the firefighter."""
         self.move_firefighter()
-        # Additional logic for the firefighter's evolution, if needed.
+
 
 @dataclass
 class ConfigData():
