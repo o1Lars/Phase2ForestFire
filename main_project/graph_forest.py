@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import random
+from forest_fire_graph import ForestFireGraph
 from typing import List, Tuple, Optional
 from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input, get_valid_file
 from dataclasses import dataclass
@@ -30,12 +31,16 @@ def main() -> None:
     # run program
     while program_running:
 
+        graph_edges, graph_pos = gh.voronoi_to_edges(10)
+        graph = ForestFireGraph(graph_edges, graph_pos, sim_time = 50)
+        graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:
             edges, pos_nodes = get_edges()
             tree_rate = get_tree_rate()
-            firefighters = get_firefighters(len(edges))
+            firefighters = get_firefighters()
+            #TODO set firefighter average skill level???? Should be integer between 1 and 100
             autocombustion_prob = get_autocombustion_prob()
             fire_spread_prob = get_fire_spread_prob()
             rock_mutate_prob = get_rock_mutate_prob()
@@ -53,7 +58,8 @@ def main() -> None:
                                                             fire_spread_prob, rock_mutate_prob, sim_limit))
         
         # Run simulation
-        graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        graph = ForestFireGraph(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        graph.simulate()
         # Display report
 
         # Ask to run simulation again
@@ -131,7 +137,7 @@ def get_edges() -> List[Tuple]:
     """Return a list of user-defined or pseudorandomly generated edges representing a planar graph"""
 
     graph_edges = None
-    graph_pos = None
+    graph_pos = {}
     getting_param = True
 
     while getting_param:
@@ -228,7 +234,7 @@ def get_tree_rate() -> int:
     return tree_rate
 
 # Simulation parameter
-def get_firefighters(max_fighters: Optional[int]=None) -> int:
+def get_firefighters() -> int:
     """Return user-defined or randomly generated number of firefighters between 2-15"""
 
     firefighters = None
@@ -239,10 +245,10 @@ def get_firefighters(max_fighters: Optional[int]=None) -> int:
         assign_firefighters = get_valid_input("Choice: ")
 
         if assign_firefighters == 1:
-            firefighters = get_valid_input(f"Enter the number of firefighters in the forest (2-{max_fighters}): ", f"least 2 and at most {max_fighters} firefighters", 2, max_fighters)
+            firefighters = get_valid_input("Enter the number of firefighters in the forest (2-15): ", "least 2 and at most 15 firefighters", 2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 2:
-            firefighters = random.randint(2, max_fighters)
+            firefighters = random.randint(2, 15)
             getting_param = False # break loop
         elif assign_firefighters == 3:
             config_info("firefighters")
