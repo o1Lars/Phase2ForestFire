@@ -123,8 +123,6 @@ class Landpatch():
         self._id = id
         self._neighbour_ids = neighbour_ids
 
-        self._firefighters_list = None
-
     def get_id(self) -> int:
         return self._id
 
