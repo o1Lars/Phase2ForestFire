@@ -47,7 +47,8 @@ def main() -> None:
             sim_limit = get_sim_limit()
 
             # Show config
-            display_config(edges, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+            display_config(edges, tree_rate, firefighters, autocombustion_prob, 
+                           fire_spread_prob, rock_mutate_prob, sim_limit)
 
             # Finalize configuration
             if finalize_configuration():
@@ -58,7 +59,8 @@ def main() -> None:
                                                             fire_spread_prob, rock_mutate_prob, sim_limit))
         
         # Run simulation
-        graph = ForestFireGraph(edges, pos_nodes, tree_rate, firefighters,autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+        graph = ForestFireGraph(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, 
+                                fire_spread_prob, rock_mutate_prob, sim_limit)
         graph.simulate()
         # Display report
 

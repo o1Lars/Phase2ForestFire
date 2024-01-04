@@ -112,21 +112,19 @@ class Graphdata:
 
 class Landpatch():
     """This is the base class for representing patches of land as vertices on a graph. 
-    Landpatches in the graph are either of type Tree or type rock.
-
-    Parameter
-    ---------
-    id: [int] = None
-        Represents a unique identifier for each unique instance of the class
-    neighbour_ids: [List[int]] = None
-        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
-    """
-
+    Landpatches in the graph are either of type Tree or type rock."""
     def __init__(
         self,
         id: [int] = None,
         neighbour_ids: [List[int]] = None) -> None:
-
+        """
+        Parameter
+        ---------
+        id: [int] = None
+            Represents a unique identifier for each unique instance of the class
+        neighbour_ids: [List[int]] = None
+            List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
+        """
         # Assign id and neighbour parameters to corresponding attributes
         self._id = id
         self._neighbour_ids = neighbour_ids
@@ -139,22 +137,22 @@ class Landpatch():
 
 
 class Rockpatch(Landpatch):
-    """This class extends Landpatch and creates an instance of subclass Rockpatch
-
-    Parameters    
-    ----------
-    id: [int] = None
-        Represents a unique identifier for each unique instance of the class
-    neighbour_ids: [List[int]] = None
-        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
-    mutate_chance: float, default = 1
-        Percentage chance for a rockpatch to mutate into treepatch
-    """
+    """This class extends Landpatch and creates an instance of subclass Rockpatch"""
     def __init__(self, 
                  id: int, 
                  neighbour_ids: List[int]=None, 
                  mutate_chance: Optional[float]=1)->None:
         super().__init__(id, neighbour_ids=neighbour_ids)
+        """
+        Parameters    
+        ----------
+        id: [int] = None
+            Represents a unique identifier for each unique instance of the class
+        neighbour_ids: [List[int]] = None
+            List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
+        mutate_chance: float, default = 1
+            Percentage chance for a rockpatch to mutate into treepatch
+        """
         self._mutate_chance = mutate_chance
 
     def mutate(self, fire_spread_prob_input:float) -> Landpatch:
