@@ -109,6 +109,7 @@ class Graphdata:
         
         self._dead_firefighters_counter += 1
 
+
 class Landpatch():
     """This is the base class for representing patches of land as vertices on a graph. 
     Landpatches in the graph are either of type Tree or type rock.
@@ -116,9 +117,9 @@ class Landpatch():
     Parameter
     ---------
     id: [int] = None
-        represents a unique identifier for each unique instance of class Landpatch
-
-    neighbour_ids: [List[int]] = None)
+        Represents a unique identifier for each unique instance of the class
+    neighbour_ids: [List[int]] = None
+        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
     """
 
     def __init__(
@@ -137,119 +138,21 @@ class Landpatch():
         return self._neighbour_ids    
 
 
-        
-        # # Change attributes of current Landpatch instance using __dict__
-        # if isinstance(self, Treepatch):
-        #     self.__dict__ = Rockpatch(id=self._id, neighbours = self._neighbours)
-        # if isinstance(self, Rockpatch):
-        #     self.__dict__ = Treepatch(id=self._id, neighbours = self._neighbours)
-            
-
-        
-
-
-#    def move_firefighters(self) -> None:
-#        """Move firefighter randomly to a neighboring patch based on the specified conditions."""
-#
-#        firefighter_map = self._firefighters_map
-#        new_firefighter_map = {}
-#
-#        # Iterate over firefighter map
-#        for vertex, firefighter in firefighter_map.items():
-#            
-#            # Check if current patch is on fire
-#            if isinstance(self._patches_map[vertex], Treepatch) and self._patches_map[vertex]._ignited:
-#                new_firefighter_map[vertex] = firefighter
-#            else:
-#                # Store neighbours list
-#                neighbors = self._neighbours[vertex]
-#
-#                # Check if there are adjacent Treepatches on fire
-#                adjacent_fire_patches = [neighbor for neighbor in neighbors if
-#                                        isinstance(self._patches_map[neighbor], Treepatch) and self._patches_map[neighbor]._ignited]
-#
-#                if adjacent_fire_patches:
-#                    # Move to a random adjacent Treepatch on fire
-#                    new_location = random.choice(adjacent_fire_patches)
-#                else:
-#                    # Move to a random adjacent patch
-#                    new_location = random.choice(neighbors)
-#
-#                print(f"Firefighter moved from {vertex} to {new_location}.")
-#                new_firefighter_map[new_location] = firefighter
-#
-#        # add new map to instance attributes
-#        self._firefighters_map = new_firefighter_map
-    
-    #def evolve_patches(self) -> None:
-    #    """Evolves the graph 1 simulation step"""
-    #    
-    #    patches = self._patches_map
-
-    #    # Loop over patch map
-    #    for patch in patches:
-
-    #        # Identify if patch is tree or rock
-    #        if isinstance(patches[patch], Treepatch):
-    #            # Firefighter skills
-    #            if patch in self._firefighters_map:
-    #                # Check for burning patch
-    #                if patches[patch]._ignited:
-    #                    # Do fire fighter stuff
-    #                    self._firefighters_map[patch].extinguish_fire(patches[patch])   # Try to fight fire
-    #                    self._firefighters_map[patch].update_health(patches[patch])     # Update firefighter health
-    #                    # Check if firefighter died
-    #                    if self._firefighters_map[patch]._heath < 0:
-    #                        del self._firefighters_map[patch]
-    #                    # Check for spread fire
-    #                    self.spread_fire(patch)
-    #                    
-    #            # Update tree stats
-    #            patches[patch].update_treestats
-
-    #            # Check if all trees on patch have died.
-    #            if patches[patch]._tree_health < 0:
-    #                self.mutate(patch)
-    #    
-    #        if isinstance(patches[patch], Rockpatch):
-    #            if random.randint(0, 100) == patches[patch]._mutate_chance:
-    #                self.mutate(patches[patch])
-    #    
-    #    self.move_firefighters()
-    
-    # Methods for working with data
-   
-    # Base methods overwriting python basic methods.
-    #def __eq__(self, other) -> bool:
-    #    """Return true if edges of this instance is equal to edges of other instance of same class"""
- 
-    #    if (self._edges == other.edges):
-    #        return True
-    #    else:
-    #        return False
-
-    #def __str__(self) -> str:
-    #    """Return a textual representation of the attributes of the graph"""
-
-    #    return f"vertices: {self._vertices_list}. Vertex colors: {self._color_map}. Vertex neighbours: {self._vertices_neighbours}."
-    
-    #def __repr__(self) -> str:
-    #    """Return a Python-like representation of this this instance"""
-    #    return f"GraphCreater({self._edges}, {self._color_pattern})"
-    
-    
-
 class Rockpatch(Landpatch):
     """This class extends Landpatch and creates an instance of subclass Rockpatch
+
     Parameters    
     ----------
-    _mutate_chance: float, default = 1
+    id: [int] = None
+        Represents a unique identifier for each unique instance of the class
+    neighbour_ids: [List[int]] = None
+        List of ids from neighbouring vertices. Necessary to properly identify neighbours of each instance
+    mutate_chance: float, default = 1
         Percentage chance for a rockpatch to mutate into treepatch
     """
-    #_mutate_chance: float = 1
-    def __init__(self, id: int, neighbour_ids: List[int] = None):
+    def __init__(self, id: int, neighbour_ids: List[int]=None, mutate_chance: Optional[float]= 1):
         super().__init__(id, neighbour_ids=neighbour_ids)
-        self._mutate_chance = 1
+        self._mutate_chance = mutate_chance
 
     def mutate(self, fire_spread_prob_input:float) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
