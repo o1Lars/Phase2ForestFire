@@ -308,7 +308,7 @@ class Treepatch(Landpatch):
         return Rockpatch(id=self._id, neighbours = self._neighbours)
 
 
-class Firefighter:
+class Firefighter():
     """Each instance of this class creates a firefighter for extinguishing fires in a graph of landpatches"""
 
     def __init__(self, firefighter_skill: Optional[float] = 25, health: Optional[float] = 100) -> None:
@@ -383,7 +383,7 @@ class ConfigData():
     sim_time: Optional[int] = 10
 
     def get_config(self) -> Tuple:
-        """Return a tuple of all attributes. Used to easility acces attributes from previous configurations
+        """Return a tuple of all attributes. Used to easily access attributes from previous configurations
         
         Return: Tuple[edges, pos_nodes, tree_distribution, firefighters, autocombustion, fire_spread_prob, rock_mutate_prob, sim_time]
         ----------
