@@ -3,17 +3,14 @@ This module holds various classes essential for simulating the evolution of wild
 
 This module provides:
 - Graphdata:    a special python dataclass for storing data associated with the landpatches on a graph.
-- Landpatch:    a base class that creates a graph that simulates the evolution of wild fire over tree and rock patches
-- Treepatch:    a subclass of landpatch, that doesnt directly inherit most of the functionality of Landpatch, but acts as a dataclass
-                The class stores data related to tree patches
-- Rockpatch:    a subclass of landpatch, that doesnt directly inherit most of the functionality of Landpatch, but acts as a dataclass
-                The class stores data related to rock patches
+- Landpatch:    a base class that creates patches of land as vertices on a graph
+- Treepatch:    a subclass of landpatch, that specifies patches of land with trees on them. Tree patches have special attributes
+- Rockpatch:    a subclass of landpatch, that specifies patches of land with rock on them. Rock patches can mutate into tree patches
 - Firefighter:  A class that is used in simulating wild fires. Each instance of the firefighter class tries to extinguish 
-                fires on tree patches
+                fires on tree patches and can move around a graph of landpatches.
 - ConfigData    A dataclass that stores graph configuration to make previous configurations easily accessible
 
 Requirements
-#TODO
 ------------
 Python 3.7 or higher.
 
@@ -23,8 +20,6 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Tuple, Type
-from visualiser_random_forest_graph import Visualiser
-import time
 import random
 
 @dataclass
@@ -60,7 +55,14 @@ class Graphdata:
     _dead_firefighters_counter: int = 0
 
     def update_patches(self, patches_map: Dict[str, Type]) -> None:
-        """Updates number of tree patches, rock patches and forest fires"""
+        """Updates number of tree patches, rock patches and forest fires
+        
+        Parameter
+        ---------
+        patches_map: Dict[str, Type]
+            A dictionary containing a vertex as the key, and a landpatch as its value. patches_map is used to identify
+            whether a vertex is a treepatch (ignited or not) or a rockpatch.
+        """
 
         # Store variables for updating patches of instance
         treepatches = self._tree_patches
@@ -108,10 +110,15 @@ class Graphdata:
         self._dead_firefighters_counter += 1
 
 class Landpatch():
-    """This is the base class for representing patches of land as a vertices on a graph. 
-    Landpatches in the graph are either of type Tree or type rock. 
-    Additionally, the class is used to simulating the evolution of wild fire on the graph on storing data
-    associated with the simulation.
+    """This is the base class for representing patches of land as vertices on a graph. 
+    Landpatches in the graph are either of type Tree or type rock.
+
+    Parameter
+    ---------
+    id: [int] = None
+        represents a unique identifier for each unique instance of class Landpatch
+
+    neighbour_ids: [List[int]] = None)
     """
 
     def __init__(
