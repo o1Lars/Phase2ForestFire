@@ -162,7 +162,7 @@ class ForestFireGraph:
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(id = vertex, fire_spread_prob=self._fire_spread_prob) # TODO Add autocombustion, id and neighbour ids
+                patch_map[vertex] = Treepatch(id = vertex, fire_spread_prob=self._fire_spread_prob, autocombustion_prob=self._autocombustion) # TODO Add autocombustion, id and neighbour ids
             else:
                 patch_map[vertex] = Rockpatch(id = vertex) # TODO add mutate probability, id and neighbour ids
         

@@ -272,12 +272,20 @@ class Treepatch(Landpatch):
     tree_health: Optional[int]
         Attribute identifies the current health of the treepatch [0-256].
     """
-    def __init__(self, id: int, fire_spread_prob: float, neighbour_ids: list[int] = None):
+    def __init__(self, id: int, fire_spread_prob: float, neighbour_ids: list[int] = None, autocombustion_prob: float = 0.6):
         super().__init__(id, neighbour_ids = neighbour_ids)
         self._fire_spread_prob = fire_spread_prob
+        self._autocombustion_prob = autocombustion_prob
         self._tree_health = 256
         self._ignited = False
 
+    def autocombust(self) -> None:
+        """Checks and updates wether instance of tree patch spontaniously catches fire."""
+        autocombustion_prob = self._autocombustion_prob
+
+        if random.randint(0,1) <= autocombustion_prob:
+            self._ignited = True
+            print(f"Treepatch ({self._id}) caught fire.")
 
     def updateland(self) -> None:
         """Update treestats based on the specified conditions."""
@@ -287,7 +295,6 @@ class Treepatch(Landpatch):
                 self._tree_health = 256
         else:
             self._tree_health -= 20
-
 
     def evolve(self) -> None:
         """Perform one evolution step for the Treepatch."""
