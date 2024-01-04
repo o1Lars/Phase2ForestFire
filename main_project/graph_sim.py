@@ -283,7 +283,7 @@ class Treepatch(Landpatch):
         """Checks and updates wether instance of tree patch spontaniously catches fire."""
         autocombustion_prob = self._autocombustion_prob
 
-        if random.randint(0,1) <= autocombustion_prob:
+        if random.uniform(0,1) <= autocombustion_prob:
             self._ignited = True
             print(f"Treepatch ({self._id}) caught fire.")
 
