@@ -196,7 +196,7 @@ class ForestFireGraph:
         self._color_map = color_map
 
     def _deploy_firefighters(self) -> None:
-        """Instantiates fire fighters, and adds them to list """
+        """Instantiates firefighters, and adds them to list """
 
         for i in range(0, self._number_of_firefighters):
             my_firefighter = Firefighter(firefighter_skill=self._firefighter_average_skill)
@@ -204,90 +204,6 @@ class ForestFireGraph:
             self._firefighters_list.append(my_firefighter)
             i+= 1
 
-        # Randomly select vertices for firefighters to be deployed
-        #firefighters_vertices = random.sample(vertices, self._number_of_firefighters)
-
-        ## Dictionary for mapping fire fighters to vertex
-        #firefighter_map = {}
-
-        #for vertex in vertices:
-        #    if vertex in firefighters_vertices:
-        #        firefighter_map[vertex] = Firefighter()
-        #        firefighter_map[vertex]._current_patch = vertex
-        #        self._firefighters_list.append(firefighter_map[vertex])
-        
-        #return firefighter_map
-
-
-#    def move_firefighters(self) -> None:
-#        """Move firefighter randomly to a neighboring patch based on the specified conditions."""
-#
-#        firefighter_map = self._firefighters_map
-#        new_firefighter_map = {}
-#
-#        # Iterate over firefighter map
-#        for vertex, firefighter in firefighter_map.items():
-#            
-#            # Check if current patch is on fire
-#            if isinstance(self._patches_map[vertex], Treepatch) and self._patches_map[vertex]._ignited:
-#                new_firefighter_map[vertex] = firefighter
-#            else:
-#                # Store neighbours list
-#                neighbors = self._neighbours[vertex]
-#
-#                # Check if there are adjacent Treepatches on fire
-#                adjacent_fire_patches = [neighbor for neighbor in neighbors if
-#                                        isinstance(self._patches_map[neighbor], Treepatch) and self._patches_map[neighbor]._ignited]
-#
-#                if adjacent_fire_patches:
-#                    # Move to a random adjacent Treepatch on fire
-#                    new_location = random.choice(adjacent_fire_patches)
-#                else:
-#                    # Move to a random adjacent patch
-#                    new_location = random.choice(neighbors)
-#
-#                print(f"Firefighter moved from {vertex} to {new_location}.")
-#                new_firefighter_map[new_location] = firefighter
-#
-#        # add new map to instance attributes
-#        self._firefighters_map = new_firefighter_map
-    
-    #def evolve_patches(self) -> None:
-    #    """Evolves the graph 1 simulation step"""
-    #    
-    #    patches = self._patches_map
-
-    #    # Loop over patch map
-    #    for patch in patches:
-
-    #        # Identify if patch is tree or rock
-    #        if isinstance(patches[patch], Treepatch):
-    #            # Firefighter skills
-    #            if patch in self._firefighters_map:
-    #                # Check for burning patch
-    #                if patches[patch]._ignited:
-    #                    # Do fire fighter stuff
-    #                    self._firefighters_map[patch].extinguish_fire(patches[patch])   # Try to fight fire
-    #                    self._firefighters_map[patch].update_health(patches[patch])     # Update firefighter health
-    #                    # Check if firefighter died
-    #                    if self._firefighters_map[patch]._heath < 0:
-    #                        del self._firefighters_map[patch]
-    #                    # Check for spread fire
-    #                    self.spread_fire(patch)
-    #                    
-    #            # Update tree stats
-    #            patches[patch].update_treestats
-
-    #            # Check if all trees on patch have died.
-    #            if patches[patch]._tree_health < 0:
-    #                self.mutate(patch)
-    #    
-    #        if isinstance(patches[patch], Rockpatch):
-    #            if random.randint(0, 100) == patches[patch]._mutate_chance:
-    #                self.mutate(patches[patch])
-    #    
-    #    self.move_firefighters()
-    
     # Methods for working with data
     def _initialize_data(self):
         """Stores initital data from graph instance creation in dataclass"""
@@ -296,9 +212,8 @@ class ForestFireGraph:
 
         data._land_patches = [len(self._vertices_list)]
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
-        data._rock_patches = [data._tree_patches[0] - data._tree_patches[0]]
+        data._rock_patches = [data._land_patches - data._tree_patches[0]]
         data._firefighters = [self._number_of_firefighters]
-
 
     def simulate(self): 
         simulation_count = 0
