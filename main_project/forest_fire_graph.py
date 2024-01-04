@@ -223,18 +223,18 @@ class ForestFireGraph:
             for vertex, patch in self._patches_map.items():
                 # Applies treepatch dynamics
                 if isinstance(patch, Treepatch):
-                    patch.evolve() #fix evolve method and replace with updateland method ## create autocombustion in updateland
+                    patch.evolve()
                     if patch._ignited:
                         patch.spread_fire(patch.get_id)
                     if patch._tree_health < 0:
                         self._patches_map[vertex] = patch.mutate()
-                    #else:
-                    #    patch.updateland() Delete? Patch is already calling update land on the evolve method
-                
+                # Applies rockpatch dynamics
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
-                    if random.random() <= patch._mutate_chance/100:
-                        self._patches_map[vertex] = patch.mutate(fire_spread_prob_input = self._fire_spread_prob)
+                    if random.random() <= patch._mutate_chance:
+                        self._patches_map[vertex] = patch.mutate(fire_spread_prob_input = self._fire_spread_prob, 
+                                                                 autocombustion_prob=self._autocombustion, 
+                                                                 tree_health=random.randint(1,256))
 
             for firefighter in self._firefighters_list:
                 firefighter_patch = self._patches_map[firefighter._current_patch]

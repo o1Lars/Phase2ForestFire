@@ -155,10 +155,11 @@ class Rockpatch(Landpatch):
         """
         self._mutate_chance = mutate_chance
 
-    def mutate(self, fire_spread_prob_input:float) -> Landpatch:
+    def mutate(self, fire_spread_prob_input:float, autocombustion_prob:float, tree_health: Optional[int]=256) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """
 
-        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, fire_spread_prob=fire_spread_prob_input)
+        return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, fire_spread_prob=fire_spread_prob_input, 
+                         autocombustion_prob=autocombustion_prob, tree_health=tree_health)
 
 
 class Treepatch(Landpatch):

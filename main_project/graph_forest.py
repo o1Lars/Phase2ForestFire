@@ -332,10 +332,10 @@ def get_rock_mutate_prob() -> float:
         assign_respawn_prob = get_valid_input("Choice: ")
 
         if assign_respawn_prob == 1:
-            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.3-0.5): ", "floating point between 0.3-0.5", 0.3, 0.5)
+            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.1-0.2): ", "floating point between 0.1-0.2", 0.1, 0.2)
             getting_param = False # break loop
         elif assign_respawn_prob == 2:
-            rock_mutate_prob = round(random.uniform(0.3, 0.5), 1)
+            rock_mutate_prob = round(random.uniform(0.1, 0.2), 1)
             getting_param = False # break loop
         elif assign_respawn_prob == 3:
             config_info("rock respawn probability")
@@ -445,7 +445,7 @@ def config_info(config: str) -> None:
         print(f"Info for configuring firefighters:\
               \n# This parameter sets the configuration for the number of firefighters used in simulating the graph.\
               \n# This parameter can be set either by the user or by randomly generating a number of firefighters.\
-              \n# If you wish to specify the number, please enter an integer value beteween 2-15.")
+              \n# If you wish to specify the number, please enter an integer value beteween 2-and num of patches.")
     elif config == "autocombustion probability":
         print(f"Info for configuring autocombustion probability on tree patches:\
               \n# This parameter sets the probability for tree patches to autocombust (min 60%, max 80%).\
@@ -455,12 +455,12 @@ def config_info(config: str) -> None:
         print(f"Info for configuring fire spread probability:\
               \n# This parameter sets the probability that fire spreads from ignited tree patches.\
               \n# This parameter can be set either by the user or by randomly generating the probability.\
-              \n# If you wish to specify the number, please enter a floating point number between 0-1.")
+              \n# If you wish to specify the number, please enter a floating point number between 0.3-0.6.")
     elif config == "rock respawn probability":
         print(f"Info for configuring forest on rockpatches repawn probability:\
               \n# This parameter sets the probability that a treepatch grows on a rockpatch.\
               \n# This parameter can be set either by the user or by randomly generating the probability.\
-              \n# If you wish to specify the number, please enter a floating point number between 0-1.")
+              \n# If you wish to specify the number, please enter a floating point number between 0.1-0.2.")
     elif config == "simulation limit":
         print(f"Info for configuring simulation limit:\
               \n# This parameter sets the limit for the simulation.\
