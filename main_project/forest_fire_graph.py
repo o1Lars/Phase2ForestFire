@@ -1,7 +1,7 @@
 import time
 from graph_sim import Firefighter, Treepatch, Rockpatch, Visualiser, Graphdata
 import random
-from typing import List, Dict, Tuple
+from typing import List, Dict, Optional, Tuple
 
 class ForestFireGraph:
     """This is the base class for representing patches of land as a vertices on a graph. 
@@ -12,8 +12,8 @@ class ForestFireGraph:
 
     def __init__(
         self,
-        edges: List[Tuple[int,int]],
-        pos_nodes: Dict = {},
+        edges: Optional[List[Tuple[int,int]]],
+        pos_nodes: Optional[Dict] = {},
         tree_distribution: float = 30,
         firefighters: int = 3,
         autocombustion: float = 0.3,
