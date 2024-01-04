@@ -3,6 +3,7 @@ This module provides a set of helper functions, to:
 get_valid_input: validate user input that returns a number
 get_valid_float_input: validate user input that returns a float
 get_valid_string_input: validate user input that returns a string
+get_valid_file: validate user input file
 
 Requirements
 ------------
