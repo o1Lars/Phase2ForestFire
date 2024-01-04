@@ -12,12 +12,12 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 import graph_helper as gh
 import file_helper as fh
-import graph_sim as gs
+import class_helper as ch
 import os
 import sys
 import time
 import random
-from forest_fire_graph import ForestFireGraph
+from sim_forest import ForestFireGraph
 from typing import List, Tuple, Optional
 from input_helper import get_valid_input, get_valid_float_input, get_valid_string_input, get_valid_file
 from dataclasses import dataclass
@@ -55,7 +55,7 @@ def main() -> None:
                 configuration_done = True
 
                 # Store current config
-                configuration_storage.append(gs.ConfigData(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, 
+                configuration_storage.append(ch.ConfigData(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, 
                                                             fire_spread_prob, rock_mutate_prob, sim_limit))
         
         # Run simulation
@@ -73,7 +73,7 @@ def main() -> None:
         if choice == 1:
             time.sleep(0.3)
             # Create instance of class
-            my_instance = gs.Graphdata
+            my_instance = ch.Graphdata
             # Call method using created instance
             my_instance.report_forest_evolution(steps=sim_time)
         elif choice == 2:
@@ -101,7 +101,7 @@ def main() -> None:
             index = get_config_choice() - 1
             edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit = configuration_storage[index].get_config()
             # Create graph
-            graph = gs.Landpatch(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+            graph = ch.Landpatch(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
             # Sim stored data
             time.sleep(0.3)
 
