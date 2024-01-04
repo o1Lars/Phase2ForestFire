@@ -328,7 +328,9 @@ class ForestFireGraph:
                         else:
                             #change firefighters _current_patch attribute
                             firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
-
+            print(self._patches_map)
+            for firefighter in self._firefighters_list:
+                print(firefighter)
                     ### remove old placement of firefighter in firefighter_map
                     ##del self._firefighters_map[vertex]
                     ##self._firefighters_map[vertex] = firefighter

@@ -279,7 +279,7 @@ class Treepatch(Landpatch):
         self._tree_health = 256
         self._ignited = False
 
-    def autocombust(self) -> None:
+    def check_autocombust(self) -> None:
         """Checks and updates wether instance of tree patch spontaniously catches fire."""
         autocombustion_prob = self._autocombustion_prob
 
@@ -299,6 +299,7 @@ class Treepatch(Landpatch):
     def evolve(self) -> None:
         """Perform one evolution step for the Treepatch."""
         self.updateland()
+        self.check_autocombust()
         # Additional logic for the Treepatch's evolution? maybe later not sure
 
     def mutate(self) -> Landpatch:
