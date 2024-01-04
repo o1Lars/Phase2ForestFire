@@ -31,9 +31,9 @@ def main() -> None:
     # run program
     while program_running:
 
-        graph_edges, graph_pos = gh.voronoi_to_edges(10)
-        graph = ForestFireGraph(graph_edges, graph_pos, sim_time = 50)
-        graph.simulate()
+        #graph_edges, graph_pos = gh.voronoi_to_edges(10)
+        #graph = ForestFireGraph(graph_edges, graph_pos, sim_time = 50)
+        #graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:
