@@ -30,9 +30,6 @@ def main() -> None:
     # run program
     while program_running:
 
-        graph_edges, graph_pos = gh.voronoi_to_edges(100)
-        graph = ForestFireGraph(graph_edges, graph_pos, firefighters= 30, autocombustion=0.05, tree_distribution=50, sim_time = 50)
-        graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:
@@ -74,7 +71,7 @@ def main() -> None:
             # Create instance of class
             my_instance = ch.Graphdata
             # Call method using created instance
-            my_instance.report_forest_evolution(steps=sim_time)
+            my_instance.report_forest_evolution(steps=sim_limit)
         elif choice == 2:
             time.sleep(0.3)
             print("Sure, I spent a whole hour configuring the report only for you to be ungrateful.")

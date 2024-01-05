@@ -20,6 +20,7 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Tuple, Type
+import matplotlib.pyplot as plt
 import random
 
 @dataclass
@@ -189,6 +190,7 @@ class Landpatch():
         self._neighbour_ids = neighbour_ids
 
         self._firefighters_list = None
+        print(self._neighbour_ids)
 
     def get_id(self) -> int:
         return self._id
@@ -222,7 +224,7 @@ class Rockpatch(Landpatch):
         #return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, self_combustion_prob=autocombustion_prob)
 
         return Treepatch(id=self._id, neighbour_ids = self._neighbour_ids, 
-                         self_combustion_prob=autocombustion_prob, tree_health=tree_health)
+                         autocombustion_prob=autocombustion_prob, tree_health=tree_health)
 
 
 class Treepatch(Landpatch):
@@ -248,17 +250,15 @@ class Treepatch(Landpatch):
         tree_health: Optional[int], default = 256
             Attribute identifies the current health of the treepatch [0-256].
         """
-    def __init__(self, id: int, self_combustion_prob: float, neighbour_ids: list[int] = None):
-        super().__init__(id, neighbour_ids = neighbour_ids)
-        self._self_combustion_prob = self_combustion_prob
-        self._tree_health = 256
+        self._autocombustion_prob = autocombustion_prob
+        self._tree_health = tree_health
         self._ignited = False
 
     def check_autocombust(self) -> None:
         """Checks and updates wether instance of tree patch spontaniously catches fire."""
         autocombustion_prob = self._autocombustion_prob
 
-        if random.uniform(0,1) <= autocombustion_prob:
+        if random.random() <= autocombustion_prob:
             self._ignited = True
             print(f"Treepatch ({self._id}) caught fire.")
 
@@ -268,10 +268,13 @@ class Treepatch(Landpatch):
             self._tree_health -= 20
         else:
             self._tree_health += 10
+
+            # Check health doesn't exceed 256
             if self._tree_health > 256:
                 self._tree_health = 256
-            if random.random() <= self._self_combustion_prob:
-                self._ignited = True 
+
+            # Check for autocombustion
+            self.check_autocombust()
 
     def mutate(self) -> Landpatch:
         """Swaps the land patch instance associated with vertex. """

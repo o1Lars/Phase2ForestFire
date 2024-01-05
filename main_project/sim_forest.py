@@ -164,7 +164,7 @@ class ForestFireGraph:
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(id = vertex, self_combustion_prob=self._autocombustion)
+                patch_map[vertex] = Treepatch(id = vertex, autocombustion_prob=self._autocombustion)
             else:
                 patch_map[vertex] = Rockpatch(id = vertex, mutate_chance = self._rock_mutate_prob) 
         
@@ -209,7 +209,7 @@ class ForestFireGraph:
 
         data._land_patches = [len(self._vertices_list)]
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
-        data._rock_patches = [data._land_patches - data._tree_patches[0]]
+        data._rock_patches = [data._land_patches[0] - data._tree_patches[0]]
         data._firefighters = [self._number_of_firefighters]
 
     def simulate(self): 
@@ -232,7 +232,7 @@ class ForestFireGraph:
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
                     if random.random() <= patch._mutate_chance/100:
-                        self._patches_map[vertex] = patch.mutate(fire_spread_prob_input = self._fire_spread_prob)
+                        self._patches_map[vertex] = patch.mutate(autocombustion_prob=self._autocombustion)
 
             # Evolve firefighters 1 evolution step
             for firefighter in self._firefighters_list:
@@ -246,9 +246,6 @@ class ForestFireGraph:
 
                     #change firefighters _current_patch attribute
                     firefighter._current_patch = random.sample(firefighter_patch.get_neighbour_ids(), 1)[0]
-            print(self._patches_map)
-            for firefighter in self._firefighters_list:
-                print(firefighter)
 
             # Update data
             self._graph_data.update_patches(self._patches_map)
