@@ -191,6 +191,7 @@ class ForestFireGraph:
         data._tree_patches = [round(data._land_patches[0] * (self._tree_distribution / 100.0))]
         data._rock_patches = [data._land_patches[0] - data._tree_patches[0]]
         data._firefighters = [self._number_of_firefighters]
+        data._ignited_tree_patches = [0]
 
     def simulate(self): 
         simulation_count = 0

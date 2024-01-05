@@ -23,10 +23,12 @@ from input_helper import get_valid_input, get_valid_float_input, get_valid_strin
 
 def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
-    # Quick test
-    edges, edge_pos = gh.voronoi_to_edges(50)
-    test_graph = ForestFireGraph(edges, edge_pos)
+    # quick_test
+    """ sim_time=10
+    edges, pos_nodes = gh.voronoi_to_edges(50)
+    test_graph = ForestFireGraph(edges=edges, pos_nodes=pos_nodes, sim_time=10)
     test_graph.simulate()
+    test_graph._graph_data.report_forest_evolution(sim_time) """
     # Show start menu
     start_menu()
     program_running = True
@@ -72,12 +74,12 @@ def main() -> None:
         if choice == 1:
             time.sleep(0.3)
             # Create instance of class
-            my_instance = ch.Graphdata
+            my_instance = graph._graph_data
             # Call method using created instance
             my_instance.report_forest_evolution(steps=sim_limit)
         elif choice == 2:
             time.sleep(0.3)
-            print("Sure, I spent a whole hour configuring the report only for you to be ungrateful.")
+            print("Sure, I spent a whole hour configuring the report only for you to be ungrateful and not view the report.")
             quit()
         else:
             print("Invalid choice"
