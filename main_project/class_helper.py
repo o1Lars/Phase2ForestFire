@@ -190,13 +190,13 @@ class Landpatch():
         self._neighbour_ids = neighbour_ids
 
         self._firefighters_list = None
-        print(self._neighbour_ids)
 
     def get_id(self) -> int:
         return self._id
 
     def get_neighbour_ids(self) -> List[int]:
-        return self._neighbour_ids    
+        return self._neighbour_ids
+        
 
 
 class Rockpatch(Landpatch):

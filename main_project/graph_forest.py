@@ -29,7 +29,10 @@ def main() -> None:
 
     # run program
     while program_running:
-
+        # Quick test
+        edges, edge_pos = gh.voronoi_to_edges(50)
+        test_graph = ForestFireGraph(edges, edge_pos)
+        test_graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:

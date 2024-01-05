@@ -224,6 +224,7 @@ class ForestFireGraph:
                     patch.updateland() #fix evolve method and replace with updateland method ## create autocombustion in updateland
                     if patch._ignited:
                         self.spread_fire(patch._neighbour_ids)
+
                     if patch._tree_health < 0:
                         self._patches_map[vertex] = patch.mutate()
                     else:
