@@ -35,7 +35,6 @@ def main() -> None:
             edges, pos_nodes = get_edges()
             tree_rate = get_tree_rate()
             firefighters = get_firefighters()
-            #TODO set firefighter average skill level???? Should be integer between 1 and 100
             autocombustion_prob = get_autocombustion_prob()
             fire_spread_prob = get_fire_spread_prob()
             rock_mutate_prob = get_rock_mutate_prob()
