@@ -118,5 +118,7 @@ def check_planar_graph(edges: List[Tuple]) -> bool:
     else:
         print("Your graph is not a planar graph.")
         print("Please try again with a new file of edges, or pseudo-randomly generating the edges for the graph.")
-        print("\n...Redirecting to graph configuration menu.")
+        time.sleep(0.5)
+        print("\n...Redirecting to file input")
+        time.sleep(0.5)
         return False

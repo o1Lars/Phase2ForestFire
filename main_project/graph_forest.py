@@ -176,6 +176,7 @@ def get_edges() -> List[Tuple]:
             time.sleep(0.3)
             print(f"Generating graph from input file.\
                   \nfile must adhere to the following criteria:\
+                  \nFile must contain edges which have a planar representation for simulation purposes.\
                   \nEach non-empty line must represent an edge, identified by two integers separated by a comma\
                   \nFilepath example: /Users/JohnDoe/examplePath/filename.dat ")
             
@@ -189,10 +190,11 @@ def get_edges() -> List[Tuple]:
                 graph_edges = fh.create_graph_from_file(file_path)
 
                 # Verify that the graph is a planar graph
-                fh.check_planar_graph(graph_edges)
-
-                # Break if file is good
-                validating_file = False
+                if fh.check_planar_graph(graph_edges):
+                    validating_file = False
+                else:
+                    # Redirecting to file input
+                    pass
 
             # Break loop
             getting_param = False
