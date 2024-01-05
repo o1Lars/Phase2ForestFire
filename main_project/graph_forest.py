@@ -23,12 +23,6 @@ from input_helper import get_valid_input, get_valid_float_input, get_valid_strin
 
 def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
-    # quick_test
-    """ sim_time=10
-    edges, pos_nodes = gh.voronoi_to_edges(50)
-    test_graph = ForestFireGraph(edges=edges, pos_nodes=pos_nodes, sim_time=10)
-    test_graph.simulate()
-    test_graph._graph_data.report_forest_evolution(sim_time) """
     # Show start menu
     start_menu()
     program_running = True
@@ -286,7 +280,7 @@ def get_firefighters() -> int:
     return firefighters
 
 # Set of probabilities
-def get_autocombustion_prob() -> float:
+def get_autocombustion_prob() -> int:
     """Return user-defined or random probability for tree patch to randomly catch fire"""
 
     autocombustion_prob = None
@@ -297,10 +291,11 @@ def get_autocombustion_prob() -> float:
         assign_fire_ignition_prob = get_valid_input("Choice: ")
 
         if assign_fire_ignition_prob == 1:
-            autocombustion_prob = get_valid_float_input("Enter fire ignition probability (0.6-0.8): ", "floating point between 0.6-0.8", 0.6, 0.8)
+            autocombustion_prob = get_valid_input("Enter fire ignition probability (1-10): ", 
+                                                        "Integer between 1-10", 1, 10)
             getting_param = False # break loop
         elif assign_fire_ignition_prob == 2:
-            autocombustion_prob = round(random.uniform(0.6, 0.8), 1)
+            autocombustion_prob = random.randint(1, 10)
             getting_param = False # break loop
         elif assign_fire_ignition_prob == 3:
             config_info("autocombustion probability")
@@ -314,7 +309,7 @@ def get_autocombustion_prob() -> float:
     
     return autocombustion_prob
 
-def get_fire_spread_prob() -> float:
+def get_fire_spread_prob() -> int:
     """Return user-defined or random probability for fire to spread to adjacent non-ignited tree patches"""
 
     spread_prob = None
@@ -325,10 +320,11 @@ def get_fire_spread_prob() -> float:
         assign_fire_spread_prob = get_valid_input("Choice: ")
 
         if assign_fire_spread_prob == 1:
-            spread_prob = get_valid_float_input("Enter the fire spread probability (0.4-0.6): ", "floating point between 0.4-0.6", 0.4, 0.6)
+            spread_prob = get_valid_input("Enter fire spread probability (30-60): ", 
+                                                        "Integer between 30-60", 30, 60)
             getting_param = False # break loop
         elif assign_fire_spread_prob == 2:
-            spread_prob = round(random.uniform(0.4, 0.6), 1)
+            spread_prob = random.randint(30, 60)
             getting_param = False # break loop
         elif assign_fire_spread_prob == 3:
             config_info("fire spread probability")
@@ -342,7 +338,7 @@ def get_fire_spread_prob() -> float:
 
     return spread_prob
 
-def get_rock_mutate_prob() -> float:
+def get_rock_mutate_prob() -> int:
     """Return user-defined or random respawn probability for rockpatch to mutate to treepatch"""
 
     rock_mutate_prob = 0
@@ -353,10 +349,11 @@ def get_rock_mutate_prob() -> float:
         assign_respawn_prob = get_valid_input("Choice: ")
 
         if assign_respawn_prob == 1:
-            rock_mutate_prob = get_valid_float_input("Enter the rock mutate probability (0.1-0.2): ", "floating point between 0.1-0.2", 0.1, 0.2)
+            rock_mutate_prob = get_valid_input("Enter rock mutate probability (1-10): ", 
+                                                        "Integer between 1-10", 1, 10)
             getting_param = False # break loop
         elif assign_respawn_prob == 2:
-            rock_mutate_prob = round(random.uniform(0.1, 0.2), 1)
+            rock_mutate_prob = random.randint(1, 10)
             getting_param = False # break loop
         elif assign_respawn_prob == 3:
             config_info("rock respawn probability")
@@ -469,19 +466,19 @@ def config_info(config: str) -> None:
               \n# If you wish to specify the number, please enter an integer value beteween 2-and num of patches.")
     elif config == "autocombustion probability":
         print(f"Info for configuring autocombustion probability on tree patches:\
-              \n# This parameter sets the probability for tree patches to autocombust (min 60%, max 80%).\
+              \n# This parameter sets the probability for tree patches to autocombust (min 1%, max 10%).\
               \n# This parameter can be set either by the user or by randomly generating the probability.\
-              \n# If you wish to specify the number, please enter a floating point number between 0.6-0.8.")
+              \n# If you wish to specify the number, please enter an integer number between 1-10 (1-10%).")
     elif config == "fire spread probability":
         print(f"Info for configuring fire spread probability:\
               \n# This parameter sets the probability that fire spreads from ignited tree patches.\
               \n# This parameter can be set either by the user or by randomly generating the probability.\
-              \n# If you wish to specify the number, please enter a floating point number between 0.3-0.6.")
+              \n# If you wish to specify the number, please enter  an integer number between 30-60 (30-60%)")
     elif config == "rock respawn probability":
         print(f"Info for configuring forest on rockpatches repawn probability:\
               \n# This parameter sets the probability that a treepatch grows on a rockpatch.\
               \n# This parameter can be set either by the user or by randomly generating the probability.\
-              \n# If you wish to specify the number, please enter a floating point number between 0.1-0.2.")
+              \n# If you wish to specify the number, please enter  an integer number between 1-10 (1-10%)")
     elif config == "simulation limit":
         print(f"Info for configuring simulation limit:\
               \n# This parameter sets the limit for the simulation.\

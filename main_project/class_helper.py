@@ -22,6 +22,10 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Tuple, Type
 import matplotlib.pyplot as plt
 import random
+import time
+
+# Set the seed based on the current time
+random.seed(int(time.time()))
 
 @dataclass
 class Graphdata:
@@ -230,9 +234,13 @@ class Treepatch(Landpatch):
 
     def check_autocombust(self) -> None:
         """Checks and updates wether instance of tree patch spontaniously catches fire."""
+
         autocombustion_prob = self._autocombustion_prob
 
-        if random.random() <= autocombustion_prob:
+        print("Combust_prob: ", autocombustion_prob)
+        autocombust = random.randint(0, 100)
+        print("Autocombust: ", autocombustion_prob)
+        if autocombust <= autocombustion_prob:
             self._ignited = True
             print(f"Treepatch ({self._id}) caught fire.")
 

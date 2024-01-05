@@ -242,10 +242,11 @@ class ForestFireGraph:
                 firefighter_patch_ids.append(firefighter._current_patch)
             self._vis_graph.update_node_edges(firefighter_patch_ids)
 
-            time.sleep(0.5) # add delay to show graph between steps
             print("Simulation count is currently" + str(simulation_count))
 
             simulation_count += 1
+
+            time.sleep(0.8) # add delay to show graph between steps
 
     def spread_fire(self, neighbour_ids: List[int]) -> None:
         """If treepatch is ignited, spread fire to any adjacent Treepatch(es)."""
