@@ -48,6 +48,9 @@ class TestForestFireGraphInitialization(unittest.TestCase):
             firefighter_average_skill=custom_firefighter_average_skill,
         )
 
+        # Kill graph visualiser
+        graph._vis_graph = None
+
         self.assertEqual(graph._edges, custom_edges)
         self.assertEqual(graph._pos_nodes, custom_pos_nodes)
         self.assertEqual(graph._tree_distribution, custom_tree_distribution)
