@@ -15,11 +15,11 @@ class ForestFireGraph:
         self,
         edges: Optional[List[Tuple[int,int]]],
         pos_nodes: Optional[Dict] = {},
-        tree_distribution: Optional[float] = 30,
+        tree_distribution: Optional[int] = 80,
         firefighters: Optional[int] = 3,
-        autocombustion: Optional[float] = 0.3,
-        fire_spread_prob: Optional[float] = 0.3,
-        rock_mutate_prob: Optional[float] = 0.1,
+        autocombustion: Optional[int] = 1,
+        fire_spread_prob: Optional[int] = 30,
+        rock_mutate_prob: Optional[int] = 1,
         sim_time: Optional[int] = 10,
         firefighter_average_skill: Optional[int] = 25
         ):
@@ -32,13 +32,13 @@ class ForestFireGraph:
             Optional argument. Stores graph position of nodes if provided.
         firefighters: Optional[int], default = 3
             Firefighters for initializing firefighter class
-        tree_distribution: Optional[int], default = 30
+        tree_distribution: Optional[int], default = 80
             The percentage distribution of tree patches on the graph
-        autocombustion: Optional[float], default = 0.3
+        autocombustion: Optional[int], default = 1
             Probability for a tree patch to randomly ignite
-        fire_spread_probability: Optional[int], default = 0.3
+        fire_spread_probability: Optional[int], default = 30
             Probability for fire to randomly spread to adjacent tree patch neighbours
-        rock_mutate_prob: Optional[float], default = 0.1
+        rock_mutate_prob: Optional[int], default = 1
             Probability for a rock patch to randomly mutate into a tree patch
         sim_time: Optional[int], default = 10
             The number of simulation steps for the purpose of simulating wildfire evolution.
@@ -213,7 +213,7 @@ class ForestFireGraph:
                 
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
-                    if random.randint() <= patch._mutate_chance:
+                    if random.randint(0, 100) <= patch._mutate_chance:
                         self._patches_map[vertex] = patch.mutate(autocombustion_prob=self._autocombustion, 
                                                                  tree_health=random.randint(1, 256))
 
@@ -247,7 +247,7 @@ class ForestFireGraph:
 
             simulation_count += 1
 
-            time.sleep(0.8) # add delay to show graph between steps
+            time.sleep(0.9) # add delay to show graph between steps
 
     def spread_fire(self, neighbour_ids: List[int]) -> None:
         """If treepatch is ignited, spread fire to any adjacent Treepatch(es)."""
@@ -257,6 +257,5 @@ class ForestFireGraph:
             current_neighbour = self._patches_map[neighbor_id]
 
             # Check if neighbor is tree patch AND simulate chance of igniting
-            if isinstance(current_neighbour, Treepatch) and random.random() <= self._fire_spread_prob:   
+            if isinstance(current_neighbour, Treepatch) and random.randint(0, 100) <= self._fire_spread_prob:   
                 current_neighbour._ignited = True
-        # Check for probable fire spread

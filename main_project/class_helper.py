@@ -115,7 +115,13 @@ class Graphdata:
       
       
     def report_forest_evolution(self, steps: int) -> None:
-        """Displays a plot of evolution of tree patches, rock patches, and wildfires over a specified number of steps"""
+        """Displays a plot of evolution of tree patches, rock patches, and wildfires over a specified number of steps
+        
+        Parameters
+        ----------
+        steps: int
+            Number of simulation steps
+        """
 
         # Retrieve data for visualisation
         tree_patches = self._tree_patches
@@ -180,7 +186,7 @@ class Rockpatch(Landpatch):
     def __init__(self, 
                  id: int, 
                  neighbour_ids: List[int]=None, 
-                 mutate_chance: Optional[float]=1)->None:
+                 mutate_chance: Optional[int]=1)->None:
         super().__init__(id, neighbour_ids=neighbour_ids)
         self._mutate_chance = mutate_chance
         """
@@ -208,7 +214,7 @@ class Treepatch(Landpatch):
     def __init__(self, 
                  id: int, 
                  neighbour_ids: list[int] = None, 
-                 autocombustion_prob: Optional[float] = 0.6, 
+                 autocombustion_prob: Optional[int] = 1, 
                  tree_health: Optional[int] = 256)->None:
         super().__init__(id, 
                          neighbour_ids = neighbour_ids)
@@ -347,9 +353,9 @@ class ConfigData():
     pos_nodes: Optional[dict] = field(default_factory=dict)
     tree_distribution: float = 30
     firefighters: int = 3
-    autocombustion: Optional[float] = 0.3
-    fire_spread_prob: Optional[float] = 0.3
-    rock_mutate_prob: Optional[float] = 0.1
+    autocombustion: Optional[int] = 1
+    fire_spread_prob: Optional[int] = 80
+    rock_mutate_prob: Optional[int] = 1
     sim_time: Optional[int] = 10
 
     def get_config(self) -> Tuple:
