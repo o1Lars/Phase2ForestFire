@@ -2,7 +2,7 @@ import sys
 import os
 
 # Ensure other modules can be opened while perfoming tests.
-# Get the absolute path of the directory containing your modules
+# Get the absolute path
 main_project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 # Add the module directory to the Python path
