@@ -243,8 +243,6 @@ class ForestFireGraph:
                 firefighter_patch_ids.append(firefighter._current_patch)
             self._vis_graph.update_node_edges(firefighter_patch_ids)
 
-            print("Simulation count is currently" + str(simulation_count))
-
             simulation_count += 1
 
             time.sleep(0.9) # add delay to show graph between steps

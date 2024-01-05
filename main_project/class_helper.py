@@ -246,7 +246,6 @@ class Treepatch(Landpatch):
 
         if random.randint(0,100) <= autocombustion_prob:
             self._ignited = True
-            print(f"Treepatch ({self._id}) caught fire.")
 
     def updateland(self) -> None:
         """Update treestats based on the specified conditions."""
@@ -297,9 +296,7 @@ class Firefighter:
         extinguish_probability = self._firefighter_skill/100
         if random.random() <= extinguish_probability:
             treepatch._ignited = False
-            print("Fire extinguished by firefighter.")
         else:
-            print("Firefighter failed to extinguish fire.")
             self.check_death()
 
     def update_health(self) -> None:
@@ -311,7 +308,6 @@ class Firefighter:
             self._health -= 10
         else:
             self._health += 5
-        print(f"Firefighter health updated to {self._health}.")
 
     def evolve(self) -> None:
         """Perform one evolution step for the firefighter."""
