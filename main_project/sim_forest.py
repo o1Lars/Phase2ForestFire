@@ -213,8 +213,9 @@ class ForestFireGraph:
                 
                 if isinstance(patch, Rockpatch):
                     # Probability for rocpatches turning into treepatches
-                    if random.random() <= patch._mutate_chance/100:
-                        self._patches_map[vertex] = patch.mutate(autocombustion_prob=self._autocombustion)
+                    if random.randint() <= patch._mutate_chance:
+                        self._patches_map[vertex] = patch.mutate(autocombustion_prob=self._autocombustion, 
+                                                                 tree_health=random.randint(1, 256))
 
             # Evolve firefighters 1 evolution step
             for firefighter in self._firefighters_list:
