@@ -193,7 +193,8 @@ class ForestFireGraph:
         data._firefighters = [self._number_of_firefighters]
         data._ignited_tree_patches = [0]
 
-    def simulate(self): 
+    def simulate(self):
+        """Simulates the evolution of wildfire by evolving the patches and fire fighters, storing data, and updating the graph visualisation"""
         simulation_count = 0
         while simulation_count < self._sim_time:
             
