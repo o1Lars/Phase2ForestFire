@@ -96,7 +96,6 @@ class ForestFireGraph:
 
     def _create_neighbour_dict(self) -> Dict[int, List[int]]:
         """Return dictionary of vertices as key and neighbours (if any) as value"""
-        # TODO "(if any)" should probably be removed, since vertices of our planar graph always have at least 1 neighbour?
 
         vertices_list = self._vertices_list
         edges = self._edges
@@ -123,30 +122,6 @@ class ForestFireGraph:
                 self._patches_map[vertex]._neighbour_ids = neighbours_list
 
         return vertices_neighbours
-
-    def update_graph_connection(self) -> None:
-        # Return True if graph is connected, otherwise return False
-        visited = set()
-        self._is_connected = False
-
-        for start_vertex in self._vertices_list:
-            if start_vertex not in visited:
-                stack = [start_vertex]
-
-                while stack:
-                    vertex = stack.pop()
-                    if vertex not in visited:
-                        visited.add(vertex)
-                        stack.extend(
-                            neighbour for neighbour in self._vertices_neighbours[vertex] if neighbour not in visited)
-
-                # If all vertices are visited, the graph is connected
-                self._is_connected = (len(visited) == len(self._vertices_list))
-                if self._is_connected:
-                    return True
-                else:
-                    return False
-            break # Finish the loop if an unconnected section has been found
 
     # Landpatces specific methods
     def _populate_patches(self) -> Dict:
