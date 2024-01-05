@@ -96,9 +96,13 @@ def main() -> None:
             index = get_config_choice() - 1
             edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit = configuration_storage[index].get_config()
             # Create graph
-            graph = ch.Landpatch(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
+            graph = ForestFireGraph(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, fire_spread_prob, rock_mutate_prob, sim_limit)
             # Sim stored data
             time.sleep(0.3)
+            graph.simulate()
+
+            # display report
+            graph._graph_data.report_forest_evolution(sim_limit)
 
             # Get next graph
             print("Configure new graph?")

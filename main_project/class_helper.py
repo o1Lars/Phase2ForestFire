@@ -20,6 +20,7 @@ This module is created as material for the phase 2 project for DM857, DS830 (202
 """
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Tuple, Type
+from input_helper import get_valid_string_input
 import matplotlib.pyplot as plt
 import random
 import time
@@ -127,9 +128,7 @@ class Graphdata:
         tree_patches = self._tree_patches
         rock_patches = self._rock_patches
         wildfires = self._ignited_tree_patches
-        print("tree: ", len(tree_patches))
-        print("rock: ", len(rock_patches))
-        print("fire: ", len(wildfires))
+
         # Create a list of steps for the x-axis
         step_list = list(range(steps + 1))
     
@@ -149,7 +148,11 @@ class Graphdata:
         plt.grid(True)
     
         # Show the plot
+        print("================================================")
+        print("Close report and simulation window to continue.")
+        print("================================================")
         plt.show()
+        plt.close()
 
     
 class Landpatch():
