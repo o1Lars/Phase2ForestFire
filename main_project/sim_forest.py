@@ -55,19 +55,21 @@ class ForestFireGraph:
         self._rock_mutate_prob = rock_mutate_prob
         self._sim_time = sim_time
         self._vertices_list = self._create_vertices_list()
+        self._vertices_neighbours = self._create_neighbour_dict()
         self._patches_map = self._populate_patches()                    # Map patch type to vertex
-        self._vertices_neighbours = self._create_neighbour_dict() 
-        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=100, pos_nodes=self._pos_nodes)
-        self._color_map : List[Tuple[int,int]] = {}                                            # Contains int for vertex/id of patch and color
+        self._color_map : List[Tuple[int,int]] = {}                     # Map colors to vertices
+
+        # Create firefighters for the simulation
+        self._firefighters_list :List[Firefighter] = []
+        self._firefighter_average_skill = firefighter_average_skill     # Skill level is probability (in percentage) of extinguishing fire
+        self._deploy_firefighters()                                     # Map firefighters to vertex
+
+        # Create visual representation of ForestFireGraph
+        self._vis_graph = Visualiser(self._edges, vis_labels=True, node_size=50, pos_nodes=self._pos_nodes)
+    
         # Initial mapping of landpatches color
         self._update_color_map()
         self._vis_graph.update_node_colours(self._color_map)
-
-        self._firefighters_list :List[Firefighter] = []
-        self._firefighter_average_skill = firefighter_average_skill #skill level is probability (in percentage) of extinguishing fire
-        self._deploy_firefighters()            # Map firefighters to vertex
-        
-        
 
         # Create data class instance to store graph data
         self._graph_data = Graphdata()
@@ -119,7 +121,7 @@ class ForestFireGraph:
 
                 # add neighbour list to dictionary
                 vertices_neighbours[vertex] = neighbours_list
-                self._patches_map[vertex]._neighbour_ids = neighbours_list
+
 
         return vertices_neighbours
 
@@ -129,6 +131,7 @@ class ForestFireGraph:
         
         vertices = self._vertices_list
         tree_count = round(len(vertices) * (self._tree_distribution / 100.0))  # Calculate the (rounded) number of tree patches from input tree percentage
+        neighbours = self._vertices_neighbours
 
         # Randomly select 'tree_count' vertices to be tree patches
         tree_vertices = random.sample(vertices, tree_count)
@@ -139,9 +142,11 @@ class ForestFireGraph:
         for vertex in vertices:
             # Check if the current vertex should be a tree or rock patch
             if vertex in tree_vertices:
-                patch_map[vertex] = Treepatch(id = vertex, autocombustion_prob=self._autocombustion)
+                patch_map[vertex] = Treepatch(id = vertex, autocombustion_prob=self._autocombustion, 
+                                              neighbour_ids=neighbours[vertex])
             else:
-                patch_map[vertex] = Rockpatch(id = vertex, mutate_chance = self._rock_mutate_prob) 
+                patch_map[vertex] = Rockpatch(id = vertex, mutate_chance = self._rock_mutate_prob, 
+                                              neighbour_ids=neighbours[vertex]) 
         
         return patch_map
     

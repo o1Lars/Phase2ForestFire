@@ -23,16 +23,16 @@ from input_helper import get_valid_input, get_valid_float_input, get_valid_strin
 
 def main() -> None:
     """Execute function for running Forest Fire Simulator, get user input, perform simulation and display report"""
+    # Quick test
+    edges, edge_pos = gh.voronoi_to_edges(50)
+    test_graph = ForestFireGraph(edges, edge_pos)
+    test_graph.simulate()
     # Show start menu
     start_menu()
     program_running = True
 
     # run program
     while program_running:
-        # Quick test
-        edges, edge_pos = gh.voronoi_to_edges(50)
-        test_graph = ForestFireGraph(edges, edge_pos)
-        test_graph.simulate()
         # get user input
         configuration_done = False
         while not configuration_done:
