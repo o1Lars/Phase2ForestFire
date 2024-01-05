@@ -57,6 +57,12 @@ def main() -> None:
         graph = ForestFireGraph(edges, pos_nodes, tree_rate, firefighters, autocombustion_prob, 
                                 fire_spread_prob, rock_mutate_prob, sim_limit)
         graph.simulate()
+
+        # Sim done
+        print("...Simulation finished. Gathering final results")
+        time.sleep(0.4)
+        print("...Final results gathered.")
+
         # Display report
         time.sleep(0.3)
         print("\n============================================================="
