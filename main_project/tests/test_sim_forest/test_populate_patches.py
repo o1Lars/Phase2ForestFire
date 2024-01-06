@@ -14,7 +14,7 @@ from ...class_helper import Landpatch, Rockpatch, Treepatch
 
 
 # test class GraphSimulator and methods
-class TestGraphSimulator(unittest.TestCase):
+class TestForestFireGraphPopulatePatches(unittest.TestCase):
     
     def setUp_test_graph(self):
         """Create instance of ForestFireGraph for testing"""

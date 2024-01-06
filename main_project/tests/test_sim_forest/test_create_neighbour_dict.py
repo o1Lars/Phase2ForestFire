@@ -13,7 +13,7 @@ from unittest.mock import MagicMock
 from ...sim_forest import ForestFireGraph
 
 # test class GraphSimulator and methods
-class TestGraphSimulator(unittest.TestCase):
+class TestForestFireGraphNeighbourDict(unittest.TestCase):
     
     def setUp_test_graph(self):
         """Create instance of ForestFireGraph for testing"""

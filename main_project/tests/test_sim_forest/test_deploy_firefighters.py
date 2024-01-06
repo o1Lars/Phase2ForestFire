@@ -13,7 +13,7 @@ from ...sim_forest import ForestFireGraph
 from ...class_helper import Firefighter
 
 # test class GraphSimulator and methods
-class TestGraphSimulator(unittest.TestCase):
+class TestForestFireGraphFirefighters(unittest.TestCase):
     
     def setUp_test_graph(self):
         """Create instance of ForestFireGraph for testing"""

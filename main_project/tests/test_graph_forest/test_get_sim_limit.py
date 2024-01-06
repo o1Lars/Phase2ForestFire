@@ -9,7 +9,7 @@ main_project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 sys.path.insert(0, main_project_dir)
 
 
-from ...graph_forest import get_rock_mutate_prob
+from ...graph_forest import get_sim_limit
 import unittest
 from unittest.mock import patch
 
@@ -37,15 +37,15 @@ class MockRandom:
         return 5  # Fixed value for testing
 
 class TestGetRockMutateProb(unittest.TestCase):
-    @patch('builtins.input', side_effect=['1', '1'])  # Simulate user input for testing (choosing option 1 and entering 42)
+    @patch('builtins.input', side_effect=['1', '10'])  # Simulate user input for testing (choosing option 1 and entering 42)
     def test_get_fire_spread_prob_user_defined(self, mock_input):
-        spread_prob = get_rock_mutate_prob()
-        self.assertEqual(spread_prob, 1)  # Ensure the function returns the user-defined spread probability
+        spread_prob = get_sim_limit()
+        self.assertEqual(spread_prob, 10)  # Ensure the function returns the user-defined spread probability
 
     @patch('builtins.input', side_effect=['2'])
     def test_get_fire_spread_prob_random(self, mock_input):
-        spread_prob = get_rock_mutate_prob()
-        self.assertTrue(1 <= spread_prob <= 10)  # Ensure the function returns a random value within the specified range
+        sim_limit = get_sim_limit()
+        self.assertTrue(2 <= sim_limit <= 50)  # Ensure the function returns a random value within the specified range
 
 if __name__ == '__main__':
     unittest.main()

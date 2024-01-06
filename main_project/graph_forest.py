@@ -558,7 +558,7 @@ def display_config_storage() -> None:
     """Display previous configurations from storage"""
 
     time.sleep(0.5)
-    print("...Retrieving privious configurations")
+    print("...Retrieving previous configurations")
     time.sleep(0.5)
     print("\n=============================================================\
           \nCurrent configurations in storage:")
