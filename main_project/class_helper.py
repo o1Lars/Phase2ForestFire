@@ -324,7 +324,7 @@ class Firefighter:
             self.isAlive = False
 
 
-@dataclass
+@dataclass(frozen=True)
 class ConfigData():
     """This is a dataclass where each instance represents a collection of data from a privious simulation configuration.
 
