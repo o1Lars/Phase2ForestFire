@@ -8,7 +8,7 @@ main_project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 # Add the module directory to the Python path
 sys.path.insert(0, main_project_dir)
 
-from ...class_helper import Firefighter
+from class_helper import Firefighter
 import unittest
 from typing import Optional, Type
 import random
